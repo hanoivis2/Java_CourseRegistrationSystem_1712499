@@ -2,8 +2,13 @@ package Views;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
+import javax.swing.event.CellEditorListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
@@ -12,8 +17,10 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.awt.Font;
+import java.net.URL;
+import java.util.EventObject;
 
 public class CoursesManagement extends JPanel implements ActionListener {
 	
@@ -81,7 +88,7 @@ public class CoursesManagement extends JPanel implements ActionListener {
 		btn_createCourse.setActionCommand("Create");
 		
 		int[] columnsWidth = { 100, 30, 70, 150, 90, 90, 50, 80, 50 };
-		class SessionsListTableModel extends AbstractTableModel {
+		class CoursesListTableModel extends AbstractTableModel {
 
 			/**
 			 * 
@@ -91,6 +98,11 @@ public class CoursesManagement extends JPanel implements ActionListener {
 			@Override
 			public int getRowCount() {
 				return 100;
+			}
+			
+			@Override
+			public boolean isCellEditable(int r, int c) {
+			    return true;
 			}
 
 			@Override
@@ -102,9 +114,9 @@ public class CoursesManagement extends JPanel implements ActionListener {
 			public Object getValueAt(int rowIndex, int columnIndex) {
 				switch (columnIndex) {
 				case 0:
-					return "MH000123";
+					return "MH000123" + rowIndex;
 				case 1:
-					return "Thi giac may tinh";
+					return "Thi giac may tinh " + rowIndex;
 				case 2:
 					return "4";
 				case 3:
@@ -118,7 +130,7 @@ public class CoursesManagement extends JPanel implements ActionListener {
 				case 7:
 					return "150";
 				default:
-					return new ImageIcon("img/delete.png");
+					return "Ngu hoc";
 				}
 			}
 			
@@ -147,71 +159,27 @@ public class CoursesManagement extends JPanel implements ActionListener {
 			}
 		}
 		
-		class RowSessionListRenderer extends JLabel implements  TableCellRenderer
-		{
-
-		  
-		  private static final long serialVersionUID = 1L;
-
-		  public RowSessionListRenderer() {
-		   
-		    setOpaque(true);
-		  }
-		  @Override
-		  public Component getTableCellRendererComponent(JTable table, Object obj,
-		      boolean selected, boolean focused, int row, int col) {
-
-		      setText((obj==null) ? "":obj.toString());
-		      setHorizontalAlignment(SwingConstants.CENTER);
-
-		    return this;
-		  }
-
-		}
-		
-		class ButtonDeleteRenderer extends JButton implements  TableCellRenderer
-		{
-
-		  
-			private static final long serialVersionUID = 1L;
-
-			  public ButtonDeleteRenderer() {
-			   
-			    setOpaque(true);
-			  }
-			  @Override
-			  public Component getTableCellRendererComponent(JTable table, Object obj,
-			      boolean selected, boolean focused, int row, int col) {
-
-				  setPreferredSize(new Dimension(30, 30));
-
-				  
-				try {
-					File inputFile = new File("/Users/giahuy/Documents/Project/Java Projects/StudentManagement/img/delete.png");
-					BufferedImage inputImage;
-					inputImage = ImageIO.read(inputFile);
-					BufferedImage outputImage = new BufferedImage(30, 30, inputImage.getType());
-					
-					Graphics2D g2d = outputImage.createGraphics();
-			  		g2d.drawImage(inputImage, 0, 0, 30, 30, null);
-			  		g2d.dispose();
-			  
-			  		  setIcon(new ImageIcon(outputImage));
-				} catch (IOException e) {
-					
-				}
-
-			      
-
-			    return this;
-			  }
-
-		}
 
 		
 		tbl_coursesList = new JTable();
-		tbl_coursesList.setModel(new SessionsListTableModel());
+		
+		String[] columnNames = {"Course ID", "Course name", "Credits", "Theory teacher's name", "Room name", "Day in week", "Shift", "Max amount", ""};
+		Object[][] data =
+		{
+		    {"MH000123", "Thi giac may tinh", "4", "Thai Hung Van", "E.302", "Thu 2", "4", "150","Ngu hoc"},
+		    {"MH000123", "Thi giac may tinh", "4", "Thai Hung Van", "E.302", "Thu 2", "4", "150","Ngu hoc"},
+		    {"MH000123", "Thi giac may tinh", "4", "Thai Hung Van", "E.302", "Thu 2", "4", "150","Ngu hoc"},
+		    {"MH000123", "Thi giac may tinh", "4", "Thai Hung Van", "E.302", "Thu 2", "4", "150","Ngu hoc"},
+		};
+		 
+		
+		
+//		tbl_coursesList.setModel(new DefaultTableModel(data, columnNames));
+		
+		tbl_coursesList.setModel(new CoursesListTableModel());
+		tbl_coursesList.setRowSelectionAllowed(true);
 		tbl_coursesList.setRowHeight(30);
+		tbl_coursesList.setBackground(Color.DARK_GRAY);
 		tbl_coursesList.getTableHeader().setPreferredSize(new Dimension(0, 30));
 		((DefaultTableCellRenderer)tbl_coursesList.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
 		
@@ -226,7 +194,19 @@ public class CoursesManagement extends JPanel implements ActionListener {
 		    column.setPreferredWidth(width);
 		    
 		    if (i == 9) {
-		    	tbl_coursesList.getColumnModel().getColumn(i-1).setCellRenderer(new ButtonDeleteRenderer());
+		    	
+		    	Action delete = new AbstractAction()
+				{
+				    public void actionPerformed(ActionEvent e)
+				    {
+				    	JTable table = (JTable)e.getSource();
+				        int modelRow = Integer.valueOf( e.getActionCommand() );
+				        System.out.println("Ngu " + modelRow);
+				    }
+				};
+		    	
+		    	tbl_coursesList.getColumnModel().getColumn(i-1).setCellRenderer(new ButtonDeleteRenderer(tbl_coursesList, delete));
+		    	tbl_coursesList.getColumnModel().getColumn(i-1).setCellEditor(new ButtonDeleteRenderer(tbl_coursesList, delete));
 		    }
 		    else {
 		    	tbl_coursesList.getColumnModel().getColumn(i-1).setCellRenderer(new RowSessionListRenderer());
@@ -234,6 +214,8 @@ public class CoursesManagement extends JPanel implements ActionListener {
 		    
 		    
 		}
+		
+		
 		
 		scrollView = new JScrollPane(tbl_coursesList);
 
@@ -285,12 +267,139 @@ public class CoursesManagement extends JPanel implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e)
 	{
+		
+		int row = tbl_coursesList.convertRowIndexToModel( tbl_coursesList.getEditingRow() );
+		System.out.println("Delete row " + row);
+		
 		String strActionCommand = e.getActionCommand();
 		if (strActionCommand.equals("Create"))
 		{
-
+			System.out.println("ngu");
 	    }
 
 	}
+
+
+	
 }
+
+class RowSessionListRenderer extends JLabel implements  TableCellRenderer
+{
+
+  
+  private static final long serialVersionUID = 1L;
+
+  public RowSessionListRenderer() {
+   
+    setOpaque(true);
+  }
+  @Override
+  public Component getTableCellRendererComponent(JTable table, Object obj,
+      boolean selected, boolean focused, int row, int col) {
+
+      setText((obj==null) ? "":obj.toString());
+      setHorizontalAlignment(SwingConstants.CENTER);
+      setBackground(Color.white);
+
+    return this;
+  }
+
+}
+
+class ButtonDeleteRenderer extends AbstractCellEditor implements  TableCellEditor, TableCellRenderer, ActionListener
+{
+	static final long serialVersionUID = 1L;
+	private JTable table;
+	private Action action;
+	
+	private Object editorValue;
+	private boolean isButtonColumnEditor;
+	
+	public ButtonDeleteRenderer(JTable table, Action action) {
+	   
+	  
+		this.table = table;
+		this.action = action;
+
+	}
+	
+	@Override
+	public Component getTableCellRendererComponent(JTable table, Object obj,
+	    boolean selected, boolean focused, int row, int col) {
+	
+		
+		  
+		JButton btn_delete = new JButton();
+		  
+		btn_delete.setBackground(Color.white);
+		Border emptyBorder = BorderFactory.createEmptyBorder();
+		btn_delete.setBorder(emptyBorder);
+		btn_delete.setPreferredSize(new Dimension(30, 30));
+		btn_delete.setBackground(Color.white);
+		btn_delete.setForeground(Color.white);
+		  
+		ImageIcon icon = new ImageIcon("img/delete.png");
+		Image scaleImage = icon.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
+		btn_delete.setIcon(new ImageIcon(scaleImage));
+		btn_delete.addActionListener(this);
+		btn_delete.setMnemonic(KeyEvent.VK_D);
+		  
+		if (focused) {
+			btn_delete.setBorder( new LineBorder(Color.BLUE) );
+		}
+		
+	
+		return btn_delete;
+	}
+	  
+	@Override
+	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+			
+		JButton btn_delete = new JButton();
+		  
+		btn_delete.setBackground(Color.white);
+		Border emptyBorder = BorderFactory.createEmptyBorder();
+		btn_delete.setBorder(emptyBorder);
+		btn_delete.setPreferredSize(new Dimension(30, 30));
+		btn_delete.setBackground(Color.white);
+		btn_delete.setForeground(Color.white);
+		  
+		ImageIcon icon = new ImageIcon("img/delete.png");
+		Image scaleImage = icon.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
+		btn_delete.setIcon(new ImageIcon(scaleImage));
+		btn_delete.addActionListener(this);
+		btn_delete.setMnemonic(KeyEvent.VK_D);
+	
+		this.editorValue = value;
+		return btn_delete;
+	}
+	  
+	@Override
+	public Object getCellEditorValue() {
+		return editorValue;
+	}
+
+	
+
+	public void actionPerformed(ActionEvent e)
+	{
+		int row = table.convertRowIndexToModel( table.getEditingRow() );
+		fireEditingStopped();
+
+		//  Invoke the Action
+
+		ActionEvent event = new ActionEvent(
+			table,
+			ActionEvent.ACTION_PERFORMED,
+			"" + row);
+		action.actionPerformed(event);
+	}
+	
+	
+}
+
+
+
+
+
 
