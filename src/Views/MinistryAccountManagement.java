@@ -12,7 +12,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import Models.Course;
+import Models.MinistryAccount;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -22,19 +22,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class CoursesManagement extends JPanel implements ActionListener {
+public class MinistryAccountManagement extends JPanel implements ActionListener {
 	
 
 	private static final long serialVersionUID = 1L;
 	JLabel lbl_title;
-	JButton btn_createCourse;
+	JButton btn_createAccount;
 	JScrollPane scrollView;
-	JTable tbl_coursesList;
+	JTable tbl_ministryAccountList;
 	JLabel lbl_search;
 	JTextField txt_search;
 	JFrame frame;
-	List<Course> courses;
-	List<Course> coursesFilter;
+	List<MinistryAccount> ministryAccounts;
+	List<MinistryAccount> ministryAccountsFilter;
 	
 	
 	public static void main(String[] args) throws IOException, URISyntaxException {
@@ -45,32 +45,28 @@ public class CoursesManagement extends JPanel implements ActionListener {
 		});
 		
 	
-		JComponent mainMenu = new CoursesManagement();
+		JComponent mainMenu = new MinistryAccountManagement();
 		mainMenu.setOpaque(true);
 		mainMenu.setVisible(true);
 	}
 	
 	
-	public CoursesManagement() throws IOException, URISyntaxException {
+	public MinistryAccountManagement() throws IOException, URISyntaxException {
 		super(new BorderLayout());
 		
-		courses = new ArrayList<Course>();
-		coursesFilter = new ArrayList<Course>();
+		ministryAccounts = new ArrayList<MinistryAccount>();
+		ministryAccountsFilter = new ArrayList<MinistryAccount>();
 		
-		courses.add(new Course("MH000001", "Computer Vision", 4, "Ly Quoc Ngoc", "B.302", "Wednesday", 4, 150));
-		courses.add(new Course("MH000002","Java application development", 4, "Nguyen Van Khiet", "E.302", "Monday", 4, 150));
-		courses.add(new Course("MH000003", "Advanced software development topic", 4, "Nguyen Van Vu", "E.401", "Tuesday", 4, 150));
-		courses.add(new Course("MH000004", "Mobile appication development", 4, "Nguyen  Hoang Dung", "C.302", "Thursday", 4, 150));
-		courses.add(new Course("MH000005", "Advanced mobile development", 4, "Pham Hoang Hai", "E.202", "Friday", 4, 150));
-		courses.add(new Course("MH000006", "Software project management", 3, "Ngo Huy Bien", "I.302", "Saturday", 4, 100));
-		courses.add(new Course("MH000007", "Sofware testing", 4, "Tran Thi Bich Hanh", "GD1", "Thursday", 4, 150));
+		ministryAccounts.add(new MinistryAccount("GV001", "Tran Linh Thuoc", "Giao vu hieu truong"));
+		ministryAccounts.add(new MinistryAccount("GV002", "Lam Quang Vu", "Giao vu khoa CNTT"));
+		ministryAccounts.add(new MinistryAccount("GV003", "Van Chi Nam", "Giao vu truong"));
 	
-		coursesFilter.removeAll(coursesFilter);
-		coursesFilter.addAll(courses);
+		ministryAccountsFilter.removeAll(ministryAccountsFilter);
+		ministryAccountsFilter.addAll(ministryAccounts);
 
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		
-        frame = new JFrame("Courses Management");
+        frame = new JFrame("Ministry accounts Management");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setPreferredSize(new Dimension(dim.width - 100,dim.height - 100));
@@ -99,19 +95,19 @@ public class CoursesManagement extends JPanel implements ActionListener {
 	
 		
 		
-		lbl_title = new JLabel("Courses in this semester");
+		lbl_title = new JLabel("Ministry accounts");
 		lbl_title.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lbl_title.setHorizontalAlignment(JLabel.CENTER);
 		lbl_title.setFont(new Font("Helvetica", Font.BOLD, 16));
 		
-		btn_createCourse = new JButton("Create new course");
-		btn_createCourse.setAlignmentX(Component.CENTER_ALIGNMENT);
-		btn_createCourse.addActionListener(this);
-		btn_createCourse.setActionCommand("Create");
+		btn_createAccount = new JButton("Create new ministry account");
+		btn_createAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btn_createAccount.addActionListener(this);
+		btn_createAccount.setActionCommand("Create");
 		
 		
-		lbl_search = new JLabel("Enter course's name to search: ");       
-        lbl_search.setPreferredSize(new Dimension(200,40));
+		lbl_search = new JLabel("Enter ministry's name to search: ");       
+        lbl_search.setPreferredSize(new Dimension(220,40));
 		
 		
         txt_search = new JTextField("Enter search text...", 15);
@@ -133,8 +129,8 @@ public class CoursesManagement extends JPanel implements ActionListener {
 		        	txt_search.setText("Enter search text...");
 		        }
 		        
-		        coursesFilter.removeAll(coursesFilter);
-				coursesFilter.addAll(courses);
+		        ministryAccountsFilter.removeAll(ministryAccountsFilter);
+		        ministryAccountsFilter.addAll(ministryAccounts);
 				revalidate();
 		        repaint();
 		    }
@@ -145,16 +141,16 @@ public class CoursesManagement extends JPanel implements ActionListener {
 			public void insertUpdate(DocumentEvent e) {
 				
 				if (txt_search.getText().equals("")) {
-					coursesFilter.removeAll(coursesFilter);
-					coursesFilter.addAll(courses);
+					ministryAccountsFilter.removeAll(ministryAccountsFilter);
+					ministryAccountsFilter.addAll(ministryAccounts);
 				}
 				else {
-					Predicate<Course> predicateString = s -> {
-			            return !s.getCourseName().toLowerCase().contains(txt_search.getText().toLowerCase());
+					Predicate<MinistryAccount> predicateString = s -> {
+						return !s.getFullname().toLowerCase().contains(txt_search.getText().toLowerCase());
 			        };
-			        coursesFilter.removeAll(coursesFilter);
-					coursesFilter.addAll(courses);
-			        coursesFilter.removeIf(predicateString);
+			        ministryAccountsFilter.removeAll(ministryAccountsFilter);
+			        ministryAccountsFilter.addAll(ministryAccounts);
+			        ministryAccountsFilter.removeIf(predicateString);
 				}
 				
 				revalidate();
@@ -165,16 +161,16 @@ public class CoursesManagement extends JPanel implements ActionListener {
 			public void removeUpdate(DocumentEvent e) {
 				
 				if (txt_search.getText().equals("")) {
-					coursesFilter.removeAll(coursesFilter);
-					coursesFilter.addAll(courses);
+					ministryAccountsFilter.removeAll(ministryAccountsFilter);
+					ministryAccountsFilter.addAll(ministryAccounts);
 				}
 				else {
-					Predicate<Course> predicateString = s -> {
-						return !s.getCourseName().toLowerCase().contains(txt_search.getText().toLowerCase());
+					Predicate<MinistryAccount> predicateString = s -> {
+						return !s.getFullname().toLowerCase().contains(txt_search.getText().toLowerCase());
 			        };
-			        coursesFilter.removeAll(coursesFilter);
-					coursesFilter.addAll(courses);
-			        coursesFilter.removeIf(predicateString);
+			        ministryAccountsFilter.removeAll(ministryAccountsFilter);
+			        ministryAccountsFilter.addAll(ministryAccounts);
+			        ministryAccountsFilter.removeIf(predicateString);
 				}
 				
 				revalidate();
@@ -185,16 +181,16 @@ public class CoursesManagement extends JPanel implements ActionListener {
 			public void changedUpdate(DocumentEvent e) {
 				
 				if (txt_search.getText().equals("")) {
-					coursesFilter.removeAll(coursesFilter);
-					coursesFilter.addAll(courses);
+					ministryAccountsFilter.removeAll(ministryAccountsFilter);
+					ministryAccountsFilter.addAll(ministryAccounts);
 				}
 				else {
-					Predicate<Course> predicateString = s -> {
-						return !s.getCourseName().toLowerCase().contains(txt_search.getText().toLowerCase());
+					Predicate<MinistryAccount> predicateString = s -> {
+						return !s.getFullname().toLowerCase().contains(txt_search.getText().toLowerCase());
 			        };
-			        coursesFilter.removeAll(coursesFilter);
-					coursesFilter.addAll(courses);
-			        coursesFilter.removeIf(predicateString);
+			        ministryAccountsFilter.removeAll(ministryAccountsFilter);
+			        ministryAccountsFilter.addAll(ministryAccounts);
+			        ministryAccountsFilter.removeIf(predicateString);
 				}
 				
 				revalidate();
@@ -203,14 +199,14 @@ public class CoursesManagement extends JPanel implements ActionListener {
 			}
 		});
 		
-		int[] columnsWidth = { 100, 30, 70, 150, 90, 90, 50, 80, 50 };
+		int[] columnsWidth = { 100, 300, 70, 120 };
 		class CoursesListTableModel extends AbstractTableModel {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public int getRowCount() {
-				return coursesFilter.size();
+				return ministryAccountsFilter.size();
 			}
 			
 			@Override
@@ -220,31 +216,21 @@ public class CoursesManagement extends JPanel implements ActionListener {
 
 			@Override
 			public int getColumnCount() {
-				return 9;
+				return 4;
 			}
 
 			@Override
 			public Object getValueAt(int rowIndex, int columnIndex) {
 				
-				Course item = coursesFilter.get(rowIndex);
+				MinistryAccount item = ministryAccountsFilter.get(rowIndex);
 				
 				switch (columnIndex) {
 				case 0:
-					return item.getCourseID();
+					return item.getUsername();
 				case 1:
-					return item.getCourseName();
+					return item.getFullname();
 				case 2:
-					return item.getCredits();
-				case 3:
-					return item.getTheoryTeacherName();
-				case 4:
-					return item.getRoomName();
-				case 5:
-					return item.getDayInWeek();
-				case 6:
-					return item.getShift();
-				case 7:
-					return item.getMaxAmountStudent();
+					return item.getDescription();
 				default:
 					return "";
 				}
@@ -254,21 +240,11 @@ public class CoursesManagement extends JPanel implements ActionListener {
 			public String getColumnName(int column) {
 				switch (column) {
 				case 0:
-					return "Course ID";
+					return "Username";
 				case 1:
-					return "Course name";
+					return "Full name";
 				case 2:
-					return "Credits";
-				case 3:
-					return "Theory teacher's name";
-				case 4:
-					return "Room name";
-				case 5:
-					return "Day in week";
-				case 6:
-					return "Shift";
-				case 7:
-					return "Max amount";
+					return "Description";
 				default:
 					return "";
 				}
@@ -277,27 +253,27 @@ public class CoursesManagement extends JPanel implements ActionListener {
 		
 
 		
-		tbl_coursesList = new JTable();		
-		tbl_coursesList.setModel(new CoursesListTableModel());
-		tbl_coursesList.setRowSelectionAllowed(true);
-		tbl_coursesList.setRowHeight(30);
-		tbl_coursesList.setBackground(Color.DARK_GRAY);
-		tbl_coursesList.getTableHeader().setPreferredSize(new Dimension(0, 30));
-		((DefaultTableCellRenderer)tbl_coursesList.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
+		tbl_ministryAccountList = new JTable();		
+		tbl_ministryAccountList.setModel(new CoursesListTableModel());
+		tbl_ministryAccountList.setRowSelectionAllowed(true);
+		tbl_ministryAccountList.setRowHeight(30);
+		tbl_ministryAccountList.setBackground(Color.DARK_GRAY);
+		tbl_ministryAccountList.getTableHeader().setPreferredSize(new Dimension(0, 30));
+		((DefaultTableCellRenderer)tbl_ministryAccountList.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
 		
 		int i = 0;
 		for (int width : columnsWidth) {
-		    TableColumn column = tbl_coursesList.getColumnModel().getColumn(i++);
+		    TableColumn column = tbl_ministryAccountList.getColumnModel().getColumn(i++);
 		    column.setMinWidth(20);
 		    column.setMaxWidth(width);
-		    if (i == 2) {
+		    if (i == 3) {
 		    	column.setMaxWidth(Integer.MAX_VALUE);
 		    }
 		    column.setPreferredWidth(width);
 		    
-		    if (i == 9) {
+		    if (i == 4) {
 		    	
-		    	Action actionDelete = new AbstractAction()
+		    	Action actionMinistryAccount = new AbstractAction()
 				{
 					private static final long serialVersionUID = 1L;
 
@@ -308,11 +284,11 @@ public class CoursesManagement extends JPanel implements ActionListener {
 				    }
 				};
 		    	
-		    	tbl_coursesList.getColumnModel().getColumn(i-1).setCellRenderer(new CourseActionCellRenderer(tbl_coursesList, actionDelete));
-		    	tbl_coursesList.getColumnModel().getColumn(i-1).setCellEditor(new CourseActionCellRenderer(tbl_coursesList, actionDelete));
+				tbl_ministryAccountList.getColumnModel().getColumn(i-1).setCellRenderer(new MinistryAccountActionCellRenderer(tbl_ministryAccountList, actionMinistryAccount));
+				tbl_ministryAccountList.getColumnModel().getColumn(i-1).setCellEditor(new MinistryAccountActionCellRenderer(tbl_ministryAccountList, actionMinistryAccount));
 		    }
 		    else {
-		    	tbl_coursesList.getColumnModel().getColumn(i-1).setCellRenderer(new RowSessionListRenderer());
+		    	tbl_ministryAccountList.getColumnModel().getColumn(i-1).setCellRenderer(new RowSessionListRenderer());
 		    }
 		    
 		    
@@ -320,14 +296,14 @@ public class CoursesManagement extends JPanel implements ActionListener {
 		
 		
 		
-		scrollView = new JScrollPane(tbl_coursesList);
+		scrollView = new JScrollPane(tbl_ministryAccountList);
 
 		
 		
 		firstRow.add(lbl_title);
 		searchRow.add(lbl_search);
 		searchRow.add(txt_search);
-		secondRow.add(btn_createCourse);
+		secondRow.add(btn_createAccount);
 		thirdRow.add(scrollView);
 		
 		layoutFirstRow.putConstraint(SpringLayout.NORTH, lbl_title, 10, SpringLayout.NORTH, firstRow);
@@ -344,9 +320,9 @@ public class CoursesManagement extends JPanel implements ActionListener {
         layoutSearchRow.putConstraint(SpringLayout.EAST, txt_search, -15, SpringLayout.EAST, searchRow);
         
 		
-        layoutSecondRow.putConstraint(SpringLayout.NORTH, btn_createCourse, 10, SpringLayout.NORTH, secondRow);
-        layoutSecondRow.putConstraint(SpringLayout.SOUTH, btn_createCourse, -10, SpringLayout.SOUTH, secondRow);
-        layoutSecondRow.putConstraint(SpringLayout.EAST, btn_createCourse, -15, SpringLayout.EAST, secondRow);
+        layoutSecondRow.putConstraint(SpringLayout.NORTH, btn_createAccount, 10, SpringLayout.NORTH, secondRow);
+        layoutSecondRow.putConstraint(SpringLayout.SOUTH, btn_createAccount, -10, SpringLayout.SOUTH, secondRow);
+        layoutSecondRow.putConstraint(SpringLayout.EAST, btn_createAccount, -15, SpringLayout.EAST, secondRow);
         
        
         layoutThirdRow.putConstraint(SpringLayout.NORTH, scrollView, 25, SpringLayout.NORTH, thirdRow);
@@ -390,17 +366,15 @@ public class CoursesManagement extends JPanel implements ActionListener {
 
 	}
 
-
-	
 }
 
-class RowSessionListRenderer extends JLabel implements  TableCellRenderer
+class RowMinistryAccountListRenderer extends JLabel implements  TableCellRenderer
 {
 
   
   private static final long serialVersionUID = 1L;
 
-  public RowSessionListRenderer() {
+  public RowMinistryAccountListRenderer() {
    
     setOpaque(true);
   }
@@ -417,18 +391,18 @@ class RowSessionListRenderer extends JLabel implements  TableCellRenderer
 
 }
 
-class CourseActionCellRenderer extends AbstractCellEditor implements  TableCellEditor, TableCellRenderer, ActionListener
+class MinistryAccountActionCellRenderer extends AbstractCellEditor implements  TableCellEditor, TableCellRenderer, ActionListener
 {
 	static final long serialVersionUID = 1L;
 	private JTable table;
-	private Action actionDelete;
+	private Action action;
 	
 	private Object editorValue;
 	
-	public CourseActionCellRenderer(JTable table, Action actionDelete) {
+	public MinistryAccountActionCellRenderer(JTable table, Action action) {
 
 		this.table = table;
-		this.actionDelete = actionDelete;
+		this.action= action;
 
 	}
 	
@@ -437,8 +411,6 @@ class CourseActionCellRenderer extends AbstractCellEditor implements  TableCellE
 	    boolean selected, boolean focused, int row, int col) {
 	
 		JButton btn_delete = new JButton();
-		  
-		btn_delete.setBackground(Color.white);
 		Border emptyBorder = BorderFactory.createEmptyBorder();
 		btn_delete.setBorder(emptyBorder);
 		btn_delete.setPreferredSize(new Dimension(30, 30));
@@ -450,14 +422,40 @@ class CourseActionCellRenderer extends AbstractCellEditor implements  TableCellE
 		btn_delete.setIcon(new ImageIcon(scaleImage));
 		btn_delete.addActionListener(this);
 		btn_delete.setMnemonic(KeyEvent.VK_D);
+		
+		JButton btn_edit = new JButton();
+		Border emptyBorder2 = BorderFactory.createEmptyBorder();
+		btn_edit.setBorder(emptyBorder2);
+		btn_edit.setPreferredSize(new Dimension(30, 30));
+		btn_edit.setBackground(Color.white);
+		btn_edit.setForeground(Color.white);
 		  
-		if (focused) {
-			btn_delete.setBorder( new LineBorder(Color.BLUE) );
-		}
+		ImageIcon icon2 = new ImageIcon("img/edit.png");
+		Image scaleImage2 = icon2.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
+		btn_edit.setIcon(new ImageIcon(scaleImage2));
+		btn_edit.addActionListener(this);
+		btn_edit.setMnemonic(KeyEvent.VK_D);
+		
+		JButton btn_passwordReset = new JButton();
+		Border emptyBorder3 = BorderFactory.createEmptyBorder();
+		btn_passwordReset.setBorder(emptyBorder3);
+		btn_passwordReset.setPreferredSize(new Dimension(30, 30));
+		btn_passwordReset.setBackground(Color.white);
+		btn_passwordReset.setForeground(Color.white);
+		  
+		ImageIcon icon3 = new ImageIcon("img/passwordReset.png");
+		Image scaleImage3 = icon3.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
+		btn_passwordReset.setIcon(new ImageIcon(scaleImage3));
+		btn_passwordReset.addActionListener(this);
+		btn_passwordReset.setMnemonic(KeyEvent.VK_D);
+
 		
 		JPanel view_button = new JPanel();
-		view_button.setLayout(new BorderLayout());
+		view_button.setLayout(new GridLayout(1,3));
 		view_button.setBackground(Color.white);
+		
+		view_button.add(btn_edit);
+		view_button.add(btn_passwordReset);
 		view_button.add(btn_delete);
 	
 		return view_button;
@@ -467,8 +465,6 @@ class CourseActionCellRenderer extends AbstractCellEditor implements  TableCellE
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 			
 		JButton btn_delete = new JButton();
-		  
-		btn_delete.setBackground(Color.white);
 		Border emptyBorder = BorderFactory.createEmptyBorder();
 		btn_delete.setBorder(emptyBorder);
 		btn_delete.setPreferredSize(new Dimension(30, 30));
@@ -480,12 +476,42 @@ class CourseActionCellRenderer extends AbstractCellEditor implements  TableCellE
 		btn_delete.setIcon(new ImageIcon(scaleImage));
 		btn_delete.addActionListener(this);
 		btn_delete.setMnemonic(KeyEvent.VK_D);
+		
+		JButton btn_edit = new JButton();
+		Border emptyBorder2 = BorderFactory.createEmptyBorder();
+		btn_edit.setBorder(emptyBorder2);
+		btn_edit.setPreferredSize(new Dimension(30, 30));
+		btn_edit.setBackground(Color.white);
+		btn_edit.setForeground(Color.white);
+		  
+		ImageIcon icon2 = new ImageIcon("img/edit.png");
+		Image scaleImage2 = icon2.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
+		btn_edit.setIcon(new ImageIcon(scaleImage2));
+		btn_edit.addActionListener(this);
+		btn_edit.setMnemonic(KeyEvent.VK_D);
+		
+		JButton btn_passwordReset = new JButton();
+		Border emptyBorder3 = BorderFactory.createEmptyBorder();
+		btn_passwordReset.setBorder(emptyBorder3);
+		btn_passwordReset.setPreferredSize(new Dimension(30, 30));
+		btn_passwordReset.setBackground(Color.white);
+		btn_passwordReset.setForeground(Color.white);
+		  
+		ImageIcon icon3 = new ImageIcon("img/passwordReset.png");
+		Image scaleImage3 = icon3.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
+		btn_passwordReset.setIcon(new ImageIcon(scaleImage3));
+		btn_passwordReset.addActionListener(this);
+		btn_passwordReset.setMnemonic(KeyEvent.VK_D);
 
 		
 		JPanel view_button = new JPanel();
-		view_button.setLayout(new BorderLayout());
+		view_button.setLayout(new GridLayout(1,3));
 		view_button.setBackground(Color.white);
+		
+		view_button.add(btn_edit);
+		view_button.add(btn_passwordReset);
 		view_button.add(btn_delete);
+		
 	
 		this.editorValue = value;
 		return view_button;
@@ -505,7 +531,7 @@ class CourseActionCellRenderer extends AbstractCellEditor implements  TableCellE
 			table,
 			ActionEvent.ACTION_PERFORMED,
 			"" + row);
-		actionDelete.actionPerformed(event);
+		action.actionPerformed(event);
 	}
 	
 	
