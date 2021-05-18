@@ -3,7 +3,6 @@ package Views;
 import javax.swing.*;
 
 import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.AbstractTableModel;

@@ -47,8 +47,8 @@ public class CreateCourseForm extends JPanel implements ActionListener {
         frame = new JFrame("Add course for current semester");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setPreferredSize(new Dimension(dim.width - 100,dim.height - 100));
-        frame.setLocation(50, 50);
+        frame.setPreferredSize(new Dimension(dim.width - 100,dim.height - 200));
+        frame.setLocation(50, 100);
 		
 		Container pane = frame.getContentPane();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
@@ -85,7 +85,7 @@ public class CreateCourseForm extends JPanel implements ActionListener {
 		row5.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
 		row6.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
 		row7.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
-		buttonRow.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
+		buttonRow.setMaximumSize(new Dimension(Integer.MAX_VALUE, frame.getPreferredSize().height - 560));
 		
 		btn_confirm = new JButton("Add course");
 		btn_confirm.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -339,7 +339,6 @@ public class CreateCourseForm extends JPanel implements ActionListener {
        
         
       
-        layoutButtonRow.putConstraint(SpringLayout.NORTH, btn_confirm, 10, SpringLayout.NORTH, buttonRow);
         layoutButtonRow.putConstraint(SpringLayout.SOUTH, btn_confirm, -10, SpringLayout.SOUTH, buttonRow);
 		layoutButtonRow.putConstraint(SpringLayout.WEST, btn_confirm, 15, SpringLayout.WEST, buttonRow);
 		layoutButtonRow.putConstraint(SpringLayout.EAST, btn_confirm, -15, SpringLayout.EAST, buttonRow);
