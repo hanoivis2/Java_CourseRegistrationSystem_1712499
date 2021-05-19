@@ -1,6 +1,4 @@
-/Controllers/
-/DAO/
-/Models/
 /Views/
-/hibernate.cfg.xml
-/hibernate/
+/Models/
+/DAO/
+/List/

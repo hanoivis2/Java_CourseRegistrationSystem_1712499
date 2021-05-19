@@ -11,7 +11,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import Models.Student;
+import Models.Subject;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -21,21 +21,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class StudentsInClassManagement extends JPanel implements ActionListener {
+public class SubjectsManagement extends JPanel implements ActionListener {
 	
 
 	private static final long serialVersionUID = 1L;
-	public String className;
-	
 	JLabel lbl_title;
-	JButton btn_addStudent;
+	JButton btn_addSubject;
 	JScrollPane scrollView;
-	JTable tbl_coursesList;
+	JTable tbl_subjectsList;
 	JLabel lbl_search;
 	JTextField txt_search;
 	JFrame frame;
-	List<Student> students;
-	List<Student> studentsFilter;
+	List<Subject> subjects;
+	List<Subject> subjectsFilter;
 	
 	
 	public static void main(String[] args) throws IOException, URISyntaxException {
@@ -46,31 +44,28 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 		});
 		
 	
-		JComponent mainMenu = new StudentsInClassManagement("17CTT4");
+		JComponent mainMenu = new SubjectsManagement();
 		mainMenu.setOpaque(true);
 		mainMenu.setVisible(true);
 	}
 	
 	
-	public StudentsInClassManagement(String className) throws IOException, URISyntaxException {
+	public SubjectsManagement() throws IOException, URISyntaxException {
 		super(new BorderLayout());
 		
-		this.className = className;
+		subjects = new ArrayList<Subject>();
+		subjectsFilter = new ArrayList<Subject>();
 		
-		students = new ArrayList<Student>();
-		studentsFilter = new ArrayList<Student>();
-		
-		students.add(new Student(1712499, "Tran Gia Huy", "17/09/1999", "Ho Chi Minh"));
-		students.add(new Student(1712516, "Huynh Thi Khanh Huyen", "21/12/1999", "Dak Lak"));
-		students.add(new Student(1712499, "Ky Tuan Khang", "02/09/1999", "Khanh Hoa"));
-		students.add(new Student(1712499, "Bui Do Huy", "17/09/1999", "Ho Chi Minh"));
+		subjects.add(new Subject("MH0001", "Computer Vision", 4));
+		subjects.add(new Subject("MH0002", "Java application development", 4));
+		subjects.add(new Subject("MH0003", "Moblie application development", 4));
 	
-		studentsFilter.removeAll(studentsFilter);
-		studentsFilter.addAll(students);
+		subjectsFilter.removeAll(subjectsFilter);
+		subjectsFilter.addAll(subjects);
 
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		
-        frame = new JFrame("Students in class management");
+        frame = new JFrame("Subjects Management");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setPreferredSize(new Dimension(dim.width - 100,dim.height - 100));
@@ -99,19 +94,19 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 	
 		
 		
-		lbl_title = new JLabel("Students in " + className);
+		lbl_title = new JLabel("Subjects list");
 		lbl_title.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lbl_title.setHorizontalAlignment(JLabel.CENTER);
 		lbl_title.setFont(new Font("Helvetica", Font.BOLD, 16));
 		
-		btn_addStudent = new JButton("Add new student");
-		btn_addStudent.setAlignmentX(Component.CENTER_ALIGNMENT);
-		btn_addStudent.addActionListener(this);
-		btn_addStudent.setActionCommand("Create");
+		btn_addSubject = new JButton("Add subject");
+		btn_addSubject.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btn_addSubject.addActionListener(this);
+		btn_addSubject.setActionCommand("Create");
 		
 		
-		lbl_search = new JLabel("Enter course's name to search: ");       
-        lbl_search.setPreferredSize(new Dimension(200,40));
+		lbl_search = new JLabel("Enter ministry's name to search: ");       
+        lbl_search.setPreferredSize(new Dimension(220,40));
 		
 		
         txt_search = new JTextField("Enter search text...", 15);
@@ -133,8 +128,8 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 		        	txt_search.setText("Enter search text...");
 		        }
 		        
-		        studentsFilter.removeAll(studentsFilter);
-		        studentsFilter.addAll(students);
+		        subjectsFilter.removeAll(subjectsFilter);
+		        subjectsFilter.addAll(subjects);
 				revalidate();
 		        repaint();
 		    }
@@ -145,17 +140,17 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 			public void insertUpdate(DocumentEvent e) {
 				
 				if (txt_search.getText().equals("")) {
-					studentsFilter.removeAll(studentsFilter);
-					studentsFilter.addAll(students);
+					subjectsFilter.removeAll(subjectsFilter);
+					subjectsFilter.addAll(subjects);
 				}
 				else {
-					Predicate<Student> predicateString = s -> {
-			            return !s.getName().toLowerCase().contains(txt_search.getText().toLowerCase())
-			            		&& !Integer.toString(s.getId()).contains(txt_search.getText().toLowerCase());
+					Predicate<Subject> predicateString = s -> {
+						return !s.getName().toLowerCase().contains(txt_search.getText().toLowerCase())
+								&& !s.getId().toLowerCase().contains(txt_search.getText().toLowerCase());
 			        };
-			        studentsFilter.removeAll(studentsFilter);
-			        studentsFilter.addAll(students);
-			        studentsFilter.removeIf(predicateString);
+			        subjectsFilter.removeAll(subjectsFilter);
+			        subjectsFilter.addAll(subjects);
+			        subjectsFilter.removeIf(predicateString);
 				}
 				
 				revalidate();
@@ -166,17 +161,17 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 			public void removeUpdate(DocumentEvent e) {
 				
 				if (txt_search.getText().equals("")) {
-					studentsFilter.removeAll(studentsFilter);
-					studentsFilter.addAll(students);
+					subjectsFilter.removeAll(subjectsFilter);
+					subjectsFilter.addAll(subjects);
 				}
 				else {
-					Predicate<Student> predicateString = s -> {
-			            return !s.getName().toLowerCase().contains(txt_search.getText().toLowerCase())
-			            		&& !Integer.toString(s.getId()).contains(txt_search.getText().toLowerCase());
+					Predicate<Subject> predicateString = s -> {
+						return !s.getName().toLowerCase().contains(txt_search.getText().toLowerCase())
+								&& !s.getId().toLowerCase().contains(txt_search.getText().toLowerCase());
 			        };
-			        studentsFilter.removeAll(studentsFilter);
-			        studentsFilter.addAll(students);
-			        studentsFilter.removeIf(predicateString);
+			        subjectsFilter.removeAll(subjectsFilter);
+			        subjectsFilter.addAll(subjects);
+			        subjectsFilter.removeIf(predicateString);
 				}
 				
 				revalidate();
@@ -187,17 +182,17 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 			public void changedUpdate(DocumentEvent e) {
 				
 				if (txt_search.getText().equals("")) {
-					studentsFilter.removeAll(studentsFilter);
-					studentsFilter.addAll(students);
+					subjectsFilter.removeAll(subjectsFilter);
+					subjectsFilter.addAll(subjects);
 				}
 				else {
-					Predicate<Student> predicateString = s -> {
-			            return !s.getName().toLowerCase().contains(txt_search.getText().toLowerCase())
-			            		&& !Integer.toString(s.getId()).contains(txt_search.getText().toLowerCase());
+					Predicate<Subject> predicateString = s -> {
+						return !s.getName().toLowerCase().contains(txt_search.getText().toLowerCase())
+								&& !s.getId().toLowerCase().contains(txt_search.getText().toLowerCase());
 			        };
-			        studentsFilter.removeAll(studentsFilter);
-			        studentsFilter.addAll(students);
-			        studentsFilter.removeIf(predicateString);
+			        subjectsFilter.removeAll(subjectsFilter);
+			        subjectsFilter.addAll(subjects);
+			        subjectsFilter.removeIf(predicateString);
 				}
 				
 				revalidate();
@@ -206,14 +201,14 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 			}
 		});
 		
-		int[] columnsWidth = { 100, 240, 100, 150, 0, 0, 0, 0, 80 };
+		int[] columnsWidth = { 120, 0, 100, 120 };
 		class CoursesListTableModel extends AbstractTableModel {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public int getRowCount() {
-				return studentsFilter.size();
+				return subjectsFilter.size();
 			}
 			
 			@Override
@@ -223,13 +218,13 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 
 			@Override
 			public int getColumnCount() {
-				return 9;
+				return 4;
 			}
 
 			@Override
 			public Object getValueAt(int rowIndex, int columnIndex) {
 				
-				Student item = studentsFilter.get(rowIndex);
+				Subject item = subjectsFilter.get(rowIndex);
 				
 				switch (columnIndex) {
 				case 0:
@@ -237,17 +232,7 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 				case 1:
 					return item.getName();
 				case 2:
-					return item.getBirthday();
-				case 3:
-					return item.getBirthplace();
-				case 4:
-					return "x";
-				case 5:
-					return "";
-				case 6:
-					return "x";
-				case 7:
-					return "x";
+					return item.getCredits();
 				default:
 					return "";
 				}
@@ -257,21 +242,11 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 			public String getColumnName(int column) {
 				switch (column) {
 				case 0:
-					return "Student's ID";
+					return "Subject's id";
 				case 1:
-					return "Student's name";
+					return "Subject's name";
 				case 2:
-					return "Birthday";
-				case 3:
-					return "Birthplace";
-				case 4:
-					return "Computer Vision";
-				case 5:
-					return "Java application development";
-				case 6:
-					return "Web application development";
-				case 7:
-					return "Require engineering";
+					return "Credits";
 				default:
 					return "";
 				}
@@ -280,29 +255,27 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 		
 
 		
-		tbl_coursesList = new JTable();		
-		tbl_coursesList.setModel(new CoursesListTableModel());
-		tbl_coursesList.setRowSelectionAllowed(true);
-		tbl_coursesList.setRowHeight(30);
-		tbl_coursesList.setBackground(Color.DARK_GRAY);
-		tbl_coursesList.getTableHeader().setPreferredSize(new Dimension(0, 30));
-		((DefaultTableCellRenderer)tbl_coursesList.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
+		tbl_subjectsList = new JTable();		
+		tbl_subjectsList.setModel(new CoursesListTableModel());
+		tbl_subjectsList.setRowSelectionAllowed(true);
+		tbl_subjectsList.setRowHeight(30);
+		tbl_subjectsList.setBackground(Color.DARK_GRAY);
+		tbl_subjectsList.getTableHeader().setPreferredSize(new Dimension(0, 30));
+		((DefaultTableCellRenderer)tbl_subjectsList.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
 		
 		int i = 0;
 		for (int width : columnsWidth) {
-		    TableColumn column = tbl_coursesList.getColumnModel().getColumn(i++);
+		    TableColumn column = tbl_subjectsList.getColumnModel().getColumn(i++);
 		    column.setMinWidth(20);
 		    column.setMaxWidth(width);
-		    if (i > 4 && i != 9) {
+		    if (i == 2) {
 		    	column.setMaxWidth(Integer.MAX_VALUE);
 		    }
-		    else {
-		    	column.setPreferredWidth(width);
-		    }
+		    column.setPreferredWidth(width);
 		    
-		    if (i == 9) {
+		    if (i == 4) {
 		    	
-		    	Action actionDelete = new AbstractAction()
+		    	Action actionMinistryAccount = new AbstractAction()
 				{
 					private static final long serialVersionUID = 1L;
 
@@ -313,11 +286,11 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 				    }
 				};
 		    	
-		    	tbl_coursesList.getColumnModel().getColumn(i-1).setCellRenderer(new StudentsInClassCellRenderer(tbl_coursesList, actionDelete));
-		    	tbl_coursesList.getColumnModel().getColumn(i-1).setCellEditor(new StudentsInClassCellRenderer(tbl_coursesList, actionDelete));
+				tbl_subjectsList.getColumnModel().getColumn(i-1).setCellRenderer(new SubjectsManagementActionCellRenderer(tbl_subjectsList, actionMinistryAccount));
+				tbl_subjectsList.getColumnModel().getColumn(i-1).setCellEditor(new SubjectsManagementActionCellRenderer(tbl_subjectsList, actionMinistryAccount));
 		    }
 		    else {
-		    	tbl_coursesList.getColumnModel().getColumn(i-1).setCellRenderer(new RowStudentsInClassRenderer());
+		    	tbl_subjectsList.getColumnModel().getColumn(i-1).setCellRenderer(new RowSubjectsManagementListRenderer());
 		    }
 		    
 		    
@@ -325,14 +298,14 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 		
 		
 		
-		scrollView = new JScrollPane(tbl_coursesList);
+		scrollView = new JScrollPane(tbl_subjectsList);
 
 		
 		
 		firstRow.add(lbl_title);
 		searchRow.add(lbl_search);
 		searchRow.add(txt_search);
-		secondRow.add(btn_addStudent);
+		secondRow.add(btn_addSubject);
 		thirdRow.add(scrollView);
 		
 		layoutFirstRow.putConstraint(SpringLayout.NORTH, lbl_title, 10, SpringLayout.NORTH, firstRow);
@@ -349,9 +322,9 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
         layoutSearchRow.putConstraint(SpringLayout.EAST, txt_search, -15, SpringLayout.EAST, searchRow);
         
 		
-        layoutSecondRow.putConstraint(SpringLayout.NORTH, btn_addStudent, 10, SpringLayout.NORTH, secondRow);
-        layoutSecondRow.putConstraint(SpringLayout.SOUTH, btn_addStudent, -10, SpringLayout.SOUTH, secondRow);
-        layoutSecondRow.putConstraint(SpringLayout.EAST, btn_addStudent, -15, SpringLayout.EAST, secondRow);
+        layoutSecondRow.putConstraint(SpringLayout.NORTH, btn_addSubject, 10, SpringLayout.NORTH, secondRow);
+        layoutSecondRow.putConstraint(SpringLayout.SOUTH, btn_addSubject, -10, SpringLayout.SOUTH, secondRow);
+        layoutSecondRow.putConstraint(SpringLayout.EAST, btn_addSubject, -15, SpringLayout.EAST, secondRow);
         
        
         layoutThirdRow.putConstraint(SpringLayout.NORTH, scrollView, 25, SpringLayout.NORTH, thirdRow);
@@ -395,17 +368,15 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 
 	}
 
-
-	
 }
 
-class RowStudentsInClassRenderer extends JLabel implements  TableCellRenderer
+class RowSubjectsManagementListRenderer extends JLabel implements  TableCellRenderer
 {
 
   
   private static final long serialVersionUID = 1L;
 
-  public RowStudentsInClassRenderer() {
+  public RowSubjectsManagementListRenderer() {
    
     setOpaque(true);
   }
@@ -422,8 +393,7 @@ class RowStudentsInClassRenderer extends JLabel implements  TableCellRenderer
 
 }
 
-
-class StudentsInClassCellRenderer extends AbstractCellEditor implements  TableCellEditor, TableCellRenderer, ActionListener
+class SubjectsManagementActionCellRenderer extends AbstractCellEditor implements  TableCellEditor, TableCellRenderer, ActionListener
 {
 	static final long serialVersionUID = 1L;
 	private JTable table;
@@ -431,7 +401,7 @@ class StudentsInClassCellRenderer extends AbstractCellEditor implements  TableCe
 	
 	private Object editorValue;
 	
-	public StudentsInClassCellRenderer(JTable table, Action action) {
+	public SubjectsManagementActionCellRenderer(JTable table, Action action) {
 
 		this.table = table;
 		this.action= action;
@@ -442,6 +412,18 @@ class StudentsInClassCellRenderer extends AbstractCellEditor implements  TableCe
 	public Component getTableCellRendererComponent(JTable table, Object obj,
 	    boolean selected, boolean focused, int row, int col) {
 	
+		JButton btn_delete = new JButton();
+		Border emptyBorder = BorderFactory.createEmptyBorder();
+		btn_delete.setBorder(emptyBorder);
+		btn_delete.setPreferredSize(new Dimension(30, 30));
+		btn_delete.setBackground(Color.white);
+		btn_delete.setForeground(Color.white);
+		  
+		ImageIcon icon = new ImageIcon("img/delete.png");
+		Image scaleImage = icon.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
+		btn_delete.setIcon(new ImageIcon(scaleImage));
+		btn_delete.addActionListener(this);
+		btn_delete.setMnemonic(KeyEvent.VK_D);
 		
 		JButton btn_edit = new JButton();
 		Border emptyBorder2 = BorderFactory.createEmptyBorder();
@@ -471,17 +453,31 @@ class StudentsInClassCellRenderer extends AbstractCellEditor implements  TableCe
 
 		
 		JPanel view_button = new JPanel();
-		view_button.setLayout(new GridLayout(1,2));
+		view_button.setLayout(new GridLayout(1,3));
 		view_button.setBackground(Color.white);
 		
 		view_button.add(btn_edit);
 		view_button.add(btn_passwordReset);
+		view_button.add(btn_delete);
 	
 		return view_button;
 	}
 	  
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+			
+		JButton btn_delete = new JButton();
+		Border emptyBorder = BorderFactory.createEmptyBorder();
+		btn_delete.setBorder(emptyBorder);
+		btn_delete.setPreferredSize(new Dimension(30, 30));
+		btn_delete.setBackground(Color.white);
+		btn_delete.setForeground(Color.white);
+		  
+		ImageIcon icon = new ImageIcon("img/delete.png");
+		Image scaleImage = icon.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
+		btn_delete.setIcon(new ImageIcon(scaleImage));
+		btn_delete.addActionListener(this);
+		btn_delete.setMnemonic(KeyEvent.VK_D);
 		
 		JButton btn_edit = new JButton();
 		Border emptyBorder2 = BorderFactory.createEmptyBorder();
@@ -511,11 +507,12 @@ class StudentsInClassCellRenderer extends AbstractCellEditor implements  TableCe
 
 		
 		JPanel view_button = new JPanel();
-		view_button.setLayout(new GridLayout(1,2));
+		view_button.setLayout(new GridLayout(1,3));
 		view_button.setBackground(Color.white);
 		
 		view_button.add(btn_edit);
 		view_button.add(btn_passwordReset);
+		view_button.add(btn_delete);
 		
 	
 		this.editorValue = value;
@@ -538,9 +535,9 @@ class StudentsInClassCellRenderer extends AbstractCellEditor implements  TableCe
 			"" + row);
 		action.actionPerformed(event);
 	}
+	
+	
 }
-	
-	
 
 
 
