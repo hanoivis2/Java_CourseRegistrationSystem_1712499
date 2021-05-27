@@ -2,51 +2,51 @@ package Models;
 
 public class Course {
 	
-	
-	private String courseID;
-	private String courseName;
-	private int credits;
+	private String subjectId;
+	private String semesterName;
+	private String semesterSchoolYear;
 	private String theoryTeacherName;
 	private String roomName;
 	private String dayInWeek;
 	private int shift;
 	private int maxAmountStudent;
 	
-	public Course(String courseID, String courseName, int credits, String theoryTeacherName, String roomName,
-			String dayInWeek, int shift, int maxAmountStudent) {
+	public Course(String subjectId, String semesterName, String semesterSchoolYear, String theoryTeacherName,
+			String roomName, String dayInWeek, int shift, int maxAmountStudent) {
 		super();
-		this.courseID = courseID;
-		this.courseName = courseName;
-		this.credits = credits;
+		this.subjectId = subjectId;
+		this.semesterName = semesterName;
+		this.semesterSchoolYear = semesterSchoolYear;
 		this.theoryTeacherName = theoryTeacherName;
 		this.roomName = roomName;
 		this.dayInWeek = dayInWeek;
 		this.shift = shift;
 		this.maxAmountStudent = maxAmountStudent;
 	}
+	
 
-	public String getCourseID() {
-		return courseID;
+	public String getSubjectId() {
+		return subjectId;
 	}
 
-	public void setCourseID(String courseID) {
-		this.courseID = courseID;
+	public void setSubjectId(String subjectId) {
+		this.subjectId = subjectId;
 	}
 
-	public String getCourseName() {
-		return courseName;
+	public String getSemesterName() {
+		return semesterName;
 	}
 
-	public void setCourseName(String courseName) {
-		this.courseName = courseName;
+	public void setSemesterName(String semesterName) {
+		this.semesterName = semesterName;
 	}
 
-	public int getCredits() {
-		return credits;
+	public String getSemesterSchoolYear() {
+		return semesterSchoolYear;
 	}
 
-	public void setCredits(int credits) {
-		this.credits = credits;
+	public void setSemesterSchoolYear(String semesterSchoolYear) {
+		this.semesterSchoolYear = semesterSchoolYear;
 	}
 
 	public String getTheoryTeacherName() {
@@ -88,5 +88,4 @@ public class Course {
 	public void setMaxAmountStudent(int maxAmountStudent) {
 		this.maxAmountStudent = maxAmountStudent;
 	}
-	
 }

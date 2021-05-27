@@ -1,0 +1,33 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
+
+<hibernate-mapping>
+   <class catalog="school_management" name="Models.Course" table="course">
+        
+      <id name = "id" type = "string">
+      	 <column name = "id" />
+         <generator class="assigned"/>
+      </id>
+      
+      <property name = "totalStudents" type = "short">
+      	<column name = "students_amount"/>
+      </property>
+      
+      <property name = "totalMale" type = "short">
+      	<column name = "male_amount"/>
+      </property>
+      
+      <property name = "totalFemale" type = "short">
+      	<column name = "female_amount"/>
+      </property>
+      
+      <property name = "description" type = "string">
+      	<column name = "description" length = "100" />
+      </property>
+      
+      
+      
+   </class>
+</hibernate-mapping>

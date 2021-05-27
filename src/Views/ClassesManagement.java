@@ -2,6 +2,7 @@ package Views;
 
 import javax.swing.*;
 
+
 import javax.swing.border.Border;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -10,6 +11,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import Models.Class;
+import DAO.ClassDAO;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -51,9 +53,8 @@ public class ClassesManagement extends JPanel implements ActionListener {
 		classes = new ArrayList<Class>();
 		classesFilter = new ArrayList<Class>();
 		
-		classes.add(new Class("17CTT4", 120, 100, 20, "Lop CNTT chinh quy khoa 2017"));
-		classes.add(new Class("16CTT5", 120, 90, 30, "Lop CNTT chinh quy khoa 2016"));
-		classes.add(new Class("16HS5", 120, 90, 30, "Lop Cong nghe Hoa hoc chinh quy khoa 2016"));
+		
+		classes = ClassDAO.getClassList();
 	
 		classesFilter.removeAll(classesFilter);
 		classesFilter.addAll(classes);

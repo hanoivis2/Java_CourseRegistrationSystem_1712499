@@ -1,21 +1,28 @@
 package Models;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Class {
 
-	
 	private String id;
-	private int totalStudents;
-	private int totalMale;
-	private int totalFemale;
+	private short totalStudents;
+	private short totalMale;
+	private short totalFemale;
 	private String description;
+	private Set<StudentAccount> students = new HashSet<StudentAccount>(0);
 	
-	public Class(String id, int totalStudents, int totalMale, int totalFemale, String description) {
+	public Class() {};
+	
+	public Class(String id, short totalStudents, short totalMale, short totalFemale, String description,
+			Set<StudentAccount> students) {
 		super();
 		this.id = id;
 		this.totalStudents = totalStudents;
 		this.totalMale = totalMale;
 		this.totalFemale = totalFemale;
 		this.description = description;
+		this.students = students;
 	}
 
 	public String getId() {
@@ -26,27 +33,27 @@ public class Class {
 		this.id = id;
 	}
 
-	public int getTotalStudents() {
+	public short getTotalStudents() {
 		return totalStudents;
 	}
 
-	public void setTotalStudents(int totalStudents) {
+	public void setTotalStudents(short totalStudents) {
 		this.totalStudents = totalStudents;
 	}
 
-	public int getTotalMale() {
+	public short getTotalMale() {
 		return totalMale;
 	}
 
-	public void setTotalMale(int totalMale) {
+	public void setTotalMale(short totalMale) {
 		this.totalMale = totalMale;
 	}
 
-	public int getTotalFemale() {
+	public short getTotalFemale() {
 		return totalFemale;
 	}
 
-	public void setTotalFemale(int totalFemale) {
+	public void setTotalFemale(short totalFemale) {
 		this.totalFemale = totalFemale;
 	}
 
@@ -56,6 +63,14 @@ public class Class {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Set<StudentAccount> getStudents() {
+		return students;
+	}
+
+	public void setStudents(Set<StudentAccount> students) {
+		this.students = students;
 	}
 	
 }
