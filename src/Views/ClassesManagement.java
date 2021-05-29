@@ -13,6 +13,8 @@ import javax.swing.table.TableColumn;
 import Models.Class;
 import DAO.ClassDAO;
 
+import static javax.swing.JOptionPane.showMessageDialog;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
@@ -257,6 +259,15 @@ public class ClassesManagement extends JPanel implements ActionListener {
 		String strActionCommand = e.getActionCommand();
 		if (strActionCommand.equals("Create"))
 		{
+			
+			try {
+				JComponent createClassForm;
+				createClassForm = new CreateClassForm();
+				createClassForm.setOpaque(true);
+				createClassForm.setVisible(true);
+			} catch (IOException | URISyntaxException e1) {
+				showMessageDialog(null, "Error!");
+			}
 			
 	    }
 

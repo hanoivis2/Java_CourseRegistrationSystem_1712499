@@ -4,9 +4,9 @@
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
 
 <hibernate-mapping>
-   <class catalog="school_management" name="Models.Student" table="student">
+   <class catalog="school_management" name="Models.Student" table="student_account">
         
-      <id name = "id" type = "int">
+      <id name = "id" type = "integer">
       	 <column name = "id" />
          <generator class="assigned"/>
       </id>
@@ -31,6 +31,9 @@
       	<column name = "notes" length = "500" />
       </property>
       
+      <many-to-one class="Models.Class" name="class" fetch="join" lazy="false" cascade="save-update">
+		<column length="50" name="class_id" not-null="true"/> 
+	  </many-to-one>
       
       
    </class>

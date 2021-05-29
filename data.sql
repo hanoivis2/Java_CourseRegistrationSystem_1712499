@@ -104,11 +104,11 @@ INSERT INTO subject(id, name, credits) VALUES ('MH0005', 'Toán tuyến tính', 
 INSERT INTO subject(id, name, credits) VALUES ('MH0006', 'Khai thác dữ liệu và ứng dụng', 4);
 
 
-INSERT INTO class(id, students_amount, male_amount, female_amount, description) VALUES ('17CTTN', 50, 0, 0, 'Lớp cử nhân tài năng khoa CNTT khoá 2017');
-INSERT INTO class(id, students_amount, male_amount, female_amount, description) VALUES ('17CTT1', 120, 0, 0, 'Lớp 1 khoa CNTT khoá 2017');
-INSERT INTO class(id, students_amount, male_amount, female_amount, description) VALUES ('17CTT2', 120, 0, 0, 'Lớp 2 khoa CNTT khoá 2017');
-INSERT INTO class(id, students_amount, male_amount, female_amount, description) VALUES ('17CTT3', 120, 0, 0, 'Lớp 3 khoa CNTT khoá 2017');
-INSERT INTO class(id, students_amount, male_amount, female_amount, description) VALUES ('17CTT4', 120, 0, 0, 'Lớp 4 khoa CNTT khoá 2017');
+INSERT INTO class(id, students_amount, male_amount, female_amount, description) VALUES ('17CTTN', 0, 0, 0, 'Lớp cử nhân tài năng khoa CNTT khoá 2017');
+INSERT INTO class(id, students_amount, male_amount, female_amount, description) VALUES ('17CTT1', 0, 0, 0, 'Lớp 1 khoa CNTT khoá 2017');
+INSERT INTO class(id, students_amount, male_amount, female_amount, description) VALUES ('17CTT2', 0, 0, 0, 'Lớp 2 khoa CNTT khoá 2017');
+INSERT INTO class(id, students_amount, male_amount, female_amount, description) VALUES ('17CTT3', 0, 0, 0, 'Lớp 3 khoa CNTT khoá 2017');
+INSERT INTO class(id, students_amount, male_amount, female_amount, description) VALUES ('17CTT4', 0, 0, 0, 'Lớp 4 khoa CNTT khoá 2017');
 
 
 INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712499', 'Trần Gia Huy', '17/09/1999', 'TP HCM', '17CTT4', '111111');

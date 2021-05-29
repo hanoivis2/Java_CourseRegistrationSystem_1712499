@@ -1,0 +1,37 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
+
+<hibernate-mapping>
+   <class catalog="school_management" name="Models.StudentAccount" table="student_account">
+        
+      <id name = "id" type = "string">
+      	 <column length="20" name = "id" />
+         <generator class="assigned"/>
+      </id>
+      
+      <property name = "fullName" type = "string">
+      	<column name = "full_name" length = "50" />
+      </property>
+      
+      <property name = "birthday" type = "string">
+      	<column name = "birthday" length = "20" />
+      </property>
+      
+      <property name = "birthplace" type = "string">
+      	<column name = "birthplace" length = "50" />
+      </property>
+      
+       <property name = "password" type = "string">
+      	<column name = "password" length = "20" />
+      </property>
+
+      
+      <many-to-one class="Models.Class" name="mainClass" fetch="join" lazy="false" cascade="save-update">
+		<column length="50" name="class_id" not-null="true"/> 
+	  </many-to-one>
+      
+      
+   </class>
+</hibernate-mapping>

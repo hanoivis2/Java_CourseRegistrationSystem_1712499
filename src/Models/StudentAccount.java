@@ -2,19 +2,26 @@ package Models;
 
 public class StudentAccount {
 
+	
+
 	private String id;
 	private String fullName;
 	private String birthday;
 	private String birthplace;
-	private String classId;
+	private Class mainClass = new Class();
+	private String password;
 	
-	public StudentAccount(String id, String fullName, String birthday, String birthplace, String classId) {
+	public StudentAccount() {}
+	
+	public StudentAccount(String id, String fullName, String birthday, String birthplace, Class mainClass,
+			String password) {
 		super();
 		this.id = id;
 		this.fullName = fullName;
 		this.birthday = birthday;
 		this.birthplace = birthplace;
-		this.classId = classId;
+		this.mainClass = mainClass;
+		this.password = password;
 	}
 
 	public String getId() {
@@ -49,11 +56,19 @@ public class StudentAccount {
 		this.birthplace = birthplace;
 	}
 
-	public String getClassId() {
-		return classId;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setClassId(String classId) {
-		this.classId = classId;
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public Class getMainClass() {
+		return mainClass;
+	}
+
+	public void setMainClass(Class mainClass) {
+		this.mainClass = mainClass;
 	}
 }

@@ -5,6 +5,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 //import org.hibernate.Transaction;
+import org.hibernate.Transaction;
 
 import Models.Class;
 
@@ -37,52 +38,54 @@ public class ClassDAO {
 		return result;
 	}
 	
-//	public static Student getStudentById(int id) {
-//		Student result = null;
-//		
-//		Session session = HibernateUtil.getSessionFactory().openSession();
-//		
-//		try {
-//			result = (Student) session.get(Student.class, id);
-//		} 
-//		
-//		catch (HibernateException ex) { 
-//			
-//		} 
-//		
-//		finally { 
-//			session.close();
-//		}
-//		
-//		return result;
-//	}
-//	
-//	public static int addStudent(Student student) {
-//
-//		Session session = HibernateUtil.getSessionFactory().openSession();
-//		
-//		if (StudentDAO.getStudentById(student.getId())!=null) {
-//			return -1; 
-//		}
-//		
-//		Transaction transaction = null;
-//		
-//		try {
-//			transaction = session.beginTransaction(); 
-//			session.save(student);
-//			transaction.commit();
-//		} 
-//		
-//		catch (HibernateException ex) { 
-//			
-//		} 
-//		
-//		finally { 
-//			session.close();
-//		}
-//		
-//		return 1;
-//	}
+	public static int addClass(Class newClass) {
+
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		
+		if (ClassDAO.getClassById(newClass.getId())!=null) {
+			return -1; 
+		}
+		
+		Transaction transaction = null;
+		
+		try {
+			transaction = session.beginTransaction(); 
+			session.save(newClass);
+			transaction.commit();
+		} 
+		
+		catch (HibernateException ex) { 
+			
+		} 
+		
+		finally { 
+			session.close();
+		}
+		
+		return 1;
+	}
+	
+	public static Class getClassById(String id) {
+		Class result = null;
+		
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		
+		try {
+			result = (Class) session.get(Class.class, id);
+		} 
+		
+		catch (HibernateException ex) { 
+			
+		} 
+		
+		finally { 
+			session.close();
+		}
+		
+		return result;
+	}
+	
+
 //	
 //	public static int updateStudent(Student student) {
 //
