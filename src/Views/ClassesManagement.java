@@ -188,8 +188,77 @@ public class ClassesManagement extends JPanel implements ActionListener {
 
 					public void actionPerformed(ActionEvent e)
 				    {
-//				        int modelRow = Integer.valueOf( e.getActionCommand() );
+				        String[] commandTokens = e.getActionCommand().split("-");
+				        String command = commandTokens[0];
+				        int row = Integer.parseInt(commandTokens[1]);
 				        
+				        System.out.println(e.getActionCommand());
+				        
+				        if(command.equals("edit")) {
+				        	
+							try {
+								
+								Class classToEdit = classesFilter.get(row);
+					        	Action actionEdit = new AbstractAction()
+								{
+									private static final long serialVersionUID = 1L;
+
+									public void actionPerformed(ActionEvent e)
+								    {
+								        
+										classes.removeAll(classes);
+										classesFilter.removeAll(classesFilter);
+										
+										
+										classes = ClassDAO.getClassList();
+									
+										classesFilter.removeAll(classesFilter);
+										classesFilter.addAll(classes);
+								        
+										revalidate();
+								        repaint();
+								    }
+								};
+								
+								JComponent editClassForm;
+								editClassForm = new EditClassForm(actionEdit, classToEdit);
+								editClassForm.setOpaque(true);
+								editClassForm.setVisible(true);
+							} catch (IOException e1) {
+								
+							} catch (URISyntaxException e1) {
+								
+							}
+							
+				        }
+				        else {
+				        	
+				        	Class classToDelete = classesFilter.get(row);
+							int input = JOptionPane.showConfirmDialog(null, "Are you sure to delete " + classToDelete.getId() +"?");
+							// 0=yes, 1=no, 2=cancel
+							
+							if(input == 0) {
+								int status = ClassDAO.deleteClass(classToDelete);
+								if (status == -1) {
+									showMessageDialog(null, "This class is not existed!");
+								}
+								else {
+									
+									classes.remove(row);
+									classesFilter.removeAll(classesFilter);
+									
+			
+								
+									classesFilter.removeAll(classesFilter);
+									classesFilter.addAll(classes);
+							        
+									revalidate();
+							        repaint();
+									
+									showMessageDialog(null, "Deleted successfully!");
+								}
+							}
+				        }
 				    }
 				};
 		    	
@@ -261,10 +330,33 @@ public class ClassesManagement extends JPanel implements ActionListener {
 		{
 			
 			try {
+				
+				Action actionRefresh = new AbstractAction()
+				{
+					private static final long serialVersionUID = 1L;
+
+					public void actionPerformed(ActionEvent e)
+				    {
+				        
+						classes.removeAll(classes);
+						classesFilter.removeAll(classesFilter);
+						
+						
+						classes = ClassDAO.getClassList();
+					
+						classesFilter.removeAll(classesFilter);
+						classesFilter.addAll(classes);
+				        
+						revalidate();
+				        repaint();
+				    }
+				};
+				
 				JComponent createClassForm;
-				createClassForm = new CreateClassForm();
+				createClassForm = new CreateClassForm(actionRefresh);
 				createClassForm.setOpaque(true);
 				createClassForm.setVisible(true);
+				
 			} catch (IOException | URISyntaxException e1) {
 				showMessageDialog(null, "Error!");
 			}
@@ -370,6 +462,7 @@ class ClassesManagementActionCellRenderer extends AbstractCellEditor implements 
 		btn_edit.setIcon(new ImageIcon(scaleImage2));
 		btn_edit.addActionListener(this);
 		btn_edit.setMnemonic(KeyEvent.VK_D);
+		btn_edit.setActionCommand("edit");
 		
 		JButton btn_delete = new JButton();
 		Border emptyBorder = BorderFactory.createEmptyBorder();
@@ -383,6 +476,7 @@ class ClassesManagementActionCellRenderer extends AbstractCellEditor implements 
 		btn_delete.setIcon(new ImageIcon(scaleImage));
 		btn_delete.addActionListener(this);
 		btn_delete.setMnemonic(KeyEvent.VK_D);
+		btn_delete.setActionCommand("delete");
 		
 		
 		JPanel view_button = new JPanel();
@@ -410,7 +504,7 @@ class ClassesManagementActionCellRenderer extends AbstractCellEditor implements 
 		ActionEvent event = new ActionEvent(
 			table,
 			ActionEvent.ACTION_PERFORMED,
-			"" + row);
+			e.getActionCommand() + "-" + row);
 		action.actionPerformed(event);
 	}
 	

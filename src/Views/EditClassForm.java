@@ -11,7 +11,7 @@ import java.net.URISyntaxException;
 import static javax.swing.JOptionPane.showMessageDialog;
 import Models.Class;
 
-public class CreateClassForm extends JPanel implements ActionListener {
+public class EditClassForm extends JPanel implements ActionListener {
 	
 	/**
 	 * 
@@ -35,7 +35,7 @@ public class CreateClassForm extends JPanel implements ActionListener {
 	}
 	
 	
-	public CreateClassForm(Action actionFresh) throws IOException, URISyntaxException {
+	public EditClassForm(Action actionFresh, Class classData) throws IOException, URISyntaxException {
 		super(new BorderLayout());
 
 		
@@ -43,7 +43,7 @@ public class CreateClassForm extends JPanel implements ActionListener {
 		
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		
-        frame = new JFrame("Add new class");
+        frame = new JFrame("Edit class information");
         frame.setPreferredSize(new Dimension(600,550));
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation(dim.width/2 - 300, dim.height/2 - 275);
@@ -65,7 +65,7 @@ public class CreateClassForm extends JPanel implements ActionListener {
 		row2.setMaximumSize(new Dimension(Integer.MAX_VALUE, frame.getPreferredSize().height - 140));
 		buttonRow.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
 		
-		btn_confirm = new JButton("Add class");
+		btn_confirm = new JButton("Confirm edit");
 		btn_confirm.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btn_confirm.addActionListener(this);
 		btn_confirm.setActionCommand("Confirm");
@@ -83,6 +83,7 @@ public class CreateClassForm extends JPanel implements ActionListener {
 		txt_id = new JTextField("Enter class' id...", 15);
 		txt_id.setForeground(Color.GRAY);
 		txt_id.setPreferredSize(new Dimension(0,50));
+		txt_id.setEditable(false);
 		txt_id.addFocusListener(new FocusListener() {
 		    @Override
 		    public void focusGained(FocusEvent e) {
@@ -104,7 +105,7 @@ public class CreateClassForm extends JPanel implements ActionListener {
 
 		
 		txt_description = new JTextArea("Enter description...", 0, 1);
-		txt_description.setForeground(Color.GRAY);
+		txt_description.setForeground(Color.BLACK);
 		txt_description.setPreferredSize(new Dimension(0,50));
 		txt_description.setLineWrap(true);
 		txt_description.setBorder(BorderFactory.createCompoundBorder(
@@ -170,6 +171,9 @@ public class CreateClassForm extends JPanel implements ActionListener {
 		
 		add(pane);
 		
+		txt_id.setText(classData.getId());
+		txt_description.setText(classData.getDescription());
+		
 
         this.setOpaque(true); 
         frame.setContentPane(this);
@@ -193,15 +197,15 @@ public class CreateClassForm extends JPanel implements ActionListener {
 				Class newClass = new Class();
 				newClass.setId(txt_id.getText());
 				newClass.setDescription(txt_description.getText());
-				int status = ClassDAO.addClass(newClass);
+				int status = ClassDAO.updateClass(newClass);
 				if (status == -1) {
-					showMessageDialog(null, "This class has already been created!");
+					showMessageDialog(null, "This class is not existed!");
 				}
 				else {
 						
 					ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "refresh");
 					action.actionPerformed(event);
-					showMessageDialog(null, "Added successfully!");
+					showMessageDialog(null, "Edited successfully!");
 				}
 			}
 			

@@ -84,34 +84,63 @@ public class ClassDAO {
 		
 		return result;
 	}
-	
+		
+	public static int updateClass(Class classToEdit) {
 
-//	
-//	public static int updateStudent(Student student) {
-//
-//		Session session = HibernateUtil.getSessionFactory().openSession();
-//		
-//		if (StudentDAO.getStudentById(student.getId())!=null) {
-//			Transaction transaction = null;
-//			
-//			try {
-//				transaction = session.beginTransaction(); 
-//				session.update(student);
-//				transaction.commit();
-//			} 
-//			
-//			catch (HibernateException ex) { 
-//				
-//			} 
-//			
-//			finally { 
-//				session.close();
-//			}
-//		}
-//		
-//		
-//		
-//		return 1;
-//	}
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		
+		if (ClassDAO.getClassById(classToEdit.getId())!=null) {
+			Transaction transaction = null;
+			
+			try {
+				transaction = session.beginTransaction(); 
+				session.update(classToEdit);
+				transaction.commit();
+			} 
+			
+			catch (HibernateException ex) { 
+				
+			} 
+			
+			finally { 
+				session.close();
+			}
+		}
+		else {
+			return -1;
+		}
+		
+		
+		return 1;
+	}
+	
+	public static int deleteClass(Class classToDelete) {
+
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		
+		if (ClassDAO.getClassById(classToDelete.getId())!=null) {
+			Transaction transaction = null;
+			
+			try {
+				transaction = session.beginTransaction(); 
+				session.delete(classToDelete);
+				transaction.commit();
+			} 
+			
+			catch (HibernateException ex) { 
+				
+			} 
+			
+			finally { 
+				session.close();
+			}
+		}
+		else {
+			return -1;
+		}
+		
+		
+		return 1;
+	}
 	
 }
