@@ -1,0 +1,30 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
+
+<hibernate-mapping>
+   <class catalog="school_management" name="Models.Subject" table="subject">
+        
+      <id name = "id" type = "string">
+      	 <column length = "8" name = "id" />
+         <generator class="assigned"/>
+      </id>
+      
+      <property name = "name" type = "string">
+      	<column name = "name" length = "150" />
+      </property>
+      
+      <property name = "credits" type = "short">
+      	<column name = "credits"/>
+      </property>
+      
+      <set inverse="true" name="courses" > 
+      	<key>
+			<column length="10" name="subject_id" not-null="true"/> 
+		</key>
+		<one-to-many class="Models.Course"/>
+	  </set>
+      
+   </class>
+</hibernate-mapping>

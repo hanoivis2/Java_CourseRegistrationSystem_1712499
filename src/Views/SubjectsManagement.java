@@ -2,6 +2,7 @@ package Views;
 
 import javax.swing.*;
 
+
 import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -11,7 +12,10 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import DAO.SubjectDAO;
 import Models.Subject;
+
+import static javax.swing.JOptionPane.showMessageDialog;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -56,9 +60,7 @@ public class SubjectsManagement extends JPanel implements ActionListener {
 		subjects = new ArrayList<Subject>();
 		subjectsFilter = new ArrayList<Subject>();
 		
-		subjects.add(new Subject("MH0001", "Computer Vision", 4));
-		subjects.add(new Subject("MH0002", "Java application development", 4));
-		subjects.add(new Subject("MH0003", "Moblie application development", 4));
+		subjects = SubjectDAO.getSubjectList();
 	
 		subjectsFilter.removeAll(subjectsFilter);
 		subjectsFilter.addAll(subjects);
@@ -105,7 +107,7 @@ public class SubjectsManagement extends JPanel implements ActionListener {
 		btn_addSubject.setActionCommand("Create");
 		
 		
-		lbl_search = new JLabel("Enter ministry's name to search: ");       
+		lbl_search = new JLabel("Enter subject's name to search: ");       
         lbl_search.setPreferredSize(new Dimension(220,40));
 		
 		
@@ -201,7 +203,7 @@ public class SubjectsManagement extends JPanel implements ActionListener {
 			}
 		});
 		
-		int[] columnsWidth = { 120, 0, 100, 120 };
+		int[] columnsWidth = { 120, 0, 100, 80 };
 		class CoursesListTableModel extends AbstractTableModel {
 
 			private static final long serialVersionUID = 1L;
@@ -281,7 +283,82 @@ public class SubjectsManagement extends JPanel implements ActionListener {
 
 					public void actionPerformed(ActionEvent e)
 				    {
-//				        int modelRow = Integer.valueOf( e.getActionCommand() );
+						String[] commandTokens = e.getActionCommand().split("-");
+				        String command = commandTokens[0];
+				        int row = Integer.parseInt(commandTokens[1]);
+				        
+				        System.out.println(e.getActionCommand());
+				        
+				        if(command.equals("edit")) {
+				        	
+//							try {
+//								
+//								Subject subjectToEdit = subjectsFilter.get(row);
+//					        	Action actionEdit = new AbstractAction()
+//								{
+//									private static final long serialVersionUID = 1L;
+//
+//									public void actionPerformed(ActionEvent e)
+//								    {
+//								        
+//										subjects.removeAll(subjects);
+//										subjectsFilter.removeAll(subjectsFilter);
+//										
+//										
+//										subjects = SubjectDAO.getSubjectList();
+//									
+//										subjectsFilter.removeAll(subjectsFilter);
+//										subjectsFilter.addAll(subjects);
+//								        
+//										revalidate();
+//								        repaint();
+//								    }
+//								};
+//								
+//								JComponent editClassForm;
+//								editClassForm = new SubjectClassForm(actionEdit, subjectToEdit);
+//								editClassForm.setOpaque(true);
+//								editClassForm.setVisible(true);
+//							} catch (IOException e1) {
+//								
+//							} catch (URISyntaxException e1) {
+//								
+//							}
+							
+				        }
+				        else if(command.equals("delete")) {
+				        	
+				        	Subject subjectToDelete = subjectsFilter.get(row);
+							int input = JOptionPane.showConfirmDialog(null, "Are you sure to delete " + subjectToDelete.getName() +"?");
+							// 0=yes, 1=no, 2=cancel
+							
+							if(input == 0) {
+								int status = SubjectDAO.deleteSubject(subjectToDelete);
+								if (status == -1) {
+									showMessageDialog(null, "This class is not existed!");
+								}
+								else {
+									
+									subjects.remove(row);
+									subjectsFilter.removeAll(subjectsFilter);
+									
+			
+								
+									subjectsFilter.removeAll(subjectsFilter);
+									subjectsFilter.addAll(subjects);
+							        
+									
+									
+									revalidate();
+							        repaint();
+									
+									showMessageDialog(null, "Deleted successfully!");
+								}
+							}
+				        }
+				        else {
+				        	
+				        }
 				        
 				    }
 				};
@@ -363,7 +440,38 @@ public class SubjectsManagement extends JPanel implements ActionListener {
 		String strActionCommand = e.getActionCommand();
 		if (strActionCommand.equals("Create"))
 		{
-			
+			try {
+				
+				Action actionRefresh = new AbstractAction()
+				{
+					private static final long serialVersionUID = 1L;
+
+					public void actionPerformed(ActionEvent e)
+				    {
+						subjects.removeAll(subjects);
+						subjectsFilter.removeAll(subjectsFilter);
+						
+						
+						subjects = SubjectDAO.getSubjectList();
+					
+						subjectsFilter.addAll(subjects);
+						
+						tbl_subjectsList.revalidate();
+						tbl_subjectsList.repaint();
+				        
+						revalidate();
+				        repaint();
+				    }
+				};
+				
+				JComponent createSubjectForm;
+				createSubjectForm = new CreateSubjectForm(actionRefresh);
+				createSubjectForm.setOpaque(true);
+				createSubjectForm.setVisible(true);
+				
+			} catch (IOException | URISyntaxException e1) {
+				showMessageDialog(null, "Error!");
+			}
 	    }
 
 	}
@@ -418,6 +526,7 @@ class SubjectsManagementActionCellRenderer extends AbstractCellEditor implements
 		btn_delete.setPreferredSize(new Dimension(30, 30));
 		btn_delete.setBackground(Color.white);
 		btn_delete.setForeground(Color.white);
+		btn_delete.setActionCommand("delete");
 		  
 		ImageIcon icon = new ImageIcon("img/delete.png");
 		Image scaleImage = icon.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
@@ -431,25 +540,13 @@ class SubjectsManagementActionCellRenderer extends AbstractCellEditor implements
 		btn_edit.setPreferredSize(new Dimension(30, 30));
 		btn_edit.setBackground(Color.white);
 		btn_edit.setForeground(Color.white);
+		btn_edit.setActionCommand("edit");
 		  
 		ImageIcon icon2 = new ImageIcon("img/edit.png");
 		Image scaleImage2 = icon2.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
 		btn_edit.setIcon(new ImageIcon(scaleImage2));
 		btn_edit.addActionListener(this);
 		btn_edit.setMnemonic(KeyEvent.VK_D);
-		
-		JButton btn_passwordReset = new JButton();
-		Border emptyBorder3 = BorderFactory.createEmptyBorder();
-		btn_passwordReset.setBorder(emptyBorder3);
-		btn_passwordReset.setPreferredSize(new Dimension(30, 30));
-		btn_passwordReset.setBackground(Color.white);
-		btn_passwordReset.setForeground(Color.white);
-		  
-		ImageIcon icon3 = new ImageIcon("img/passwordReset.png");
-		Image scaleImage3 = icon3.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
-		btn_passwordReset.setIcon(new ImageIcon(scaleImage3));
-		btn_passwordReset.addActionListener(this);
-		btn_passwordReset.setMnemonic(KeyEvent.VK_D);
 
 		
 		JPanel view_button = new JPanel();
@@ -457,7 +554,6 @@ class SubjectsManagementActionCellRenderer extends AbstractCellEditor implements
 		view_button.setBackground(Color.white);
 		
 		view_button.add(btn_edit);
-		view_button.add(btn_passwordReset);
 		view_button.add(btn_delete);
 	
 		return view_button;
@@ -491,19 +587,7 @@ class SubjectsManagementActionCellRenderer extends AbstractCellEditor implements
 		btn_edit.setIcon(new ImageIcon(scaleImage2));
 		btn_edit.addActionListener(this);
 		btn_edit.setMnemonic(KeyEvent.VK_D);
-		
-		JButton btn_passwordReset = new JButton();
-		Border emptyBorder3 = BorderFactory.createEmptyBorder();
-		btn_passwordReset.setBorder(emptyBorder3);
-		btn_passwordReset.setPreferredSize(new Dimension(30, 30));
-		btn_passwordReset.setBackground(Color.white);
-		btn_passwordReset.setForeground(Color.white);
-		  
-		ImageIcon icon3 = new ImageIcon("img/passwordReset.png");
-		Image scaleImage3 = icon3.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
-		btn_passwordReset.setIcon(new ImageIcon(scaleImage3));
-		btn_passwordReset.addActionListener(this);
-		btn_passwordReset.setMnemonic(KeyEvent.VK_D);
+
 
 		
 		JPanel view_button = new JPanel();
@@ -511,7 +595,6 @@ class SubjectsManagementActionCellRenderer extends AbstractCellEditor implements
 		view_button.setBackground(Color.white);
 		
 		view_button.add(btn_edit);
-		view_button.add(btn_passwordReset);
 		view_button.add(btn_delete);
 		
 	
@@ -532,7 +615,7 @@ class SubjectsManagementActionCellRenderer extends AbstractCellEditor implements
 		ActionEvent event = new ActionEvent(
 			table,
 			ActionEvent.ACTION_PERFORMED,
-			"" + row);
+			e.getActionCommand() + "-" + row);
 		action.actionPerformed(event);
 	}
 	

@@ -29,7 +29,7 @@ public class ClassesManagement extends JPanel implements ActionListener {
 	JLabel lbl_title;
 	JButton btn_createClass;
 	JScrollPane scrollView;
-	JTable tbl_ministryAccountList;
+	JTable tbl_classes;
 	JFrame frame;
 	List<Class> classes;
 	List<Class> classesFilter;
@@ -162,17 +162,17 @@ public class ClassesManagement extends JPanel implements ActionListener {
 		
 
 		
-		tbl_ministryAccountList = new JTable();		
-		tbl_ministryAccountList.setModel(new CoursesListTableModel());
-		tbl_ministryAccountList.setRowSelectionAllowed(true);
-		tbl_ministryAccountList.setRowHeight(30);
-		tbl_ministryAccountList.setBackground(Color.DARK_GRAY);
-		tbl_ministryAccountList.getTableHeader().setPreferredSize(new Dimension(0, 30));
-		((DefaultTableCellRenderer)tbl_ministryAccountList.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
+		tbl_classes = new JTable();		
+		tbl_classes.setModel(new CoursesListTableModel());
+		tbl_classes.setRowSelectionAllowed(true);
+		tbl_classes.setRowHeight(30);
+		tbl_classes.setBackground(Color.DARK_GRAY);
+		tbl_classes.getTableHeader().setPreferredSize(new Dimension(0, 30));
+		((DefaultTableCellRenderer)tbl_classes.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
 		
 		int i = 0;
 		for (int width : columnsWidth) {
-		    TableColumn column = tbl_ministryAccountList.getColumnModel().getColumn(i++);
+		    TableColumn column = tbl_classes.getColumnModel().getColumn(i++);
 		    column.setMinWidth(20);
 		    column.setMaxWidth(width);
 		    if (i == 5) {
@@ -262,11 +262,11 @@ public class ClassesManagement extends JPanel implements ActionListener {
 				    }
 				};
 		    	
-				tbl_ministryAccountList.getColumnModel().getColumn(i-1).setCellRenderer(new ClassesManagementActionCellRenderer(tbl_ministryAccountList, actionMinistryAccount));
-				tbl_ministryAccountList.getColumnModel().getColumn(i-1).setCellEditor(new ClassesManagementActionCellRenderer(tbl_ministryAccountList, actionMinistryAccount));
+				tbl_classes.getColumnModel().getColumn(i-1).setCellRenderer(new ClassesManagementActionCellRenderer(tbl_classes, actionMinistryAccount));
+				tbl_classes.getColumnModel().getColumn(i-1).setCellEditor(new ClassesManagementActionCellRenderer(tbl_classes, actionMinistryAccount));
 		    }
 		    else {
-		    	tbl_ministryAccountList.getColumnModel().getColumn(i-1).setCellRenderer(new RowClassesManagementRenderer());
+		    	tbl_classes.getColumnModel().getColumn(i-1).setCellRenderer(new RowClassesManagementRenderer());
 		    }
 		    
 		    
@@ -274,7 +274,7 @@ public class ClassesManagement extends JPanel implements ActionListener {
 		
 		
 		
-		scrollView = new JScrollPane(tbl_ministryAccountList);
+		scrollView = new JScrollPane(tbl_classes);
 
 		
 		
@@ -346,6 +346,9 @@ public class ClassesManagement extends JPanel implements ActionListener {
 					
 						classesFilter.removeAll(classesFilter);
 						classesFilter.addAll(classes);
+						
+						tbl_classes.revalidate();
+						tbl_classes.repaint();
 				        
 						revalidate();
 				        repaint();

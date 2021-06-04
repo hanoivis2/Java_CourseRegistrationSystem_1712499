@@ -12,6 +12,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import DAO.CourseDAO;
 import Models.Course;
 
 import java.awt.*;
@@ -57,13 +58,7 @@ public class CoursesManagement extends JPanel implements ActionListener {
 		courses = new ArrayList<Course>();
 		coursesFilter = new ArrayList<Course>();
 		
-		courses.add(new Course("MH000001", "Computer Vision", 4, "Ly Quoc Ngoc", "B.302", "Wednesday", 4, 150));
-		courses.add(new Course("MH000002","Java application development", 4, "Nguyen Van Khiet", "E.302", "Monday", 4, 150));
-		courses.add(new Course("MH000003", "Advanced software development topic", 4, "Nguyen Van Vu", "E.401", "Tuesday", 4, 150));
-		courses.add(new Course("MH000004", "Mobile appication development", 4, "Nguyen  Hoang Dung", "C.302", "Thursday", 4, 150));
-		courses.add(new Course("MH000005", "Advanced mobile development", 4, "Pham Hoang Hai", "E.202", "Friday", 4, 150));
-		courses.add(new Course("MH000006", "Software project management", 3, "Ngo Huy Bien", "I.302", "Saturday", 4, 100));
-		courses.add(new Course("MH000007", "Sofware testing", 4, "Tran Thi Bich Hanh", "GD1", "Thursday", 4, 150));
+		courses = CourseDAO.getCourseList();
 	
 		coursesFilter.removeAll(coursesFilter);
 		coursesFilter.addAll(courses);
@@ -150,7 +145,7 @@ public class CoursesManagement extends JPanel implements ActionListener {
 				}
 				else {
 					Predicate<Course> predicateString = s -> {
-			            return !s.getCourseName().toLowerCase().contains(txt_search.getText().toLowerCase());
+			            return !s.getSubjectId().toLowerCase().contains(txt_search.getText().toLowerCase());
 			        };
 			        coursesFilter.removeAll(coursesFilter);
 					coursesFilter.addAll(courses);
@@ -170,7 +165,7 @@ public class CoursesManagement extends JPanel implements ActionListener {
 				}
 				else {
 					Predicate<Course> predicateString = s -> {
-						return !s.getCourseName().toLowerCase().contains(txt_search.getText().toLowerCase());
+						return !s.getSubjectId().toLowerCase().contains(txt_search.getText().toLowerCase());
 			        };
 			        coursesFilter.removeAll(coursesFilter);
 					coursesFilter.addAll(courses);
@@ -190,7 +185,7 @@ public class CoursesManagement extends JPanel implements ActionListener {
 				}
 				else {
 					Predicate<Course> predicateString = s -> {
-						return !s.getCourseName().toLowerCase().contains(txt_search.getText().toLowerCase());
+						return !s.getSubjectId().toLowerCase().contains(txt_search.getText().toLowerCase());
 			        };
 			        coursesFilter.removeAll(coursesFilter);
 					coursesFilter.addAll(courses);
@@ -230,11 +225,11 @@ public class CoursesManagement extends JPanel implements ActionListener {
 				
 				switch (columnIndex) {
 				case 0:
-					return item.getCourseID();
+					return item.getSubjectId();
 				case 1:
-					return item.getCourseName();
+					return item.getSubjectId();
 				case 2:
-					return item.getCredits();
+					return item.getSubjectId();
 				case 3:
 					return item.getTheoryTeacherName();
 				case 4:

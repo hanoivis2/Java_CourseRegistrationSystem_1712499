@@ -1,7 +1,13 @@
 package Models;
 
-public class Course {
+import java.io.Serializable;
+
+public class Course implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String subjectId;
 	private String semesterName;
 	private String semesterSchoolYear;
@@ -10,6 +16,10 @@ public class Course {
 	private String dayInWeek;
 	private int shift;
 	private int maxAmountStudent;
+	private Subject subject = new Subject();
+	private Semester semester = new Semester();
+	
+	public Course() {}
 	
 	public Course(String subjectId, String semesterName, String semesterSchoolYear, String theoryTeacherName,
 			String roomName, String dayInWeek, int shift, int maxAmountStudent) {
@@ -87,5 +97,25 @@ public class Course {
 
 	public void setMaxAmountStudent(int maxAmountStudent) {
 		this.maxAmountStudent = maxAmountStudent;
+	}
+
+
+	public Subject getSubject() {
+		return subject;
+	}
+
+
+	public void setSubject(Subject subject) {
+		this.subject = subject;
+	}
+
+
+	public Semester getSemester() {
+		return semester;
+	}
+
+
+	public void setSemester(Semester semester) {
+		this.semester = semester;
 	}
 }

@@ -1,12 +1,18 @@
 package Models;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Subject {
 
 	private String id;
 	private String name;
-	private int credits;
+	private short credits;
+	private Set<Course> courses = new HashSet<Course>(0);
 	
-	public Subject(String id, String name, int credits) {
+	public Subject() {} 
+	
+	public Subject(String id, String name, short credits) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -29,11 +35,19 @@ public class Subject {
 		this.name = name;
 	}
 
-	public int getCredits() {
+	public Set<Course> getCourses() {
+		return courses;
+	}
+
+	public void setCourses(Set<Course> courses) {
+		this.courses = courses;
+	}
+
+	public short getCredits() {
 		return credits;
 	}
 
-	public void setCredits(int credits) {
+	public void setCredits(short credits) {
 		this.credits = credits;
 	}
 	

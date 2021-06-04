@@ -5,29 +5,49 @@
 
 <hibernate-mapping>
    <class catalog="school_management" name="Models.Course" table="course">
-        
-      <id name = "id" type = "string">
-      	 <column name = "id" />
-         <generator class="assigned"/>
-      </id>
       
-      <property name = "totalStudents" type = "short">
-      	<column name = "students_amount"/>
+      <composite-id>
+	  	<key-property name = "subjectId" type = "string">
+      	 <column length="10" name = "subject_id" />
+      	</key-property>
+	      
+	    <key-property name = "semesterName" type = "string">
+	      <column length="5" name = "semester_name"/>
+	    </key-property>
+	    
+	    <key-property name = "semesterSchoolYear" type = "string">
+	      <column length="12" name = "semester_school_year"/>
+	    </key-property>
+	  </composite-id> 
+      
+      <property name = "theoryTeacherName" type = "string">
+      	<column length="70" name = "theory_teacher_name"/>
       </property>
       
-      <property name = "totalMale" type = "short">
-      	<column name = "male_amount"/>
+      <property name = "roomName" type = "string">
+      	<column length="10" name = "room_name"/>
       </property>
       
-      <property name = "totalFemale" type = "short">
-      	<column name = "female_amount"/>
+      <property name = "dayInWeek" type = "string">
+      	<column length="15" name = "day_in_week"/>
       </property>
       
-      <property name = "description" type = "string">
-      	<column name = "description" length = "100" />
+      <property name = "shift" type = "short">
+      	<column name = "shift"/>
       </property>
       
+      <property name = "maxAmountStudent" type = "short">
+      	<column name = "maximum_amount"/>
+      </property>
       
+      <many-to-one class="Models.Subject" name="subject" fetch="join" lazy="false" cascade="save-update" insert="false" update="false">
+		<column length="10" name="subject_id" not-null="true"/> 
+	  </many-to-one>
+	  
+	  <many-to-one class="Models.Semester" name="semester" fetch="join" lazy="false" cascade="save-update" insert="false" update="false">
+		<column length="10" name="semester_name" not-null="true"/> 
+		<column length="5" name="semester_school_year" not-null="true"/> 
+	  </many-to-one>
       
    </class>
 </hibernate-mapping>

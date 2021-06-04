@@ -1,14 +1,22 @@
 package Models;
 
-public class Semester {
+import java.io.Serializable;
+
+public class Semester implements Serializable {
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String name;
 	private String schoolYear;
 	private String startDate;
 	private String endDate;
 	private String description;
 	private int isCurrentSemester;
+	
+	public Semester() {}
 	
 	public Semester(String name, String schoolYear, String startDate, String endDate, String description,
 			int isCurrentSemester) {

@@ -1,0 +1,39 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
+
+<hibernate-mapping>
+   <class catalog="school_management" name="Models.Semester" table="semester">
+        
+      <composite-id>
+	  	<key-property name = "name" type = "string">
+      	 <column length="5" name = "name" />
+      	</key-property>
+	      
+	    <key-property name = "schoolYear" type = "string">
+	      <column length="12" name = "school_year"/>
+	    </key-property>
+	    
+	  </composite-id> 
+      
+      <property name = "startDate" type = "string">
+      	<column name = "start_date" length = "20" />
+      </property>
+      
+      <property name = "endDate" type = "string">
+      	<column name = "end_date" length = "20"/>
+      </property>
+      
+      <property name = "description" type = "string">
+      	<column name = "description" length = "100" />
+      </property>
+      
+      <property name = "isCurrentSemester" type = "short">
+      	<column name = "is_current_semester"/>
+      </property>
+    
+      
+      
+   </class>
+</hibernate-mapping>

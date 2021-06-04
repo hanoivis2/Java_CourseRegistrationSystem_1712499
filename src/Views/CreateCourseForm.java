@@ -387,7 +387,7 @@ public class CreateCourseForm extends JPanel implements ActionListener {
 //				String endDate = dateFormat.format(endDateChooser.getDate());
 				
 			} catch (Exception e1) {
-				System.out.println("Invalid date");
+				System.out.println("Invalid date!");
 			}
 			
 
