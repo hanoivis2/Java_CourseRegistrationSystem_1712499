@@ -187,9 +187,10 @@ public class CreateCourseRegistrationSessionForm extends JPanel implements Actio
 		String strActionCommand = e.getActionCommand();
 		if (strActionCommand.equals("Confirm"))
 		{
-//			SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+			
 
 			try {
+//				SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 //				String startDate = dateFormat.format(startDateChooser.getDate());
 //				String endDate = dateFormat.format(endDateChooser.getDate());
 				

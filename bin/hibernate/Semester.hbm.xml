@@ -6,7 +6,7 @@
 <hibernate-mapping>
    <class catalog="school_management" name="Models.Semester" table="semester">
         
-      <composite-id>
+      <composite-id name = "id" class = "Models.SemesterID">
 	  	<key-property name = "name" type = "string">
       	 <column length="5" name = "name" />
       	</key-property>
@@ -33,7 +33,13 @@
       	<column name = "is_current_semester"/>
       </property>
     
-      
+      <set inverse="true" name="courses" > 
+      	<key>
+			<column length="10" name="semester_name" not-null="true"/> 
+			<column length="5" name="semester_school_year" not-null="true"/> 
+		</key>
+		<one-to-many class="Models.Course"/>
+	  </set>
       
    </class>
 </hibernate-mapping>

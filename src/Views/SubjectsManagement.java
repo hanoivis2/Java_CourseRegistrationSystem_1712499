@@ -61,6 +61,7 @@ public class SubjectsManagement extends JPanel implements ActionListener {
 		subjectsFilter = new ArrayList<Subject>();
 		
 		subjects = SubjectDAO.getSubjectList();
+		subjects.sort(Subject.subjectIdAscendingComparator);
 	
 		subjectsFilter.removeAll(subjectsFilter);
 		subjectsFilter.addAll(subjects);
@@ -289,41 +290,44 @@ public class SubjectsManagement extends JPanel implements ActionListener {
 				        
 				        System.out.println(e.getActionCommand());
 				        
-				        if(command.equals("edit")) {
-				        	
-//							try {
-//								
-//								Subject subjectToEdit = subjectsFilter.get(row);
-//					        	Action actionEdit = new AbstractAction()
-//								{
-//									private static final long serialVersionUID = 1L;
-//
-//									public void actionPerformed(ActionEvent e)
-//								    {
-//								        
-//										subjects.removeAll(subjects);
-//										subjectsFilter.removeAll(subjectsFilter);
-//										
-//										
-//										subjects = SubjectDAO.getSubjectList();
-//									
-//										subjectsFilter.removeAll(subjectsFilter);
-//										subjectsFilter.addAll(subjects);
-//								        
-//										revalidate();
-//								        repaint();
-//								    }
-//								};
-//								
-//								JComponent editClassForm;
-//								editClassForm = new SubjectClassForm(actionEdit, subjectToEdit);
-//								editClassForm.setOpaque(true);
-//								editClassForm.setVisible(true);
-//							} catch (IOException e1) {
-//								
-//							} catch (URISyntaxException e1) {
-//								
-//							}
+				        if(command.equals("edit")) {				        	
+							try {
+								
+								Subject subjectToEdit = subjectsFilter.get(row);
+					        	Action actionEdit = new AbstractAction()
+								{
+									private static final long serialVersionUID = 1L;
+
+									public void actionPerformed(ActionEvent e)
+								    {
+								        
+										subjects.removeAll(subjects);
+										subjectsFilter.removeAll(subjectsFilter);
+										
+										
+										subjects = SubjectDAO.getSubjectList();
+										subjects.sort(Subject.subjectIdAscendingComparator);
+									
+										subjectsFilter.removeAll(subjectsFilter);
+										subjectsFilter.addAll(subjects);
+										
+										tbl_subjectsList.revalidate();
+										tbl_subjectsList.repaint();
+								        
+										revalidate();
+								        repaint();
+								    }
+								};
+								
+								JComponent editSubjectForm;
+								editSubjectForm = new EditSubjectForm(actionEdit, subjectToEdit);
+								editSubjectForm.setOpaque(true);
+								editSubjectForm.setVisible(true);
+							} catch (IOException e1) {
+								
+							} catch (URISyntaxException e1) {
+								
+							}
 							
 				        }
 				        else if(command.equals("delete")) {
@@ -335,7 +339,7 @@ public class SubjectsManagement extends JPanel implements ActionListener {
 							if(input == 0) {
 								int status = SubjectDAO.deleteSubject(subjectToDelete);
 								if (status == -1) {
-									showMessageDialog(null, "This class is not existed!");
+									showMessageDialog(null, "This subject is not existed!");
 								}
 								else {
 									
@@ -453,6 +457,7 @@ public class SubjectsManagement extends JPanel implements ActionListener {
 						
 						
 						subjects = SubjectDAO.getSubjectList();
+						subjects.sort(Subject.subjectIdAscendingComparator);
 					
 						subjectsFilter.addAll(subjects);
 						
@@ -568,6 +573,7 @@ class SubjectsManagementActionCellRenderer extends AbstractCellEditor implements
 		btn_delete.setPreferredSize(new Dimension(30, 30));
 		btn_delete.setBackground(Color.white);
 		btn_delete.setForeground(Color.white);
+		btn_delete.setActionCommand("delete");
 		  
 		ImageIcon icon = new ImageIcon("img/delete.png");
 		Image scaleImage = icon.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
@@ -581,6 +587,7 @@ class SubjectsManagementActionCellRenderer extends AbstractCellEditor implements
 		btn_edit.setPreferredSize(new Dimension(30, 30));
 		btn_edit.setBackground(Color.white);
 		btn_edit.setForeground(Color.white);
+		btn_edit.setActionCommand("edit");
 		  
 		ImageIcon icon2 = new ImageIcon("img/edit.png");
 		Image scaleImage2 = icon2.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);

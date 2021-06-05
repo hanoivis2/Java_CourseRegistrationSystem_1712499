@@ -2,6 +2,8 @@ package Views;
 
 import javax.swing.*;
 
+
+
 import javax.swing.border.Border;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -9,7 +11,10 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import DAO.SemesterDAO;
 import Models.Semester;
+
+import static javax.swing.JOptionPane.showMessageDialog;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -51,10 +56,8 @@ public class SemestersManagement extends JPanel implements ActionListener {
 		semesters = new ArrayList<Semester>();
 		semestersFilter = new ArrayList<Semester>();
 		
-		semesters.add(new Semester("HK1", "2014 - 2015", "09/05/2014", "06/05/2015"));
-		semesters.add(new Semester("HK2", "2019 - 2020", "09/05/2019", "06/05/2020"));
-		semesters.add(new Semester("HK3", "2017 - 2018", "09/05/2017", "06/05/2018"));
-		semesters.add(new Semester("HK2", "2018 - 2019", "09/05/2018", "06/05/2019"));
+		semesters = SemesterDAO.getSemesterList();
+		semesters.sort(Semester.semesterAscendingComparator);
 	
 		semestersFilter.removeAll(semestersFilter);
 		semestersFilter.addAll(semesters);
@@ -91,14 +94,14 @@ public class SemestersManagement extends JPanel implements ActionListener {
 		lbl_title.setHorizontalAlignment(JLabel.CENTER);
 		lbl_title.setFont(new Font("Helvetica", Font.BOLD, 16));
 		
-		btn_createClass = new JButton("Add class");
+		btn_createClass = new JButton("Add semester");
 		btn_createClass.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btn_createClass.addActionListener(this);
 		btn_createClass.setActionCommand("Create");
 		
 		
 		
-		int[] columnsWidth = { 100, 100, 100, 100, 80 };
+		int[] columnsWidth = { 135, 135, 135, 135, 0, 150, 80 };
 		class CoursesListTableModel extends AbstractTableModel {
 
 			private static final long serialVersionUID = 1L;
@@ -115,7 +118,7 @@ public class SemestersManagement extends JPanel implements ActionListener {
 
 			@Override
 			public int getColumnCount() {
-				return 5;
+				return 7;
 			}
 
 			@Override
@@ -125,13 +128,17 @@ public class SemestersManagement extends JPanel implements ActionListener {
 				
 				switch (columnIndex) {
 				case 0:
-					return item.getSemesterName();
+					return item.getId().getName();
 				case 1:
-					return item.getSchoolYear();
+					return item.getId().getSchoolYear();
 				case 2:
 					return item.getStartDate();
 				case 3:
 					return item.getEndDate();
+				case 4:
+					return item.getDescription();
+				case 5:
+					return (item.getIsCurrentSemester() == 1) ? true : false;
 				default:
 					return "";
 				}
@@ -148,6 +155,10 @@ public class SemestersManagement extends JPanel implements ActionListener {
 					return "Start date";
 				case 3:
 					return "End date";
+				case 4:
+					return "Description";
+				case 5:
+					return "Is current semester";
 				default:
 					return "";
 				}
@@ -168,26 +179,158 @@ public class SemestersManagement extends JPanel implements ActionListener {
 		for (int width : columnsWidth) {
 		    TableColumn column = tbl_semesterList.getColumnModel().getColumn(i++);
 		    
+		    column.setMinWidth(20);
+		    column.setMaxWidth(width);
 		    if (i == 5) {
-		    	column.setMinWidth(20);
-			    column.setMaxWidth(width);
-			    column.setPreferredWidth(width);
+		    	column.setMaxWidth(Integer.MAX_VALUE);
 		    }
-		    if (i == 5) {
+		    column.setPreferredWidth(width);
+		    if (i == 7) {
 		    	
-		    	Action actionMinistryAccount = new AbstractAction()
+		    	Action actionSemester = new AbstractAction()
 				{
 					private static final long serialVersionUID = 1L;
 
 					public void actionPerformed(ActionEvent e)
 				    {
-//				        int modelRow = Integer.valueOf( e.getActionCommand() );
+
+						String[] commandTokens = e.getActionCommand().split("-");
+				        String command = commandTokens[0];
+				        int row = Integer.parseInt(commandTokens[1]);
+				        
+				        System.out.println(e.getActionCommand());
+				        
+				        if(command.equals("edit")) {
+				        	
+							try {
+								
+								Semester semesterToEdit = semestersFilter.get(row);
+					        	Action actionEdit = new AbstractAction()
+								{
+									private static final long serialVersionUID = 1L;
+
+									public void actionPerformed(ActionEvent e)
+								    {
+								        
+										semesters.removeAll(semesters);
+										semestersFilter.removeAll(semestersFilter);
+										
+										
+										semesters = SemesterDAO.getSemesterList();
+										semesters.sort(Semester.semesterAscendingComparator);
+									
+										semestersFilter.removeAll(semestersFilter);
+										semestersFilter.addAll(semesters);
+								        
+										revalidate();
+								        repaint();
+								    }
+								};
+								
+								JComponent editSemesterForm;
+								editSemesterForm = new EditSemesterForm(actionEdit, semesterToEdit);
+								editSemesterForm.setOpaque(true);
+								editSemesterForm.setVisible(true);
+							} catch (IOException e1) {
+								
+							} catch (URISyntaxException e1) {
+								
+							}
+							
+				        }
+				        else {
+				        	Semester semesterToDelete = semestersFilter.get(row);
+				        	if (semesterToDelete.getIsCurrentSemester() == 1) {
+								showMessageDialog(null, "Please set another semester as current semester before deleting!");
+							}
+				        	else {
+				        		int input = JOptionPane.showConfirmDialog(null, "Are you sure to delete " + semesterToDelete.getId() +"?");
+								// 0=yes, 1=no, 2=cancel
+								
+								if(input == 0) {
+									int status = SemesterDAO.deleteSemester(semesterToDelete);
+									if (status == -1) {
+										showMessageDialog(null, "This class is not existed!");
+									}
+									else {
+										
+										semesters.remove(row);
+										semestersFilter.removeAll(semestersFilter);
+										
+				
+									
+										semestersFilter.removeAll(semestersFilter);
+										semestersFilter.addAll(semesters);
+								        
+										revalidate();
+								        repaint();
+										
+										showMessageDialog(null, "Deleted successfully!");
+									}
+								}
+				        	}
+				        }
+				    }
+				};
+		    	
+				tbl_semesterList.getColumnModel().getColumn(i-1).setCellRenderer(new SemestersManagementActionCellRenderer(tbl_semesterList, actionSemester));
+				tbl_semesterList.getColumnModel().getColumn(i-1).setCellEditor(new SemestersManagementActionCellRenderer(tbl_semesterList, actionSemester));
+		    }
+		    else if (i == 6) {
+		    	Action actionSetCurrentSemester = new AbstractAction()
+				{
+					private static final long serialVersionUID = 1L;
+
+					public void actionPerformed(ActionEvent e)
+				    {
+						
+						String[] commandTokens = e.getActionCommand().split("-");
+				        String command = commandTokens[0];
+				        boolean value = Boolean.parseBoolean(commandTokens[1]);
+				        int row = Integer.parseInt(commandTokens[2]);
+				        
+				        System.out.println(command + "- " + value + " - " + row);
+				        
+				        if (value == true) {
+				        	//Show message
+				        	showMessageDialog(null, "This semester has already been current semester!");
+				        }
+				        else {
+				        	//Set current semester
+				        	for (Semester item : semesters) {
+								if (item.getId().equals(semesters.get(row).getId())) {
+									item.setIsCurrentSemester((short) 1); 
+								}
+								else {
+									item.setIsCurrentSemester((short) 0); 
+								}
+								SemesterDAO.updateSemester(item);
+							}
+				        	
+				        	showMessageDialog(null, "Set successfully!");
+				        	
+				        	semesters.removeAll(semesters);
+				    		
+				    		semesters = SemesterDAO.getSemesterList();
+				    		semesters.sort(Semester.semesterAscendingComparator);
+				    	
+				    		semestersFilter.removeAll(semestersFilter);
+				    		semestersFilter.addAll(semesters);
+				        	
+				        	tbl_semesterList.revalidate();
+				        	tbl_semesterList.repaint();
+				        	
+				        	revalidate();
+				        	repaint();
+				        }
 				        
 				    }
 				};
 		    	
-				tbl_semesterList.getColumnModel().getColumn(i-1).setCellRenderer(new SemestersManagementActionCellRenderer(tbl_semesterList, actionMinistryAccount));
-				tbl_semesterList.getColumnModel().getColumn(i-1).setCellEditor(new SemestersManagementActionCellRenderer(tbl_semesterList, actionMinistryAccount));
+				tbl_semesterList.getColumnModel().getColumn(i-1).setCellRenderer(new ActionSetCurrentSemesterCellRenderer(tbl_semesterList, 
+						actionSetCurrentSemester));
+				tbl_semesterList.getColumnModel().getColumn(i-1).setCellEditor(new ActionSetCurrentSemesterCellRenderer(tbl_semesterList, 
+						actionSetCurrentSemester));
 		    }
 		    else {
 		    	tbl_semesterList.getColumnModel().getColumn(i-1).setCellRenderer(new RowSemestersManagementRenderer());
@@ -252,7 +395,41 @@ public class SemestersManagement extends JPanel implements ActionListener {
 		String strActionCommand = e.getActionCommand();
 		if (strActionCommand.equals("Create"))
 		{
-			
+			try {
+				
+				Action actionRefresh = new AbstractAction()
+				{
+					private static final long serialVersionUID = 1L;
+
+					public void actionPerformed(ActionEvent e)
+				    {
+				        
+						semesters.removeAll(semesters);
+						semestersFilter.removeAll(semestersFilter);
+						
+						
+						semesters = SemesterDAO.getSemesterList();
+						semesters.sort(Semester.semesterAscendingComparator);
+					
+						semestersFilter.removeAll(semestersFilter);
+						semestersFilter.addAll(semesters);
+						
+						tbl_semesterList.revalidate();
+						tbl_semesterList.repaint();
+				        
+						revalidate();
+				        repaint();
+				    }
+				};
+				
+				JComponent createSemesterForm;
+				createSemesterForm = new CreateSemesterForm(actionRefresh);
+				createSemesterForm.setOpaque(true);
+				createSemesterForm.setVisible(true);
+				
+			} catch (IOException | URISyntaxException e1) {
+				showMessageDialog(null, "Error!");
+			}
 	    }
 
 	}
@@ -300,7 +477,8 @@ class SemestersManagementActionCellRenderer extends AbstractCellEditor implement
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object obj,
 	    boolean selected, boolean focused, int row, int col) {
-		
+
+
 		JButton btn_edit = new JButton();
 		Border emptyBorder2 = BorderFactory.createEmptyBorder();
 		btn_edit.setBorder(emptyBorder2);
@@ -313,7 +491,7 @@ class SemestersManagementActionCellRenderer extends AbstractCellEditor implement
 		btn_edit.setIcon(new ImageIcon(scaleImage2));
 		btn_edit.addActionListener(this);
 		btn_edit.setMnemonic(KeyEvent.VK_D);
-	
+		
 		JButton btn_delete = new JButton();
 		Border emptyBorder = BorderFactory.createEmptyBorder();
 		btn_delete.setBorder(emptyBorder);
@@ -326,7 +504,7 @@ class SemestersManagementActionCellRenderer extends AbstractCellEditor implement
 		btn_delete.setIcon(new ImageIcon(scaleImage));
 		btn_delete.addActionListener(this);
 		btn_delete.setMnemonic(KeyEvent.VK_D);
-
+		
 		
 		JPanel view_button = new JPanel();
 		view_button.setLayout(new GridLayout(1,3));
@@ -334,6 +512,7 @@ class SemestersManagementActionCellRenderer extends AbstractCellEditor implement
 		
 		view_button.add(btn_edit);
 		view_button.add(btn_delete);
+		
 	
 		return view_button;
 	}
@@ -348,6 +527,7 @@ class SemestersManagementActionCellRenderer extends AbstractCellEditor implement
 		btn_edit.setPreferredSize(new Dimension(30, 30));
 		btn_edit.setBackground(Color.white);
 		btn_edit.setForeground(Color.white);
+		btn_edit.setActionCommand("edit");
 		  
 		ImageIcon icon2 = new ImageIcon("img/edit.png");
 		Image scaleImage2 = icon2.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
@@ -361,6 +541,7 @@ class SemestersManagementActionCellRenderer extends AbstractCellEditor implement
 		btn_delete.setPreferredSize(new Dimension(30, 30));
 		btn_delete.setBackground(Color.white);
 		btn_delete.setForeground(Color.white);
+		btn_delete.setActionCommand("delete");
 		  
 		ImageIcon icon = new ImageIcon("img/delete.png");
 		Image scaleImage = icon.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
@@ -394,14 +575,104 @@ class SemestersManagementActionCellRenderer extends AbstractCellEditor implement
 		ActionEvent event = new ActionEvent(
 			table,
 			ActionEvent.ACTION_PERFORMED,
-			"" + row);
+			e.getActionCommand() + "-" + row);
 		action.actionPerformed(event);
 	}
 	
 	
 }
 
+class ActionSetCurrentSemesterCellRenderer extends AbstractCellEditor implements  TableCellEditor, TableCellRenderer, ActionListener
+{
+	static final long serialVersionUID = 1L;
+	private JTable table;
+	private Action action;
+	private boolean isChecked;
+	private Object editorValue;
+	
+	public ActionSetCurrentSemesterCellRenderer(JTable table, Action action) {
 
+		this.table = table;
+		this.action= action;
+	}
+	
+	@Override
+	public Component getTableCellRendererComponent(JTable table, Object obj,
+	    boolean selected, boolean focused, int row, int col) {
+		
+		this.isChecked = (boolean) obj;
+		
+		JCheckBox checkbox = new JCheckBox();
+		Border emptyBorder2 = BorderFactory.createEmptyBorder();
+		checkbox.setBorder(emptyBorder2);
+		checkbox.setPreferredSize(new Dimension(30, 30));
+		checkbox.setBackground(Color.white);
+		checkbox.setForeground(Color.white);
+		checkbox.addActionListener(this);
+		checkbox.setActionCommand("checkbox");
+		checkbox.setAlignmentX(JCheckBox.CENTER);
+		checkbox.setAlignmentY(JCheckBox.CENTER);
+		checkbox.setHorizontalAlignment(JCheckBox.CENTER);
+		checkbox.setVerticalAlignment(JCheckBox.CENTER);
+		checkbox.setSelected(isChecked);
+		
+		
+		JPanel view_button = new JPanel();
+		view_button.setLayout(new GridLayout(1,3));
+		view_button.setBackground(Color.white);
+		view_button.add(checkbox);
+	
+		return view_button;
+	}
+	  
+	@Override
+	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+		
+		this.isChecked = (boolean) value;
+			
+		JCheckBox checkbox = new JCheckBox();
+		Border emptyBorder2 = BorderFactory.createEmptyBorder();
+		checkbox.setBorder(emptyBorder2);
+		checkbox.setPreferredSize(new Dimension(30, 30));
+		checkbox.setBackground(Color.white);
+		checkbox.setForeground(Color.white);
+		checkbox.addActionListener(this);
+		checkbox.setActionCommand("checkbox");
+		checkbox.setAlignmentX(JCheckBox.CENTER);
+		checkbox.setAlignmentY(JCheckBox.CENTER);
+		checkbox.setHorizontalAlignment(JCheckBox.CENTER);
+		checkbox.setVerticalAlignment(JCheckBox.CENTER);
+		checkbox.setSelected(isChecked);
+
+		
+		JPanel view_button = new JPanel();
+		view_button.setLayout(new GridLayout(1,3));
+		view_button.setBackground(Color.white);
+		view_button.add(checkbox);
+	
+		return view_button;
+	}
+	  
+	@Override
+	public Object getCellEditorValue() {
+		return editorValue;
+	}
+
+	public void actionPerformed(ActionEvent e)
+	{
+	
+		int row = table.convertRowIndexToModel( table.getEditingRow() );
+		fireEditingStopped();
+
+		ActionEvent event = new ActionEvent(
+			table,
+			ActionEvent.ACTION_PERFORMED,
+			e.getActionCommand() + "-" + isChecked + "-"+ row);
+		action.actionPerformed(event);
+	}
+	
+	
+}
 
 
 

@@ -1,5 +1,6 @@
 package Models;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -72,5 +73,15 @@ public class Class {
 	public void setStudents(Set<StudentAccount> students) {
 		this.students = students;
 	}
+	
+	public static Comparator<Class> classIdAscendingComparator = new Comparator<Class>() {
+
+		public int compare(Class s1, Class s2) {
+		   String classId1 = s1.getId();
+		   String classId2 = s2.getId();
+	
+		   return classId1.compareTo(classId2);
+		}
+	};
 	
 }

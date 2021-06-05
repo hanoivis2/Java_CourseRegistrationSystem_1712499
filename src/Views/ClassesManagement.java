@@ -57,6 +57,7 @@ public class ClassesManagement extends JPanel implements ActionListener {
 		
 		
 		classes = ClassDAO.getClassList();
+		classes.sort(Class.classIdAscendingComparator);
 	
 		classesFilter.removeAll(classesFilter);
 		classesFilter.addAll(classes);
@@ -211,6 +212,7 @@ public class ClassesManagement extends JPanel implements ActionListener {
 										
 										
 										classes = ClassDAO.getClassList();
+										classes.sort(Class.classIdAscendingComparator);
 									
 										classesFilter.removeAll(classesFilter);
 										classesFilter.addAll(classes);
@@ -343,6 +345,7 @@ public class ClassesManagement extends JPanel implements ActionListener {
 						
 						
 						classes = ClassDAO.getClassList();
+						classes.sort(Class.classIdAscendingComparator);
 					
 						classesFilter.removeAll(classesFilter);
 						classesFilter.addAll(classes);
