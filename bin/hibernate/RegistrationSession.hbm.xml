@@ -1,0 +1,38 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
+
+<hibernate-mapping>
+   <class catalog="school_management" name="Models.RegistrationSession" table="registration_session">
+        
+      <composite-id name = "id" class = "Models.RegistrationSessionID">
+	  	<key-property name = "startDate" type = "string">
+      	 <column length="20" name = "start_date" />
+      	</key-property>
+	      
+	    <key-property name = "endDate" type = "string">
+	      <column length="20" name = "end_date"/>
+	    </key-property>
+	    
+	  </composite-id> 
+      
+      <property name = "semesterName" type = "string">
+      	<column name = "semester_name" length = "5" />
+      </property>
+      
+      <property name = "semesterSchoolYear" type = "string">
+      	<column name = "semester_school_year" length = "12" />
+      </property>
+      
+      <property name = "description" type = "string">
+      	<column name = "description" length = "100" />
+      </property>
+      
+      <many-to-one class="Models.Semester" name="semester" fetch="join" lazy="false" cascade="save-update" insert="false" update="false">
+		<column length="10" name="semester_name" not-null="true"/> 
+		<column length="5" name="semester_school_year" not-null="true"/> 
+	  </many-to-one>
+      
+   </class>
+</hibernate-mapping>

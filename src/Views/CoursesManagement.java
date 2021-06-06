@@ -3,7 +3,6 @@ package Views;
 import javax.swing.*;
 
 import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.AbstractTableModel;
@@ -14,6 +13,8 @@ import javax.swing.table.TableColumn;
 
 import DAO.CourseDAO;
 import Models.Course;
+
+import static javax.swing.JOptionPane.showMessageDialog;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -59,6 +60,7 @@ public class CoursesManagement extends JPanel implements ActionListener {
 		coursesFilter = new ArrayList<Course>();
 		
 		courses = CourseDAO.getCourseList();
+		courses.sort(Course.courseAscendingComparator);
 	
 		coursesFilter.removeAll(coursesFilter);
 		coursesFilter.addAll(courses);
@@ -145,7 +147,7 @@ public class CoursesManagement extends JPanel implements ActionListener {
 				}
 				else {
 					Predicate<Course> predicateString = s -> {
-			            return !s.getSubjectId().toLowerCase().contains(txt_search.getText().toLowerCase());
+			            return !s.getId().getSubjectId().toLowerCase().contains(txt_search.getText().toLowerCase());
 			        };
 			        coursesFilter.removeAll(coursesFilter);
 					coursesFilter.addAll(courses);
@@ -165,7 +167,7 @@ public class CoursesManagement extends JPanel implements ActionListener {
 				}
 				else {
 					Predicate<Course> predicateString = s -> {
-						return !s.getSubjectId().toLowerCase().contains(txt_search.getText().toLowerCase());
+						return !s.getId().getSubjectId().toLowerCase().contains(txt_search.getText().toLowerCase());
 			        };
 			        coursesFilter.removeAll(coursesFilter);
 					coursesFilter.addAll(courses);
@@ -185,7 +187,7 @@ public class CoursesManagement extends JPanel implements ActionListener {
 				}
 				else {
 					Predicate<Course> predicateString = s -> {
-						return !s.getSubjectId().toLowerCase().contains(txt_search.getText().toLowerCase());
+						return !s.getId().getSubjectId().toLowerCase().contains(txt_search.getText().toLowerCase());
 			        };
 			        coursesFilter.removeAll(coursesFilter);
 					coursesFilter.addAll(courses);
@@ -198,7 +200,7 @@ public class CoursesManagement extends JPanel implements ActionListener {
 			}
 		});
 		
-		int[] columnsWidth = { 100, 30, 70, 150, 90, 90, 50, 80, 50 };
+		int[] columnsWidth = { 150, 30, 70, 250, 90, 90, 50, 80, 50 };
 		class CoursesListTableModel extends AbstractTableModel {
 
 			private static final long serialVersionUID = 1L;
@@ -225,11 +227,11 @@ public class CoursesManagement extends JPanel implements ActionListener {
 				
 				switch (columnIndex) {
 				case 0:
-					return item.getSubjectId();
+					return item.getSemester().getId().toString();
 				case 1:
-					return item.getSubjectId();
+					return item.getSubject().getName();
 				case 2:
-					return item.getSubjectId();
+					return item.getSubject().getCredits();
 				case 3:
 					return item.getTheoryTeacherName();
 				case 4:
@@ -249,9 +251,9 @@ public class CoursesManagement extends JPanel implements ActionListener {
 			public String getColumnName(int column) {
 				switch (column) {
 				case 0:
-					return "Course ID";
+					return "Semester";
 				case 1:
-					return "Course name";
+					return "Subject name";
 				case 2:
 					return "Credits";
 				case 3:
@@ -292,19 +294,47 @@ public class CoursesManagement extends JPanel implements ActionListener {
 		    
 		    if (i == 9) {
 		    	
-		    	Action actionDelete = new AbstractAction()
+		    	Action actionClass = new AbstractAction()
 				{
 					private static final long serialVersionUID = 1L;
 
 					public void actionPerformed(ActionEvent e)
 				    {
-//				        int modelRow = Integer.valueOf( e.getActionCommand() );
+				        String[] commandTokens = e.getActionCommand().split("-");
+				        int row = Integer.parseInt(commandTokens[1]);
 				        
+				        System.out.println(e.getActionCommand());
+				        
+				        Course courseToDelete = coursesFilter.get(row);
+						int input = JOptionPane.showConfirmDialog(null, "Are you sure to delete " + courseToDelete.getSubject().getName() +"?");
+						// 0=yes, 1=no, 2=cancel
+						
+						if(input == 0) {
+							int status = CourseDAO.deleteCourse(courseToDelete);
+							if (status == -1) {
+								showMessageDialog(null, "This course is not existed!");
+							}
+							else {
+								
+								courses.remove(row);
+								coursesFilter.removeAll(coursesFilter);
+								
+		
+							
+								coursesFilter.removeAll(coursesFilter);
+								coursesFilter.addAll(courses);
+						        
+								revalidate();
+						        repaint();
+								
+								showMessageDialog(null, "Deleted successfully!");
+							}
+						}
 				    }
 				};
 		    	
-		    	tbl_coursesList.getColumnModel().getColumn(i-1).setCellRenderer(new CourseActionCellRenderer(tbl_coursesList, actionDelete));
-		    	tbl_coursesList.getColumnModel().getColumn(i-1).setCellEditor(new CourseActionCellRenderer(tbl_coursesList, actionDelete));
+				tbl_coursesList.getColumnModel().getColumn(i-1).setCellRenderer(new CourseActionCellRenderer(tbl_coursesList, actionClass));
+				tbl_coursesList.getColumnModel().getColumn(i-1).setCellEditor(new CourseActionCellRenderer(tbl_coursesList, actionClass));
 		    }
 		    else {
 		    	tbl_coursesList.getColumnModel().getColumn(i-1).setCellRenderer(new RowSessionListRenderer());
@@ -380,7 +410,41 @@ public class CoursesManagement extends JPanel implements ActionListener {
 		String strActionCommand = e.getActionCommand();
 		if (strActionCommand.equals("Create"))
 		{
-			
+			try {
+				
+				Action actionRefresh = new AbstractAction()
+				{
+					private static final long serialVersionUID = 1L;
+
+					public void actionPerformed(ActionEvent e)
+				    {
+				        
+						courses.removeAll(courses);
+						coursesFilter.removeAll(coursesFilter);
+						
+						
+						courses = CourseDAO.getCourseList();
+						courses.sort(Course.courseAscendingComparator);
+					
+						coursesFilter.removeAll(coursesFilter);
+						coursesFilter.addAll(courses);
+						
+						tbl_coursesList.revalidate();
+						tbl_coursesList.repaint();
+				        
+						revalidate();
+				        repaint();
+				    }
+				};
+				
+				JComponent createCourseForm;
+				createCourseForm = new CreateCourseForm(actionRefresh);
+				createCourseForm.setOpaque(true);
+				createCourseForm.setVisible(true);
+				
+			} catch (IOException | URISyntaxException e1) {
+				showMessageDialog(null, "Error!");
+			}
 	    }
 
 	}
@@ -416,24 +480,23 @@ class CourseActionCellRenderer extends AbstractCellEditor implements  TableCellE
 {
 	static final long serialVersionUID = 1L;
 	private JTable table;
-	private Action actionDelete;
+	private Action action;
 	
 	private Object editorValue;
 	
-	public CourseActionCellRenderer(JTable table, Action actionDelete) {
+	public CourseActionCellRenderer(JTable table, Action action) {
 
 		this.table = table;
-		this.actionDelete = actionDelete;
+		this.action= action;
 
 	}
 	
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object obj,
 	    boolean selected, boolean focused, int row, int col) {
+		
 	
 		JButton btn_delete = new JButton();
-		  
-		btn_delete.setBackground(Color.white);
 		Border emptyBorder = BorderFactory.createEmptyBorder();
 		btn_delete.setBorder(emptyBorder);
 		btn_delete.setPreferredSize(new Dimension(30, 30));
@@ -445,14 +508,12 @@ class CourseActionCellRenderer extends AbstractCellEditor implements  TableCellE
 		btn_delete.setIcon(new ImageIcon(scaleImage));
 		btn_delete.addActionListener(this);
 		btn_delete.setMnemonic(KeyEvent.VK_D);
-		  
-		if (focused) {
-			btn_delete.setBorder( new LineBorder(Color.BLUE) );
-		}
+
 		
 		JPanel view_button = new JPanel();
-		view_button.setLayout(new BorderLayout());
+		view_button.setLayout(new GridLayout(1,3));
 		view_button.setBackground(Color.white);
+		
 		view_button.add(btn_delete);
 	
 		return view_button;
@@ -461,9 +522,9 @@ class CourseActionCellRenderer extends AbstractCellEditor implements  TableCellE
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 			
+		
+		
 		JButton btn_delete = new JButton();
-		  
-		btn_delete.setBackground(Color.white);
 		Border emptyBorder = BorderFactory.createEmptyBorder();
 		btn_delete.setBorder(emptyBorder);
 		btn_delete.setPreferredSize(new Dimension(30, 30));
@@ -475,12 +536,15 @@ class CourseActionCellRenderer extends AbstractCellEditor implements  TableCellE
 		btn_delete.setIcon(new ImageIcon(scaleImage));
 		btn_delete.addActionListener(this);
 		btn_delete.setMnemonic(KeyEvent.VK_D);
-
+		btn_delete.setActionCommand("delete");
+		
 		
 		JPanel view_button = new JPanel();
-		view_button.setLayout(new BorderLayout());
+		view_button.setLayout(new GridLayout(1,3));
 		view_button.setBackground(Color.white);
+		
 		view_button.add(btn_delete);
+		
 	
 		this.editorValue = value;
 		return view_button;
@@ -499,8 +563,8 @@ class CourseActionCellRenderer extends AbstractCellEditor implements  TableCellE
 		ActionEvent event = new ActionEvent(
 			table,
 			ActionEvent.ACTION_PERFORMED,
-			"" + row);
-		actionDelete.actionPerformed(event);
+			e.getActionCommand() + "-" + row);
+		action.actionPerformed(event);
 	}
 	
 	

@@ -3,6 +3,7 @@ package Views;
 import javax.swing.*;
 
 
+
 import javax.swing.border.Border;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -183,7 +184,7 @@ public class ClassesManagement extends JPanel implements ActionListener {
 		    
 		    if (i == 6) {
 		    	
-		    	Action actionMinistryAccount = new AbstractAction()
+		    	Action actionClass = new AbstractAction()
 				{
 					private static final long serialVersionUID = 1L;
 
@@ -264,8 +265,8 @@ public class ClassesManagement extends JPanel implements ActionListener {
 				    }
 				};
 		    	
-				tbl_classes.getColumnModel().getColumn(i-1).setCellRenderer(new ClassesManagementActionCellRenderer(tbl_classes, actionMinistryAccount));
-				tbl_classes.getColumnModel().getColumn(i-1).setCellEditor(new ClassesManagementActionCellRenderer(tbl_classes, actionMinistryAccount));
+				tbl_classes.getColumnModel().getColumn(i-1).setCellRenderer(new ClassesManagementActionCellRenderer(tbl_classes, actionClass));
+				tbl_classes.getColumnModel().getColumn(i-1).setCellEditor(new ClassesManagementActionCellRenderer(tbl_classes, actionClass));
 		    }
 		    else {
 		    	tbl_classes.getColumnModel().getColumn(i-1).setCellRenderer(new RowClassesManagementRenderer());

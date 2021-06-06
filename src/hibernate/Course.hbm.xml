@@ -6,7 +6,7 @@
 <hibernate-mapping>
    <class catalog="school_management" name="Models.Course" table="course">
       
-      <composite-id>
+      <composite-id name = "id" class = "Models.CourseID">
 	  	<key-property name = "subjectId" type = "string">
       	 <column length="10" name = "subject_id" />
       	</key-property>

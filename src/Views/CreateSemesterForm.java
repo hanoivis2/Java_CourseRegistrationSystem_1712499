@@ -308,11 +308,11 @@ public class CreateSemesterForm extends JPanel implements ActionListener {
 				String startDate = dateFormat.format(startDateChooser.getDate());
 				String endDate = dateFormat.format(endDateChooser.getDate());
 				
-				if (txt_name.getText().equals("Enter subject' id...")) {
-					showMessageDialog(null, "Please fill in subject id!");
+				if (txt_name.getText().equals("Enter semester's name...")) {
+					showMessageDialog(null, "Please fill in semester's name!");
 				}
-				else if (txt_schoolYear.getText().equals("Enter subject' id...")) {
-					showMessageDialog(null, "Please fill in subject id!");
+				else if (txt_schoolYear.getText().equals("Enter semester's school year...")) {
+					showMessageDialog(null, "Please fill in semester's school year!");
 				}
 				else {
 					Semester newSemester = new Semester();

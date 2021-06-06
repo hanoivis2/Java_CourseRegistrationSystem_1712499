@@ -62,4 +62,13 @@ public class Subject {
 		}
 	};
 	
+	public static Comparator<Subject> subjectNameIdAscendingComparator = new Comparator<Subject>() {
+
+		public int compare(Subject s1, Subject s2) {
+		   String subjectName1 = s1.getName();
+		   String subjectName2 = s2.getName();
+	
+		   return subjectName1.compareTo(subjectName2);
+		}
+	};
 }

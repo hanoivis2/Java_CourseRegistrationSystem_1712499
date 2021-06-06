@@ -8,38 +8,31 @@
         
       <composite-id name = "id" class = "Models.SemesterID">
 	  	<key-property name = "name" type = "string">
-      	 <column length="5" name = "name" />
+      	 <column length="20" name = "name" />
       	</key-property>
 	      
 	    <key-property name = "schoolYear" type = "string">
-	      <column length="12" name = "school_year"/>
+	      <column length="20" name = "school_year"/>
 	    </key-property>
 	    
 	  </composite-id> 
+      
+      <property name = "description" type = "string">
+      	<column name = "description" length = "100" />
+      </property>
       
       <property name = "startDate" type = "string">
       	<column name = "start_date" length = "20" />
       </property>
       
       <property name = "endDate" type = "string">
-      	<column name = "end_date" length = "20"/>
+      	<column name = "end_date" length = "20" />
       </property>
-      
-      <property name = "description" type = "string">
-      	<column name = "description" length = "100" />
-      </property>
-      
-      <property name = "isCurrentSemester" type = "short">
+ 
+ 	  <property name = "isCurrentSemester" type = "short">
       	<column name = "is_current_semester"/>
       </property>
     
-      <set inverse="true" name="courses" > 
-      	<key>
-			<column length="10" name="semester_name" not-null="true"/> 
-			<column length="5" name="semester_school_year" not-null="true"/> 
-		</key>
-		<one-to-many class="Models.Course"/>
-	  </set>
       
    </class>
 </hibernate-mapping>

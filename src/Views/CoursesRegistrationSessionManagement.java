@@ -1,16 +1,25 @@
 package Views;
 
 import javax.swing.*;
+
+
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+
+import DAO.RegistrationSessionDAO;
+import Models.RegistrationSession;
+
+import static javax.swing.JOptionPane.showMessageDialog;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CoursesRegistrationSessionManagement extends JPanel implements ActionListener {
 	
@@ -22,6 +31,7 @@ public class CoursesRegistrationSessionManagement extends JPanel implements Acti
 	JTable tbl_sessionsList;
 	JFrame frame;
 	
+	List<RegistrationSession> registrationSessions;
 	
 	public static void main(String[] args) throws IOException, URISyntaxException {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -41,6 +51,12 @@ public class CoursesRegistrationSessionManagement extends JPanel implements Acti
 
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		
+		registrationSessions = new ArrayList<RegistrationSession>();
+		
+		
+		registrationSessions = RegistrationSessionDAO.getRegistrationSessionList();
+		registrationSessions.sort(RegistrationSession.registrationSessionAscendingComparator);
+	
         frame = new JFrame("Courses Registration Session Management");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -75,7 +91,7 @@ public class CoursesRegistrationSessionManagement extends JPanel implements Acti
 		btn_createSession.addActionListener(this);
 		btn_createSession.setActionCommand("Create");
 		
-		int[] columnsWidth = { 75, 100, 100, 100 };
+		int[] columnsWidth = { 150, 150, 150, 100 };
 		class SessionsListTableModel extends AbstractTableModel {
 
 			/**
@@ -85,7 +101,7 @@ public class CoursesRegistrationSessionManagement extends JPanel implements Acti
 
 			@Override
 			public int getRowCount() {
-				return 100;
+				return registrationSessions.size();
 			}
 
 			@Override
@@ -95,15 +111,18 @@ public class CoursesRegistrationSessionManagement extends JPanel implements Acti
 
 			@Override
 			public Object getValueAt(int rowIndex, int columnIndex) {
+				
+				RegistrationSession item = registrationSessions.get(rowIndex);
+				
 				switch (columnIndex) {
 				case 0:
-					return "HK12021";
+					return item.getSemesterName() + " / " + item.getSemesterSchoolYear();
 				case 1:
-					return "06/02/2021";
+					return item.getId().getStartDate();
 				case 2:
-					return "06/03/2021";
+					return item.getId().getEndDate();
 				default:
-					return "Course registration for first semester in 2021-2022 year";
+					return item.getDescription();
 				}
 			}
 			
@@ -217,7 +236,37 @@ public class CoursesRegistrationSessionManagement extends JPanel implements Acti
 		String strActionCommand = e.getActionCommand();
 		if (strActionCommand.equals("Create"))
 		{
+			try {
+				
+				Action actionRefresh = new AbstractAction()
+				{
+					private static final long serialVersionUID = 1L;
 
+					public void actionPerformed(ActionEvent e)
+				    {
+				        
+						registrationSessions.removeAll(registrationSessions);
+						
+						registrationSessions = RegistrationSessionDAO.getRegistrationSessionList();
+						registrationSessions.sort(RegistrationSession.registrationSessionAscendingComparator);
+					
+
+						tbl_sessionsList.revalidate();
+						tbl_sessionsList.repaint();
+				        
+						revalidate();
+				        repaint();
+				    }
+				};
+				
+				JComponent createCourseRegistrationSessionForm;
+				createCourseRegistrationSessionForm = new CreateCourseRegistrationSessionForm(actionRefresh);
+				createCourseRegistrationSessionForm.setOpaque(true);
+				createCourseRegistrationSessionForm.setVisible(true);
+				
+			} catch (IOException | URISyntaxException e1) {
+				showMessageDialog(null, "Error!");
+			}
 	    }
 
 	}

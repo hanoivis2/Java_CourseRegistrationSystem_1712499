@@ -4,23 +4,22 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-//import org.hibernate.Transaction;
 import org.hibernate.Transaction;
 
-import Models.Course;
-import Models.CourseID;
+import Models.RegistrationSession;
+import Models.RegistrationSessionID;
 
 @SuppressWarnings("deprecation")
-public class CourseDAO {
+public class RegistrationSessionDAO {
 
 	@SuppressWarnings("unchecked")
-	public static List<Course> getCourseList() {
-		List<Course> result = null;
+	public static List<RegistrationSession> getRegistrationSessionList() {
+		List<RegistrationSession> result = null;
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		
 		try {
-			String hql = "SELECT c FROM Course c"; 
+			String hql = "SELECT s FROM RegistrationSession s"; 
 			@SuppressWarnings("rawtypes")
 			Query query = session.createQuery(hql);
 			result = query.list();
@@ -39,11 +38,11 @@ public class CourseDAO {
 		return result;
 	}
 	
-	public static int addCourse(Course newCourse) {
+	public static int addRegistrationSession(RegistrationSession newRegistrationSession) {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		
-		if (CourseDAO.getCourseById(newCourse.getId())!=null) {
+		if (RegistrationSessionDAO.getRegistrationSessionById(newRegistrationSession.getId())!=null) {
 			return -1; 
 		}
 		
@@ -51,12 +50,12 @@ public class CourseDAO {
 		
 		try {
 			transaction = session.beginTransaction(); 
-			session.save(newCourse);
+			session.save(newRegistrationSession);
 			transaction.commit();
 		} 
 		
 		catch (HibernateException ex) { 
-			System.out.println(ex.getMessage());
+			
 		} 
 		
 		finally { 
@@ -66,13 +65,13 @@ public class CourseDAO {
 		return 1;
 	}
 	
-	public static Course getCourseById(CourseID courseID) {
-		Course result = null;
+	public static RegistrationSession getRegistrationSessionById(RegistrationSessionID registrationSessionID) {
+		RegistrationSession result = null;
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		
 		try {
-			result = (Course) session.get(Course.class, courseID);
+			result = (RegistrationSession) session.get(RegistrationSession.class, registrationSessionID);
 		} 
 		
 		catch (HibernateException ex) { 
@@ -86,16 +85,16 @@ public class CourseDAO {
 		return result;
 	}
 		
-	public static int updateClass(Course courseToEdit) {
+	public static int updateRegistrationSession(RegistrationSession registrationSessionToEdit) {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		
-		if (CourseDAO.getCourseById(courseToEdit.getId())!=null) {
+		if (RegistrationSessionDAO.getRegistrationSessionById(registrationSessionToEdit.getId())!=null) {
 			Transaction transaction = null;
 			
 			try {
 				transaction = session.beginTransaction(); 
-				session.update(courseToEdit);
+				session.update(registrationSessionToEdit);
 				transaction.commit();
 			} 
 			
@@ -115,16 +114,16 @@ public class CourseDAO {
 		return 1;
 	}
 	
-	public static int deleteCourse(Course courseToDelete) {
+	public static int deleteRegistrationSession(RegistrationSession registrationSessionToDelete) {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		
-		if (CourseDAO.getCourseById(courseToDelete.getId())!=null) {
+		if (RegistrationSessionDAO.getRegistrationSessionById(registrationSessionToDelete.getId())!=null) {
 			Transaction transaction = null;
 			
 			try {
 				transaction = session.beginTransaction(); 
-				session.delete(courseToDelete);
+				session.delete(registrationSessionToDelete);
 				transaction.commit();
 			} 
 			
@@ -143,5 +142,6 @@ public class CourseDAO {
 		
 		return 1;
 	}
+	
 	
 }

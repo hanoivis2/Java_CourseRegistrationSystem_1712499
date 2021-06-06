@@ -1,39 +1,19 @@
 package Models;
 
+import java.util.Comparator;
+
 public class RegistrationSession {
 
 	
-	private String startDate;
-	private String endDate;
+	private RegistrationSessionID id;
 	private String description;
 	private String semesterName;
 	private String semesterSchoolYear;
+	private Semester semester = new Semester();
 	
-	public RegistrationSession(String startDate, String endDate, String description, String semesterName,
-			String semesterSchoolYear) {
-		super();
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.description = description;
-		this.semesterName = semesterName;
-		this.semesterSchoolYear = semesterSchoolYear;
-	}
+	public RegistrationSession() {}
 
-	public String getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(String startDate) {
-		this.startDate = startDate;
-	}
-
-	public String getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(String endDate) {
-		this.endDate = endDate;
-	}
+	
 
 	public String getDescription() {
 		return description;
@@ -58,4 +38,41 @@ public class RegistrationSession {
 	public void setSemesterSchoolYear(String semesterSchoolYear) {
 		this.semesterSchoolYear = semesterSchoolYear;
 	}
+
+
+	public RegistrationSessionID getId() {
+		return id;
+	}
+
+
+	public void setId(RegistrationSessionID id) {
+		this.id = id;
+	}
+	
+	public Semester getSemester() {
+		return semester;
+	}
+
+
+	public void setSemester(Semester semester) {
+		this.semester = semester;
+	}
+	
+	public static Comparator<RegistrationSession> registrationSessionAscendingComparator = new Comparator<RegistrationSession>() {
+
+		public int compare(RegistrationSession s1, RegistrationSession s2) {
+			
+			   String semesterSchoolYear1 = s1.getSemesterSchoolYear();
+			   String semesterSchoolYear2 = s2.getSemesterSchoolYear();
+			   
+			   if (semesterSchoolYear1.equals(semesterSchoolYear2)) {
+				   return s1.getSemesterName().compareTo(s2.getSemesterName());
+			   }
+			   else {
+				   return semesterSchoolYear1.compareTo(semesterSchoolYear2);
+			   }
+		}
+	};
+
+	
 }

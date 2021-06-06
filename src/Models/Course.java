@@ -1,6 +1,7 @@
 package Models;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 public class Course implements Serializable {
 	
@@ -8,56 +9,17 @@ public class Course implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String subjectId;
-	private String semesterName;
-	private String semesterSchoolYear;
+	private CourseID id;
 	private String theoryTeacherName;
 	private String roomName;
 	private String dayInWeek;
-	private int shift;
-	private int maxAmountStudent;
+	private short shift;
+	private short maxAmountStudent;
 	private Subject subject = new Subject();
 	private Semester semester = new Semester();
 	
 	public Course() {}
 	
-	public Course(String subjectId, String semesterName, String semesterSchoolYear, String theoryTeacherName,
-			String roomName, String dayInWeek, int shift, int maxAmountStudent) {
-		super();
-		this.subjectId = subjectId;
-		this.semesterName = semesterName;
-		this.semesterSchoolYear = semesterSchoolYear;
-		this.theoryTeacherName = theoryTeacherName;
-		this.roomName = roomName;
-		this.dayInWeek = dayInWeek;
-		this.shift = shift;
-		this.maxAmountStudent = maxAmountStudent;
-	}
-	
-
-	public String getSubjectId() {
-		return subjectId;
-	}
-
-	public void setSubjectId(String subjectId) {
-		this.subjectId = subjectId;
-	}
-
-	public String getSemesterName() {
-		return semesterName;
-	}
-
-	public void setSemesterName(String semesterName) {
-		this.semesterName = semesterName;
-	}
-
-	public String getSemesterSchoolYear() {
-		return semesterSchoolYear;
-	}
-
-	public void setSemesterSchoolYear(String semesterSchoolYear) {
-		this.semesterSchoolYear = semesterSchoolYear;
-	}
 
 	public String getTheoryTeacherName() {
 		return theoryTeacherName;
@@ -83,22 +45,6 @@ public class Course implements Serializable {
 		this.dayInWeek = dayInWeek;
 	}
 
-	public int getShift() {
-		return shift;
-	}
-
-	public void setShift(int shift) {
-		this.shift = shift;
-	}
-
-	public int getMaxAmountStudent() {
-		return maxAmountStudent;
-	}
-
-	public void setMaxAmountStudent(int maxAmountStudent) {
-		this.maxAmountStudent = maxAmountStudent;
-	}
-
 
 	public Subject getSubject() {
 		return subject;
@@ -118,4 +64,54 @@ public class Course implements Serializable {
 	public void setSemester(Semester semester) {
 		this.semester = semester;
 	}
+
+
+	public CourseID getId() {
+		return id;
+	}
+
+
+	public void setId(CourseID id) {
+		this.id = id;
+	}
+	
+	public short getShift() {
+		return shift;
+	}
+
+
+	public void setShift(short shift) {
+		this.shift = shift;
+	}
+
+
+	public short getMaxAmountStudent() {
+		return maxAmountStudent;
+	}
+
+
+	public void setMaxAmountStudent(short maxAmountStudent) {
+		this.maxAmountStudent = maxAmountStudent;
+	}
+	
+	public static Comparator<Course> courseAscendingComparator = new Comparator<Course>() {
+
+		public int compare(Course s1, Course s2) {
+		   String courseSchoolYear1 = s1.getId().getSemesterSchoolYear();
+		   String courseSchoolYear2 = s2.getId().getSemesterSchoolYear();
+		   
+		   if (courseSchoolYear1.equals(courseSchoolYear1)) {
+			   return s1.getId().getSemesterName().compareTo(s2.getId().getSemesterName());
+		   }
+		   else {
+			   return courseSchoolYear2.compareTo(courseSchoolYear1);
+		   }
+	
+		   
+		}
+	};
+
+	
+	
+	
 }
