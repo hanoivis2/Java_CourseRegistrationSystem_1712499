@@ -2,6 +2,8 @@ package Models;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Course implements Serializable {
 	
@@ -17,6 +19,7 @@ public class Course implements Serializable {
 	private short maxAmountStudent;
 	private Subject subject = new Subject();
 	private Semester semester = new Semester();
+	private Set<StudentAccount> students = new HashSet<StudentAccount>(0);
 	
 	public Course() {}
 	
@@ -94,6 +97,15 @@ public class Course implements Serializable {
 		this.maxAmountStudent = maxAmountStudent;
 	}
 	
+	public Set<StudentAccount> getStudents() {
+		return students;
+	}
+
+
+	public void setStudents(Set<StudentAccount> students) {
+		this.students = students;
+	}
+	
 	public static Comparator<Course> courseAscendingComparator = new Comparator<Course>() {
 
 		public int compare(Course s1, Course s2) {
@@ -112,6 +124,5 @@ public class Course implements Serializable {
 	};
 
 	
-	
-	
+
 }

@@ -211,6 +211,7 @@ public class CreateCourseForm extends JPanel implements ActionListener {
 		        }
 		    }
 	    });
+		txt_credits.setText(String.valueOf(allSubjects.get(subjects.getSelectedIndex()).getCredits()));
 		
 		txt_roomName = new JTextField("Enter room's name...", 15);
 		txt_roomName.setForeground(Color.GRAY);
@@ -381,7 +382,8 @@ public class CreateCourseForm extends JPanel implements ActionListener {
 		
 		add(pane);
 		
-
+		
+		
         this.setOpaque(true); 
         frame.setContentPane(this);
         

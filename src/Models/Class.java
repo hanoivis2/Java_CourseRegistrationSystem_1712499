@@ -14,17 +14,6 @@ public class Class {
 	private Set<StudentAccount> students = new HashSet<StudentAccount>(0);
 	
 	public Class() {};
-	
-	public Class(String id, short totalStudents, short totalMale, short totalFemale, String description,
-			Set<StudentAccount> students) {
-		super();
-		this.id = id;
-		this.totalStudents = totalStudents;
-		this.totalMale = totalMale;
-		this.totalFemale = totalFemale;
-		this.description = description;
-		this.students = students;
-	}
 
 	public String getId() {
 		return id;

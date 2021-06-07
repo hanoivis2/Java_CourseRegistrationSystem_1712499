@@ -26,12 +26,33 @@
        <property name = "password" type = "string">
       	<column name = "password" length = "20" />
       </property>
+      
+  
+      <property name = "classId" type = "string">
+      	<column name = "class_id" length = "10" />
+      </property>
+      
+      <property name = "gender" type = "short">
+      	<column name = "gender"/>
+      </property>
 
       
-      <many-to-one class="Models.Class" name="mainClass" fetch="join" lazy="false" cascade="save-update">
+      <many-to-one class="Models.Class" name="mainClass" fetch="join" lazy="false" cascade="save-update" insert="false" update="false">
 		<column length="50" name="class_id" not-null="true"/> 
 	  </many-to-one>
       
+      <set inverse="true" name="courses" table="student_register_course" fetch="join" lazy="false"> 
+      	<key>
+			<column length="10" name="student_id" not-null="true"/>
+		</key>
+		<many-to-many entity-name="Models.Course">
+			<column length="10" name="subject_id" not-null="true"/> 
+			<column length="5" name="semester_name" not-null="true"/> 
+			<column length="12" name="semester_school_year" not-null="true"/> 
+		</many-to-many>
+	  </set>
+	  
+
       
    </class>
 </hibernate-mapping>

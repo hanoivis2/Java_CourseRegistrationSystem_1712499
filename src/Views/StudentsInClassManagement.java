@@ -11,7 +11,10 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import Models.Student;
+import DAO.StudentAccountDAO;
+import Models.StudentAccount;
+
+import static javax.swing.JOptionPane.showMessageDialog;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -30,13 +33,14 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 	JLabel lbl_title;
 	JButton btn_addStudent;
 	JScrollPane scrollView;
-	JTable tbl_coursesList;
+	JTable tbl_students;
 	JLabel lbl_search;
 	JTextField txt_search;
 	JFrame frame;
-	List<Student> students;
-	List<Student> studentsFilter;
+	List<StudentAccount> students;
+	List<StudentAccount> studentsFilter;
 	
+	private Action action;
 	
 	public static void main(String[] args) throws IOException, URISyntaxException {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -45,25 +49,21 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 			}
 		});
 		
-	
-		JComponent mainMenu = new StudentsInClassManagement("17CTT4");
-		mainMenu.setOpaque(true);
-		mainMenu.setVisible(true);
 	}
 	
 	
-	public StudentsInClassManagement(String className) throws IOException, URISyntaxException {
+	public StudentsInClassManagement(Action action, String className) throws IOException, URISyntaxException {
 		super(new BorderLayout());
+		
+		this.action = action;
 		
 		this.className = className;
 		
-		students = new ArrayList<Student>();
-		studentsFilter = new ArrayList<Student>();
+		students = new ArrayList<StudentAccount>();
+		studentsFilter = new ArrayList<StudentAccount>();
 		
-		students.add(new Student(1712499, "Tran Gia Huy", "17/09/1999", "Ho Chi Minh"));
-		students.add(new Student(1712516, "Huynh Thi Khanh Huyen", "21/12/1999", "Dak Lak"));
-		students.add(new Student(1712499, "Ky Tuan Khang", "02/09/1999", "Khanh Hoa"));
-		students.add(new Student(1712499, "Bui Do Huy", "17/09/1999", "Ho Chi Minh"));
+		students = StudentAccountDAO.getStudentAccountByClassIdList(className);
+		students.sort(StudentAccount.studentIdAscendingComparator);
 	
 		studentsFilter.removeAll(studentsFilter);
 		studentsFilter.addAll(students);
@@ -71,7 +71,6 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		
         frame = new JFrame("Students in class management");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setPreferredSize(new Dimension(dim.width - 100,dim.height - 100));
         frame.setLocation(50, 50);
@@ -114,13 +113,13 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
         lbl_search.setPreferredSize(new Dimension(200,40));
 		
 		
-        txt_search = new JTextField("Enter search text...", 15);
+        txt_search = new JTextField("Enter name or id to search ...", 15);
         txt_search.setForeground(Color.GRAY);
         txt_search.setPreferredSize(new Dimension(0,50));
         txt_search.addFocusListener(new FocusListener() {
 		    @Override
 		    public void focusGained(FocusEvent e) {
-		        if (txt_search.getText().equals("Enter search text...")) {
+		        if (txt_search.getText().equals("Enter name or id to search ...")) {
 		        	txt_search.setText("");
 		        	txt_search.setForeground(Color.BLACK);
 		        }
@@ -130,7 +129,7 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 		    public void focusLost(FocusEvent e) {
 		        if (txt_search.getText().isEmpty()) {
 		        	txt_search.setForeground(Color.GRAY);
-		        	txt_search.setText("Enter search text...");
+		        	txt_search.setText("Enter name or id to search ...");
 		        }
 		        
 		        studentsFilter.removeAll(studentsFilter);
@@ -149,9 +148,9 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 					studentsFilter.addAll(students);
 				}
 				else {
-					Predicate<Student> predicateString = s -> {
-			            return !s.getName().toLowerCase().contains(txt_search.getText().toLowerCase())
-			            		&& !Integer.toString(s.getId()).contains(txt_search.getText().toLowerCase());
+					Predicate<StudentAccount> predicateString = s -> {
+			            return !s.getFullName().toLowerCase().contains(txt_search.getText().toLowerCase())
+			            		&& !String.valueOf(s.getId()).contains(txt_search.getText().toLowerCase());
 			        };
 			        studentsFilter.removeAll(studentsFilter);
 			        studentsFilter.addAll(students);
@@ -170,9 +169,9 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 					studentsFilter.addAll(students);
 				}
 				else {
-					Predicate<Student> predicateString = s -> {
-			            return !s.getName().toLowerCase().contains(txt_search.getText().toLowerCase())
-			            		&& !Integer.toString(s.getId()).contains(txt_search.getText().toLowerCase());
+					Predicate<StudentAccount> predicateString = s -> {
+			            return !s.getFullName().toLowerCase().contains(txt_search.getText().toLowerCase())
+			            		&& !String.valueOf(s.getId()).contains(txt_search.getText().toLowerCase());
 			        };
 			        studentsFilter.removeAll(studentsFilter);
 			        studentsFilter.addAll(students);
@@ -191,9 +190,9 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 					studentsFilter.addAll(students);
 				}
 				else {
-					Predicate<Student> predicateString = s -> {
-			            return !s.getName().toLowerCase().contains(txt_search.getText().toLowerCase())
-			            		&& !Integer.toString(s.getId()).contains(txt_search.getText().toLowerCase());
+					Predicate<StudentAccount> predicateString = s -> {
+			            return !s.getFullName().toLowerCase().contains(txt_search.getText().toLowerCase())
+			            		&& !String.valueOf(s.getId()).contains(txt_search.getText().toLowerCase());
 			        };
 			        studentsFilter.removeAll(studentsFilter);
 			        studentsFilter.addAll(students);
@@ -206,7 +205,7 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 			}
 		});
 		
-		int[] columnsWidth = { 100, 240, 100, 150, 0, 0, 0, 0, 80 };
+		int[] columnsWidth = { 100, 240, 100, 150, 80, 80 };
 		class CoursesListTableModel extends AbstractTableModel {
 
 			private static final long serialVersionUID = 1L;
@@ -223,31 +222,25 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 
 			@Override
 			public int getColumnCount() {
-				return 9;
+				return 6;
 			}
 
 			@Override
 			public Object getValueAt(int rowIndex, int columnIndex) {
 				
-				Student item = studentsFilter.get(rowIndex);
+				StudentAccount item = studentsFilter.get(rowIndex);
 				
 				switch (columnIndex) {
 				case 0:
 					return item.getId();
 				case 1:
-					return item.getName();
+					return item.getFullName();
 				case 2:
 					return item.getBirthday();
 				case 3:
 					return item.getBirthplace();
 				case 4:
-					return "x";
-				case 5:
-					return "";
-				case 6:
-					return "x";
-				case 7:
-					return "x";
+					return (item.getGender() == 1) ? "Male" : "Female";
 				default:
 					return "";
 				}
@@ -265,13 +258,7 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 				case 3:
 					return "Birthplace";
 				case 4:
-					return "Computer Vision";
-				case 5:
-					return "Java application development";
-				case 6:
-					return "Web application development";
-				case 7:
-					return "Require engineering";
+					return "Gender";
 				default:
 					return "";
 				}
@@ -280,27 +267,27 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 		
 
 		
-		tbl_coursesList = new JTable();		
-		tbl_coursesList.setModel(new CoursesListTableModel());
-		tbl_coursesList.setRowSelectionAllowed(true);
-		tbl_coursesList.setRowHeight(30);
-		tbl_coursesList.setBackground(Color.DARK_GRAY);
-		tbl_coursesList.getTableHeader().setPreferredSize(new Dimension(0, 30));
-		((DefaultTableCellRenderer)tbl_coursesList.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
+		tbl_students = new JTable();		
+		tbl_students.setModel(new CoursesListTableModel());
+		tbl_students.setRowSelectionAllowed(true);
+		tbl_students.setRowHeight(30);
+		tbl_students.setBackground(Color.DARK_GRAY);
+		tbl_students.getTableHeader().setPreferredSize(new Dimension(0, 30));
+		((DefaultTableCellRenderer)tbl_students.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
 		
 		int i = 0;
 		for (int width : columnsWidth) {
-		    TableColumn column = tbl_coursesList.getColumnModel().getColumn(i++);
+		    TableColumn column = tbl_students.getColumnModel().getColumn(i++);
 		    column.setMinWidth(20);
 		    column.setMaxWidth(width);
-		    if (i > 4 && i != 9) {
+		    if (i == 2) {
 		    	column.setMaxWidth(Integer.MAX_VALUE);
 		    }
 		    else {
 		    	column.setPreferredWidth(width);
 		    }
 		    
-		    if (i == 9) {
+		    if (i == 6) {
 		    	
 		    	Action actionDelete = new AbstractAction()
 				{
@@ -308,16 +295,98 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 
 					public void actionPerformed(ActionEvent e)
 				    {
-//				        int modelRow = Integer.valueOf( e.getActionCommand() );
+						
+						String[] commandTokens = e.getActionCommand().split("-");
+				        String command = commandTokens[0];
+				        int row = Integer.parseInt(commandTokens[1]);
+				        
+				        System.out.println(e.getActionCommand());
+				        
+				        if(command.equals("edit")) {
+				        	
+							try {
+								
+								StudentAccount accountToEdit = studentsFilter.get(row);
+					        	Action actionEdit = new AbstractAction()
+								{
+									private static final long serialVersionUID = 1L;
+
+									public void actionPerformed(ActionEvent e)
+								    {
+								        
+										students.removeAll(students);
+										
+										students = StudentAccountDAO.getStudentAccountByClassIdList(className);
+										students.sort(StudentAccount.studentIdAscendingComparator);
+									
+										studentsFilter.removeAll(studentsFilter);
+										studentsFilter.addAll(students);
+								        
+										revalidate();
+								        repaint();
+								        
+								        ActionEvent event = new ActionEvent(
+								    			this,
+								    			ActionEvent.ACTION_PERFORMED,
+								    			"refresh");
+								    		action.actionPerformed(event);
+								    }
+								};
+								
+								JComponent editStudentAccountForm;
+								editStudentAccountForm = new EditStudentAccountForm(actionEdit, accountToEdit);
+								editStudentAccountForm.setOpaque(true);
+								editStudentAccountForm.setVisible(true);
+							} catch (IOException e1) {
+								
+							} catch (URISyntaxException e1) {
+								
+							}
+							
+				        }
+				        else {
+				        	StudentAccount accountToReset = studentsFilter.get(row);
+							int input = JOptionPane.showConfirmDialog(null, "Are you sure to reset password for " + accountToReset.getId() + " - " + accountToReset.getFullName() +"?");
+							// 0=yes, 1=no, 2=cancel
+							
+							if(input == 0) {
+								accountToReset.setId(accountToReset.getId());
+								accountToReset.setFullName(accountToReset.getFullName());
+								accountToReset.setPassword("1111");
+								accountToReset.setBirthday(accountToReset.getBirthday());
+								accountToReset.setBirthplace(accountToReset.getBirthplace());
+								int status = StudentAccountDAO.updateStudentAccount(accountToReset);
+								if (status == -1) {
+									showMessageDialog(null, "This account is not existed!");
+								}
+								else {
+									
+									students.removeAll(students);
+									
+									
+									students = StudentAccountDAO.getStudentAccountByClassIdList(className);
+									students.sort(StudentAccount.studentIdAscendingComparator);
+								
+									studentsFilter.removeAll(studentsFilter);
+									studentsFilter.addAll(students);
+							        
+									revalidate();
+							        repaint();
+									
+									showMessageDialog(null, accountToReset.getId() + " has been reseted to '1111'!");
+								}
+								
+							}
+				        }
 				        
 				    }
 				};
 		    	
-		    	tbl_coursesList.getColumnModel().getColumn(i-1).setCellRenderer(new StudentsInClassCellRenderer(tbl_coursesList, actionDelete));
-		    	tbl_coursesList.getColumnModel().getColumn(i-1).setCellEditor(new StudentsInClassCellRenderer(tbl_coursesList, actionDelete));
+		    	tbl_students.getColumnModel().getColumn(i-1).setCellRenderer(new StudentsInClassCellRenderer(tbl_students, actionDelete));
+		    	tbl_students.getColumnModel().getColumn(i-1).setCellEditor(new StudentsInClassCellRenderer(tbl_students, actionDelete));
 		    }
 		    else {
-		    	tbl_coursesList.getColumnModel().getColumn(i-1).setCellRenderer(new RowStudentsInClassRenderer());
+		    	tbl_students.getColumnModel().getColumn(i-1).setCellRenderer(new RowStudentsInClassRenderer());
 		    }
 		    
 		    
@@ -325,7 +394,7 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 		
 		
 		
-		scrollView = new JScrollPane(tbl_coursesList);
+		scrollView = new JScrollPane(tbl_students);
 
 		
 		
@@ -390,7 +459,47 @@ public class StudentsInClassManagement extends JPanel implements ActionListener 
 		String strActionCommand = e.getActionCommand();
 		if (strActionCommand.equals("Create"))
 		{
-			
+			try {
+				
+				Action actionRefresh = new AbstractAction()
+				{
+					private static final long serialVersionUID = 1L;
+
+					public void actionPerformed(ActionEvent e)
+				    {
+				        
+						students.removeAll(students);
+						studentsFilter.removeAll(studentsFilter);
+						
+						
+						students = StudentAccountDAO.getStudentAccountByClassIdList(className);
+						students.sort(StudentAccount.studentIdAscendingComparator);
+					
+						studentsFilter.removeAll(studentsFilter);
+						studentsFilter.addAll(students);
+						
+						tbl_students.revalidate();
+						tbl_students.repaint();
+				        
+						revalidate();
+				        repaint();
+				        
+				        ActionEvent event = new ActionEvent(
+				    			this,
+				    			ActionEvent.ACTION_PERFORMED,
+				    			"refresh");
+				    		action.actionPerformed(event);
+				    }
+				};
+				
+				JComponent createStudentAccountForm;
+				createStudentAccountForm = new CreateStudentAccountForm(actionRefresh, this.className);
+				createStudentAccountForm.setOpaque(true);
+				createStudentAccountForm.setVisible(true);
+				
+			} catch (IOException | URISyntaxException e1) {
+				showMessageDialog(null, "Error!");
+			}
 	    }
 
 	}
@@ -489,6 +598,7 @@ class StudentsInClassCellRenderer extends AbstractCellEditor implements  TableCe
 		btn_edit.setPreferredSize(new Dimension(30, 30));
 		btn_edit.setBackground(Color.white);
 		btn_edit.setForeground(Color.white);
+		btn_edit.setActionCommand("edit");
 		  
 		ImageIcon icon2 = new ImageIcon("img/edit.png");
 		Image scaleImage2 = icon2.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
@@ -502,6 +612,7 @@ class StudentsInClassCellRenderer extends AbstractCellEditor implements  TableCe
 		btn_passwordReset.setPreferredSize(new Dimension(30, 30));
 		btn_passwordReset.setBackground(Color.white);
 		btn_passwordReset.setForeground(Color.white);
+		btn_passwordReset.setActionCommand("resetPassword");
 		  
 		ImageIcon icon3 = new ImageIcon("img/passwordReset.png");
 		Image scaleImage3 = icon3.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
@@ -535,7 +646,7 @@ class StudentsInClassCellRenderer extends AbstractCellEditor implements  TableCe
 		ActionEvent event = new ActionEvent(
 			table,
 			ActionEvent.ACTION_PERFORMED,
-			"" + row);
+			e.getActionCommand() + "-" + row);
 		action.actionPerformed(event);
 	}
 }

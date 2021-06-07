@@ -12,7 +12,7 @@ import java.awt.event.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-public class CreateMinistryAccountForm extends JPanel implements ActionListener {
+public class EditMinistryAccountForm extends JPanel implements ActionListener {
 	
 	/**
 	 * 
@@ -39,14 +39,14 @@ public class CreateMinistryAccountForm extends JPanel implements ActionListener 
 	}
 	
 	
-	public CreateMinistryAccountForm(Action action) throws IOException, URISyntaxException {
+	public EditMinistryAccountForm(Action action, MinistryAccount accountData) throws IOException, URISyntaxException {
 		super(new BorderLayout());
 		
 		this.action = action;
 
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		
-        frame = new JFrame("Add ministry account");
+        frame = new JFrame("Edit ministry account");
         frame.setPreferredSize(new Dimension(600,550));
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation(dim.width/2 - 300, dim.height/2 - 275);
@@ -80,7 +80,7 @@ public class CreateMinistryAccountForm extends JPanel implements ActionListener 
 		row5.setMaximumSize(new Dimension(Integer.MAX_VALUE, frame.getPreferredSize().height - 320));
 		buttonRow.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
 		
-		btn_confirm = new JButton("Add account");
+		btn_confirm = new JButton("Edit account");
 		btn_confirm.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btn_confirm.addActionListener(this);
 		btn_confirm.setActionCommand("Confirm");
@@ -102,7 +102,7 @@ public class CreateMinistryAccountForm extends JPanel implements ActionListener 
 		
 	
 		txt_fullName = new JTextField("Enter ministry's full name...", 15);
-		txt_fullName.setForeground(Color.GRAY);
+		txt_fullName.setForeground(Color.BLACK);
 		txt_fullName.setPreferredSize(new Dimension(0,50));
 		txt_fullName.addFocusListener(new FocusListener() {
 		    @Override
@@ -124,6 +124,7 @@ public class CreateMinistryAccountForm extends JPanel implements ActionListener 
 		
 		txt_ministryId = new JTextField("Enter ministry's id...", 15);
 		txt_ministryId.setForeground(Color.GRAY);
+		txt_ministryId.setEditable(false);
 		txt_ministryId.setPreferredSize(new Dimension(0,50));
 		txt_ministryId.addFocusListener(new FocusListener() {
 		    @Override
@@ -145,16 +146,18 @@ public class CreateMinistryAccountForm extends JPanel implements ActionListener 
 		
 		txt_password = new JPasswordField();
 		txt_password.setForeground(Color.BLACK);
+		txt_password.setEditable(false);
 		txt_password.setPreferredSize(new Dimension(0,50));
 
 		
 		txt_confirmPassword = new JPasswordField();
+		txt_confirmPassword.setEditable(false);
 		txt_confirmPassword.setForeground(Color.BLACK);
 		txt_confirmPassword.setPreferredSize(new Dimension(0,50));
 
 		
 		txt_description = new JTextArea("Enter description...", 0, 1);
-		txt_description.setForeground(Color.GRAY);
+		txt_description.setForeground(Color.BLACK);
 		txt_description.setPreferredSize(new Dimension(0,50));
 		txt_description.setLineWrap(true);
 		txt_description.setBorder(BorderFactory.createCompoundBorder(
@@ -259,6 +262,12 @@ public class CreateMinistryAccountForm extends JPanel implements ActionListener 
 		
 		add(pane);
 		
+		txt_fullName.setText(accountData.getFullname());
+		txt_ministryId.setText(accountData.getUsername());
+		txt_password.setText(accountData.getPassword());
+		txt_confirmPassword.setText(accountData.getPassword());
+		txt_description.setText(accountData.getDescription());
+		
 
         this.setOpaque(true); 
         frame.setContentPane(this);
@@ -301,7 +310,7 @@ public class CreateMinistryAccountForm extends JPanel implements ActionListener 
 				else {
 					newAccount.setDescription(txt_description.getText());
 				}
-				int status = MinistryAccountDAO.addMinistryAccount(newAccount);
+				int status = MinistryAccountDAO.updateMinistryAccount(newAccount);
 				if (status == -1) {
 					showMessageDialog(null, "This username has already been created!");
 				}
@@ -309,7 +318,7 @@ public class CreateMinistryAccountForm extends JPanel implements ActionListener 
 						
 					ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "refresh");
 					action.actionPerformed(event);
-					showMessageDialog(null, "Added successfully!");
+					showMessageDialog(null, "Edited successfully!");
 				}
 			}
 			

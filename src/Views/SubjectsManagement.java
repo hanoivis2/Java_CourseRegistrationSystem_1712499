@@ -48,9 +48,6 @@ public class SubjectsManagement extends JPanel implements ActionListener {
 		});
 		
 	
-		JComponent mainMenu = new SubjectsManagement();
-		mainMenu.setOpaque(true);
-		mainMenu.setVisible(true);
 	}
 	
 	
@@ -69,7 +66,6 @@ public class SubjectsManagement extends JPanel implements ActionListener {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		
         frame = new JFrame("Subjects Management");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setPreferredSize(new Dimension(dim.width - 100,dim.height - 100));
         frame.setLocation(50, 50);

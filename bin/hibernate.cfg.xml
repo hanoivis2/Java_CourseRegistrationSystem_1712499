@@ -15,5 +15,8 @@
    	   <mapping resource="hibernate/Subject.hbm.xml"/>
    	   <mapping resource="hibernate/Semester.hbm.xml"/>
    	   <mapping resource="hibernate/RegistrationSession.hbm.xml"/>
+   	   <mapping resource="hibernate/MinistryAccount.hbm.xml"/>
+   	   <mapping resource="hibernate/StudentAccount.hbm.xml"/>
+   	   <mapping resource="hibernate/StudentRegisterCourse.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

@@ -40,9 +40,6 @@ public class CoursesRegistrationSessionManagement extends JPanel implements Acti
 			}
 		});
 	
-		JComponent mainMenu = new CoursesRegistrationSessionManagement();
-		mainMenu.setOpaque(true);
-		mainMenu.setVisible(true);
 	}
 	
 	
@@ -58,7 +55,6 @@ public class CoursesRegistrationSessionManagement extends JPanel implements Acti
 		registrationSessions.sort(RegistrationSession.registrationSessionAscendingComparator);
 	
         frame = new JFrame("Courses Registration Session Management");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setPreferredSize(new Dimension(dim.width - 100,dim.height - 100));
         frame.setLocation(50, 50);

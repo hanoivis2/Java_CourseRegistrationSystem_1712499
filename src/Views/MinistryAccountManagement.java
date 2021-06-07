@@ -11,7 +11,10 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import DAO.MinistryAccountDAO;
 import Models.MinistryAccount;
+
+import static javax.swing.JOptionPane.showMessageDialog;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -43,10 +46,6 @@ public class MinistryAccountManagement extends JPanel implements ActionListener 
 			}
 		});
 		
-	
-		JComponent mainMenu = new MinistryAccountManagement();
-		mainMenu.setOpaque(true);
-		mainMenu.setVisible(true);
 	}
 	
 	
@@ -56,9 +55,8 @@ public class MinistryAccountManagement extends JPanel implements ActionListener 
 		ministryAccounts = new ArrayList<MinistryAccount>();
 		ministryAccountsFilter = new ArrayList<MinistryAccount>();
 		
-		ministryAccounts.add(new MinistryAccount("GV001", "Tran Linh Thuoc", "Giao vu hieu truong"));
-		ministryAccounts.add(new MinistryAccount("GV002", "Lam Quang Vu", "Giao vu khoa CNTT"));
-		ministryAccounts.add(new MinistryAccount("GV003", "Van Chi Nam", "Giao vu truong"));
+		ministryAccounts = MinistryAccountDAO.getMinistryAccountList();
+		ministryAccounts.sort(MinistryAccount.ministryAccountAscendingComparator);
 	
 		ministryAccountsFilter.removeAll(ministryAccountsFilter);
 		ministryAccountsFilter.addAll(ministryAccounts);
@@ -66,7 +64,6 @@ public class MinistryAccountManagement extends JPanel implements ActionListener 
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		
         frame = new JFrame("Ministry accounts Management");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setPreferredSize(new Dimension(dim.width - 100,dim.height - 100));
         frame.setLocation(50, 50);
@@ -109,13 +106,13 @@ public class MinistryAccountManagement extends JPanel implements ActionListener 
         lbl_search.setPreferredSize(new Dimension(220,40));
 		
 		
-        txt_search = new JTextField("Enter search text...", 15);
+        txt_search = new JTextField("Enter ministry's name to search...", 15);
         txt_search.setForeground(Color.GRAY);
         txt_search.setPreferredSize(new Dimension(0,50));
         txt_search.addFocusListener(new FocusListener() {
 		    @Override
 		    public void focusGained(FocusEvent e) {
-		        if (txt_search.getText().equals("Enter search text...")) {
+		        if (txt_search.getText().equals("Enter ministry's name to search...")) {
 		        	txt_search.setText("");
 		        	txt_search.setForeground(Color.BLACK);
 		        }
@@ -125,7 +122,7 @@ public class MinistryAccountManagement extends JPanel implements ActionListener 
 		    public void focusLost(FocusEvent e) {
 		        if (txt_search.getText().isEmpty()) {
 		        	txt_search.setForeground(Color.GRAY);
-		        	txt_search.setText("Enter search text...");
+		        	txt_search.setText("Enter ministry's name to search...");
 		        }
 		        
 		        ministryAccountsFilter.removeAll(ministryAccountsFilter);
@@ -278,7 +275,110 @@ public class MinistryAccountManagement extends JPanel implements ActionListener 
 
 					public void actionPerformed(ActionEvent e)
 				    {
-//				        int modelRow = Integer.valueOf( e.getActionCommand() );
+				        String[] commandTokens = e.getActionCommand().split("-");
+				        String command = commandTokens[0];
+				        int row = Integer.parseInt(commandTokens[1]);
+				        
+				        System.out.println(e.getActionCommand());
+				        
+				        if(command.equals("edit")) {
+				        	
+							try {
+								
+								MinistryAccount accountToEdit = ministryAccountsFilter.get(row);
+					        	Action actionEdit = new AbstractAction()
+								{
+									private static final long serialVersionUID = 1L;
+
+									public void actionPerformed(ActionEvent e)
+								    {
+								        
+										ministryAccounts.removeAll(ministryAccounts);
+										
+										
+										ministryAccounts = MinistryAccountDAO.getMinistryAccountList();
+										ministryAccounts.sort(MinistryAccount.ministryAccountAscendingComparator);
+									
+										ministryAccountsFilter.removeAll(ministryAccountsFilter);
+										ministryAccountsFilter.addAll(ministryAccounts);
+								        
+										revalidate();
+								        repaint();
+								    }
+								};
+								
+								JComponent editAccountForm;
+								editAccountForm = new EditMinistryAccountForm(actionEdit, accountToEdit);
+								editAccountForm.setOpaque(true);
+								editAccountForm.setVisible(true);
+							} catch (IOException e1) {
+								
+							} catch (URISyntaxException e1) {
+								
+							}
+							
+				        }
+				        else if(command.equals("delete")) {
+				        	MinistryAccount accountToDelete = ministryAccountsFilter.get(row);
+							int input = JOptionPane.showConfirmDialog(null, "Are you sure to delete " + accountToDelete.getUsername() + " - " + accountToDelete.getFullname() +"?");
+							// 0=yes, 1=no, 2=cancel
+							
+							if(input == 0) {
+								int status = MinistryAccountDAO.deleteMinistryAccount(accountToDelete);
+								if (status == -1) {
+									showMessageDialog(null, "This account is not existed!");
+								}
+								else {
+									
+									ministryAccounts.removeAll(ministryAccounts);
+									
+									
+									ministryAccounts = MinistryAccountDAO.getMinistryAccountList();
+									ministryAccounts.sort(MinistryAccount.ministryAccountAscendingComparator);
+								
+									ministryAccountsFilter.removeAll(ministryAccountsFilter);
+									ministryAccountsFilter.addAll(ministryAccounts);
+							        
+									revalidate();
+							        repaint();
+									
+									showMessageDialog(null, "Deleted successfully!");
+								}
+							}
+				        }
+				        else {
+				        	MinistryAccount accountToReset = ministryAccountsFilter.get(row);
+							int input = JOptionPane.showConfirmDialog(null, "Are you sure to reset password for " + accountToReset.getUsername() + " - " + accountToReset.getFullname() +"?");
+							// 0=yes, 1=no, 2=cancel
+							
+							if(input == 0) {
+								accountToReset.setUsername(accountToReset.getUsername());
+								accountToReset.setFullname(accountToReset.getFullname());
+								accountToReset.setPassword("1111");
+								accountToReset.setDescription(accountToReset.getDescription());
+								int status = MinistryAccountDAO.updateMinistryAccount(accountToReset);
+								if (status == -1) {
+									showMessageDialog(null, "This account is not existed!");
+								}
+								else {
+									
+									ministryAccounts.removeAll(ministryAccounts);
+									
+									
+									ministryAccounts = MinistryAccountDAO.getMinistryAccountList();
+									ministryAccounts.sort(MinistryAccount.ministryAccountAscendingComparator);
+								
+									ministryAccountsFilter.removeAll(ministryAccountsFilter);
+									ministryAccountsFilter.addAll(ministryAccounts);
+							        
+									revalidate();
+							        repaint();
+									
+									showMessageDialog(null, accountToReset.getUsername() + " has been reseted to '1111'!");
+								}
+								
+							}
+				        }
 				        
 				    }
 				};
@@ -360,7 +460,41 @@ public class MinistryAccountManagement extends JPanel implements ActionListener 
 		String strActionCommand = e.getActionCommand();
 		if (strActionCommand.equals("Create"))
 		{
-			
+			try {
+				
+				Action actionRefresh = new AbstractAction()
+				{
+					private static final long serialVersionUID = 1L;
+
+					public void actionPerformed(ActionEvent e)
+				    {
+				        
+						ministryAccounts.removeAll(ministryAccounts);
+						ministryAccountsFilter.removeAll(ministryAccountsFilter);
+						
+						
+						ministryAccounts = MinistryAccountDAO.getMinistryAccountList();
+						ministryAccounts.sort(MinistryAccount.ministryAccountAscendingComparator);
+					
+						ministryAccountsFilter.removeAll(ministryAccountsFilter);
+						ministryAccountsFilter.addAll(ministryAccounts);
+						
+						tbl_ministryAccountList.revalidate();
+						tbl_ministryAccountList.repaint();
+				        
+						revalidate();
+				        repaint();
+				    }
+				};
+				
+				JComponent createMinistryAccountForm;
+				createMinistryAccountForm = new CreateMinistryAccountForm(actionRefresh);
+				createMinistryAccountForm.setOpaque(true);
+				createMinistryAccountForm.setVisible(true);
+				
+			} catch (IOException | URISyntaxException e1) {
+				showMessageDialog(null, "Error!");
+			}
 	    }
 
 	}
@@ -469,6 +603,7 @@ class MinistryAccountActionCellRenderer extends AbstractCellEditor implements  T
 		btn_delete.setPreferredSize(new Dimension(30, 30));
 		btn_delete.setBackground(Color.white);
 		btn_delete.setForeground(Color.white);
+		btn_delete.setActionCommand("delete");
 		  
 		ImageIcon icon = new ImageIcon("img/delete.png");
 		Image scaleImage = icon.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
@@ -482,6 +617,7 @@ class MinistryAccountActionCellRenderer extends AbstractCellEditor implements  T
 		btn_edit.setPreferredSize(new Dimension(30, 30));
 		btn_edit.setBackground(Color.white);
 		btn_edit.setForeground(Color.white);
+		btn_edit.setActionCommand("edit");
 		  
 		ImageIcon icon2 = new ImageIcon("img/edit.png");
 		Image scaleImage2 = icon2.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
@@ -495,6 +631,7 @@ class MinistryAccountActionCellRenderer extends AbstractCellEditor implements  T
 		btn_passwordReset.setPreferredSize(new Dimension(30, 30));
 		btn_passwordReset.setBackground(Color.white);
 		btn_passwordReset.setForeground(Color.white);
+		btn_passwordReset.setActionCommand("passwordReset");
 		  
 		ImageIcon icon3 = new ImageIcon("img/passwordReset.png");
 		Image scaleImage3 = icon3.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
@@ -529,7 +666,7 @@ class MinistryAccountActionCellRenderer extends AbstractCellEditor implements  T
 		ActionEvent event = new ActionEvent(
 			table,
 			ActionEvent.ACTION_PERFORMED,
-			"" + row);
+			e.getActionCommand() + "-" + row);
 		action.actionPerformed(event);
 	}
 	

@@ -39,6 +39,7 @@ CREATE TABLE student_account (
 	birthplace VARCHAR(50),
 	class_id VARCHAR(10),
 	password VARCHAR(20),
+	gender SMALLINT,
 	FOREIGN KEY (class_id) REFERENCES class(id),
 	PRIMARY KEY (id)
 );
@@ -86,8 +87,7 @@ CREATE TABLE student_register_course (
 	semester_school_year VARCHAR(12) NOT NULL,
 	create_date VARCHAR(20),
 	FOREIGN KEY (student_id) REFERENCES student_account(id),
-	FOREIGN KEY (subject_id) REFERENCES subject(id),
-	FOREIGN KEY (semester_name, semester_school_year) REFERENCES semester(name, school_year),
+	FOREIGN KEY (subject_id, semester_name, semester_school_year) REFERENCES course(subject_id, semester_name, semester_school_year),
 	PRIMARY KEY (student_id, subject_id, subject_name, subject_credits, semester_name, semester_school_year)
 );
 
@@ -111,23 +111,23 @@ INSERT INTO class(id, students_amount, male_amount, female_amount, description) 
 INSERT INTO class(id, students_amount, male_amount, female_amount, description) VALUES ('17CTT4', 0, 0, 0, 'Lớp 4 khoa CNTT khoá 2017');
 
 
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712499', 'Trần Gia Huy', '17/09/1999', 'TP HCM', '17CTT4', '111111');
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712488', 'Bùi Đỗ Huy', '25/08/1999', 'TP HCM', '17CTT4', '111111');
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712480', 'Huỳnh Đức Huy', '12/03/1999', 'Bến Tre', '17CTT4', '111111');
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712466', 'Nguyễn Hữu Huân', '24/08/1999', 'Khánh Hoà', '17CTT4', '111111');
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712506', 'Kỳ Tuấn Khang', '02/09/1999', 'Khánh Hoà', '17CTT4', '111111');
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712516', 'Huỳnh Thị Khánh Huyên', '21/12/1999', 'Đắk Lắk', '17CTT4', '111111');
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712501', 'Nguyễn Văn Kha', '14/03/1999', 'Đồn Tháp', '17CTT4', '111111');
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712502', 'Phạm Kinh Kha', '29/11/1999', 'TP HCM', '17CTT4', '111111');
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712503', 'Trần Nhựt Kha', '05/07/1999', 'Bến Tre', '17CTT4', '111111');
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712504', 'Trần Tuấn Kiệt', '14/05/1999', 'Bình Thuận', '17CTT4', '111111');
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712477', 'Lê Tấn Hưng', '03/07/1999', 'Ninh Thuận', '17CTT4', '111111');
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712478', 'Nguyễn Đông Hưng', '17/09/1999', 'Bình Định', '17CTT4', '111111');
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712010', 'Lê Tấn Tài', '02/06/1999', 'Đà Nẵng', '17CTTN', '111111');
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712020', 'Phạm Hoàng Đức', '04/08/1999', 'TP HCM', '17CTTN', '111111');
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712110', 'Nguyễn Thành Nguyên', '32/12/1999', 'An Giang', '17CTT1', '111111');
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712111', 'Hồng Như Ngọc', '13/01/1999', 'An Giang', '17CTT1', '111111');
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712201', 'Nguyễn Phương Anh', '21/07/1999', 'Đồng Tháp', '17CTT2', '111111');
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712202', 'Tôn Kim Ái', '05/09/1999', 'Đắk Lắk', '17CTT2', '111111');
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712301', 'Nguyễn Quí Em', '18/03/1999', 'Vĩnh Long', '17CTT3', '111111');
-INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, password) VALUES ('1712302', 'Mai Linh Đồng', '25/06/1999', 'Gia Lai', '17CTT3', '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712499', 'Trần Gia Huy', '17/09/1999', 'TP HCM', '17CTT4', 1, '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712488', 'Bùi Đỗ Huy', '25/08/1999', 'TP HCM', '17CTT4', 1,  '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712480', 'Huỳnh Đức Huy', '12/03/1999', 'Bến Tre', '17CTT4', 1,  '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712466', 'Nguyễn Hữu Huân', '24/08/1999', 'Khánh Hoà', '17CTT4', 1,  '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712506', 'Kỳ Tuấn Khang', '02/09/1999', 'Khánh Hoà', '17CTT4', 1,  '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712516', 'Huỳnh Thị Khánh Huyên', '21/12/1999', 'Đắk Lắk', '17CTT4', 1 '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712501', 'Nguyễn Văn Kha', '14/03/1999', 'Đồn Tháp', '17CTT4', 1,  '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712502', 'Phạm Kinh Kha', '29/11/1999', 'TP HCM', '17CTT4', 1,  '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712503', 'Trần Nhựt Kha', '05/07/1999', 'Bến Tre', '17CTT4', 1,  '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712504', 'Trần Tuấn Kiệt', '14/05/1999', 'Bình Thuận', '17CTT4', 1,  '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712477', 'Lê Tấn Hưng', '03/07/1999', 'Ninh Thuận', '17CTT4', 1,  '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712478', 'Nguyễn Đông Hưng', '17/09/1999', 'Bình Định', '17CTT4', 1,  '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712010', 'Lê Tấn Tài', '02/06/1999', 'Đà Nẵng', '17CTTN', 1,  '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712020', 'Phạm Hoàng Đức', '04/08/1999', 'TP HCM', '17CTTN', 1,  '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712110', 'Nguyễn Thành Nguyên', '32/12/1999', 'An Giang', '17CTT1', 1,  '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712111', 'Hồng Như Ngọc', '13/01/1999', 'An Giang', '17CTT1', 1,  '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712201', 'Nguyễn Phương Anh', '21/07/1999', 'Đồng Tháp', '17CTT2', 1,  '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712202', 'Tôn Kim Ái', '05/09/1999', 'Đắk Lắk', '17CTT2', 1,  '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712301', 'Nguyễn Quí Em', '18/03/1999', 'Vĩnh Long', '17CTT3', 1,  '111111');
+INSERT INTO student_account(id, full_name, birthday, birthplace, class_id, gender, password) VALUES ('1712302', 'Mai Linh Đồng', '25/06/1999', 'Gia Lai', '17CTT3', 1,  '111111');

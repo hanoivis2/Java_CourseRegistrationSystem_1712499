@@ -4,6 +4,8 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 
 public class MinistryMainMenu extends JPanel implements ActionListener {
@@ -13,12 +15,11 @@ public class MinistryMainMenu extends JPanel implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	JButton btn_myAccount;
 	JButton btn_ministryAccountManagement;
 	JButton btn_subjectManagement;
 	JButton btn_semesterManagement;
 	JButton btn_classManagement;
-	JButton btn_studentInClassManagement;
-	JButton btn_studentInCourseManagement;
 	JButton btn_couresRegistrationSessionManagement;
 	JButton btn_coursesManagement;
 	JButton btn_logout;
@@ -42,7 +43,7 @@ public class MinistryMainMenu extends JPanel implements ActionListener {
 	}
 	
 	public MinistryMainMenu() {
-		 super(new GridLayout(3,4));
+		 super(new GridLayout(3,3));
 		 
 		 JFrame.setDefaultLookAndFeelDecorated(true);
          frame = new JFrame("Ministry Main Menu");
@@ -50,6 +51,10 @@ public class MinistryMainMenu extends JPanel implements ActionListener {
          frame.setPreferredSize(new Dimension(1200,600));
          Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
          frame.setLocation(dim.width/2 - 600, dim.height/2 - 300);
+         
+         btn_myAccount = new JButton("My account");
+         btn_myAccount.addActionListener(this);
+         btn_myAccount.setActionCommand("MyAccount");
 	
          btn_ministryAccountManagement = new JButton("Ministry account management");
          btn_ministryAccountManagement.addActionListener(this);
@@ -67,13 +72,6 @@ public class MinistryMainMenu extends JPanel implements ActionListener {
          btn_classManagement.addActionListener(this);
          btn_classManagement.setActionCommand("ClassManagement");
 		 
-         btn_studentInClassManagement = new JButton("Student in class management");
-         btn_studentInClassManagement.addActionListener(this);
-         btn_studentInClassManagement.setActionCommand("StudentInClassManagement");
-         
-         btn_studentInCourseManagement = new JButton("Student in course management");
-         btn_studentInCourseManagement.addActionListener(this);
-         btn_studentInCourseManagement.setActionCommand("StudentInCourseManagement");
 		 
          btn_couresRegistrationSessionManagement = new JButton("Courses Registration Session Management");
          btn_couresRegistrationSessionManagement.addActionListener(this);
@@ -91,12 +89,11 @@ public class MinistryMainMenu extends JPanel implements ActionListener {
          btn_exit.addActionListener(this);
          btn_exit.setActionCommand("Exit");
 		 
+         add(btn_myAccount);
 		 add(btn_ministryAccountManagement);
 		 add(btn_subjectManagement);
 		 add(btn_semesterManagement);
 		 add(btn_classManagement);
-		 add(btn_studentInClassManagement);
-		 add(btn_studentInCourseManagement);
 		 add(btn_couresRegistrationSessionManagement);
 		 add(btn_coursesManagement);
 		 add(btn_logout);
@@ -114,34 +111,81 @@ public class MinistryMainMenu extends JPanel implements ActionListener {
 		String strActionCommand = e.getActionCommand();
 		if (strActionCommand.equals("MinistryAccountManagement"))
 		{
-			
+			try {
+				JComponent ministryAccountManagement = new MinistryAccountManagement();
+				ministryAccountManagement.setOpaque(true);
+				ministryAccountManagement.setVisible(true);
+			} catch (IOException e1) {
+				
+			} catch (URISyntaxException e1) {
+				
+			}
 	    }
 		else if (strActionCommand.equals("SubjectManagement"))
 		{
-
+			try {
+				JComponent subjectsManagement = new SubjectsManagement();
+				subjectsManagement.setOpaque(true);
+				subjectsManagement.setVisible(true);
+			} catch (IOException e1) {
+				
+			} catch (URISyntaxException e1) {
+				
+			}
 		}
 		else if (strActionCommand.equals("SemesterManagement"))
 		{
-			
+			try {
+				JComponent semestersManagement = new SemestersManagement();
+				semestersManagement.setOpaque(true);
+				semestersManagement.setVisible(true);
+			} catch (IOException e1) {
+				
+			} catch (URISyntaxException e1) {
+				
+			}
 		     
 	    }
 		else if (strActionCommand.equals("ClassManagement"))
 		{
-			
-	    }
-		else if (strActionCommand.equals("StudentInClassManagement"))
-		{
-			
-	    }
-		else if (strActionCommand.equals("StudentInCourseManagement"))
-		{
+			try {
+				JComponent classManagement = new ClassesManagement();
+				classManagement.setOpaque(true);
+				classManagement.setVisible(true);
+			} catch (IOException e1) {
+				
+			} catch (URISyntaxException e1) {
+				
+			}
 			
 	    }
 		else if (strActionCommand.equals("CoursesRegistrationSessionManagement"))
 		{
+			try {
+				JComponent coursesRegistrationSessionManagement = new CoursesRegistrationSessionManagement();
+				coursesRegistrationSessionManagement.setOpaque(true);
+				coursesRegistrationSessionManagement.setVisible(true);
+			} catch (IOException e1) {
+				
+			} catch (URISyntaxException e1) {
+				
+			}
 			
 	    }
 		else if (strActionCommand.equals("CoursesManagement"))
+		{
+			try {
+				JComponent coursesManagement = new CoursesManagement();
+				coursesManagement.setOpaque(true);
+				coursesManagement.setVisible(true);
+			} catch (IOException e1) {
+				
+			} catch (URISyntaxException e1) {
+				
+			}
+			
+	    }
+		else if (strActionCommand.equals("MyAccount"))
 		{
 			
 	    }

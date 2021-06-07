@@ -11,8 +11,12 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import DAO.CourseDAO;
+import DAO.StudentAccountDAO;
+import DAO.StudentRegisterCourseDAO;
 import Models.Course;
+import Models.StudentAccount;
+import Models.StudentRegisterCourse;
+import Models.StudentRegisterCourseID;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -24,12 +28,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class CoursesManagement extends JPanel implements ActionListener {
+public class CourseList extends JPanel implements ActionListener {
 	
 
 	private static final long serialVersionUID = 1L;
 	JLabel lbl_title;
-	JButton btn_createCourse;
+	JButton btn_registerCourse;
 	JScrollPane scrollView;
 	JTable tbl_coursesList;
 	JLabel lbl_search;
@@ -37,6 +41,8 @@ public class CoursesManagement extends JPanel implements ActionListener {
 	JFrame frame;
 	List<Course> courses;
 	List<Course> coursesFilter;
+	
+	private String studentId;
 	
 	
 	public static void main(String[] args) throws IOException, URISyntaxException {
@@ -46,24 +52,26 @@ public class CoursesManagement extends JPanel implements ActionListener {
 			}
 		});
 		
+		JComponent mainMenu = new CourseList();
+		mainMenu.setOpaque(true);
+		mainMenu.setVisible(true);
 	}
 	
 	
-	public CoursesManagement() throws IOException, URISyntaxException {
+	public CourseList() throws IOException, URISyntaxException {
 		super(new BorderLayout());
 		
-		courses = new ArrayList<Course>();
-		coursesFilter = new ArrayList<Course>();
+		studentId = "1712499";
 		
-		courses = CourseDAO.getCourseList();
-		courses.sort(Course.courseAscendingComparator);
+		courses = new ArrayList<Course>(StudentAccountDAO.getStudentAccountById(studentId).getCourses());
+		coursesFilter = new ArrayList<Course>();
 	
 		coursesFilter.removeAll(coursesFilter);
 		coursesFilter.addAll(courses);
 
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		
-        frame = new JFrame("Courses Management");
+        frame = new JFrame("Course List");
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setPreferredSize(new Dimension(dim.width - 100,dim.height - 100));
         frame.setLocation(50, 50);
@@ -91,28 +99,28 @@ public class CoursesManagement extends JPanel implements ActionListener {
 	
 		
 		
-		lbl_title = new JLabel("Courses in this semester");
+		lbl_title = new JLabel("All courses");
 		lbl_title.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lbl_title.setHorizontalAlignment(JLabel.CENTER);
 		lbl_title.setFont(new Font("Helvetica", Font.BOLD, 16));
 		
-		btn_createCourse = new JButton("Create new course");
-		btn_createCourse.setAlignmentX(Component.CENTER_ALIGNMENT);
-		btn_createCourse.addActionListener(this);
-		btn_createCourse.setActionCommand("Create");
+		btn_registerCourse = new JButton("Create new ministry account");
+		btn_registerCourse.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btn_registerCourse.addActionListener(this);
+		btn_registerCourse.setActionCommand("Register Course");
 		
 		
-		lbl_search = new JLabel("Enter course's name to search: ");       
-        lbl_search.setPreferredSize(new Dimension(200,40));
+		lbl_search = new JLabel("Enter ministry's name to search: ");       
+        lbl_search.setPreferredSize(new Dimension(220,40));
 		
 		
-        txt_search = new JTextField("Enter search text...", 15);
+        txt_search = new JTextField("Enter ministry's name to search...", 15);
         txt_search.setForeground(Color.GRAY);
         txt_search.setPreferredSize(new Dimension(0,50));
         txt_search.addFocusListener(new FocusListener() {
 		    @Override
 		    public void focusGained(FocusEvent e) {
-		        if (txt_search.getText().equals("Enter search text...")) {
+		        if (txt_search.getText().equals("Enter ministry's name to search...")) {
 		        	txt_search.setText("");
 		        	txt_search.setForeground(Color.BLACK);
 		        }
@@ -122,11 +130,11 @@ public class CoursesManagement extends JPanel implements ActionListener {
 		    public void focusLost(FocusEvent e) {
 		        if (txt_search.getText().isEmpty()) {
 		        	txt_search.setForeground(Color.GRAY);
-		        	txt_search.setText("Enter search text...");
+		        	txt_search.setText("Enter ministry's name to search...");
 		        }
 		        
 		        coursesFilter.removeAll(coursesFilter);
-				coursesFilter.addAll(courses);
+		        coursesFilter.addAll(courses);
 				revalidate();
 		        repaint();
 		    }
@@ -142,10 +150,10 @@ public class CoursesManagement extends JPanel implements ActionListener {
 				}
 				else {
 					Predicate<Course> predicateString = s -> {
-			            return !s.getId().getSubjectId().toLowerCase().contains(txt_search.getText().toLowerCase());
+						return !s.getSubject().getName().toLowerCase().contains(txt_search.getText().toLowerCase());
 			        };
 			        coursesFilter.removeAll(coursesFilter);
-					coursesFilter.addAll(courses);
+			        coursesFilter.addAll(courses);
 			        coursesFilter.removeIf(predicateString);
 				}
 				
@@ -162,10 +170,10 @@ public class CoursesManagement extends JPanel implements ActionListener {
 				}
 				else {
 					Predicate<Course> predicateString = s -> {
-						return !s.getId().getSubjectId().toLowerCase().contains(txt_search.getText().toLowerCase());
+						return !s.getSubject().getName().toLowerCase().contains(txt_search.getText().toLowerCase());
 			        };
 			        coursesFilter.removeAll(coursesFilter);
-					coursesFilter.addAll(courses);
+			        coursesFilter.addAll(courses);
 			        coursesFilter.removeIf(predicateString);
 				}
 				
@@ -182,10 +190,10 @@ public class CoursesManagement extends JPanel implements ActionListener {
 				}
 				else {
 					Predicate<Course> predicateString = s -> {
-						return !s.getId().getSubjectId().toLowerCase().contains(txt_search.getText().toLowerCase());
+						return !s.getSubject().getName().toLowerCase().contains(txt_search.getText().toLowerCase());
 			        };
 			        coursesFilter.removeAll(coursesFilter);
-					coursesFilter.addAll(courses);
+			        coursesFilter.addAll(courses);
 			        coursesFilter.removeIf(predicateString);
 				}
 				
@@ -195,7 +203,7 @@ public class CoursesManagement extends JPanel implements ActionListener {
 			}
 		});
 		
-		int[] columnsWidth = { 150, 30, 70, 250, 90, 90, 50, 80, 50 };
+		int[] columnsWidth = { 100, 300, 100, 100, 100, 100, 50 };
 		class CoursesListTableModel extends AbstractTableModel {
 
 			private static final long serialVersionUID = 1L;
@@ -212,7 +220,7 @@ public class CoursesManagement extends JPanel implements ActionListener {
 
 			@Override
 			public int getColumnCount() {
-				return 9;
+				return 7;
 			}
 
 			@Override
@@ -222,21 +230,28 @@ public class CoursesManagement extends JPanel implements ActionListener {
 				
 				switch (columnIndex) {
 				case 0:
-					return item.getSemester().getId().toString();
+					return item.getSubject().getId();
 				case 1:
 					return item.getSubject().getName();
 				case 2:
 					return item.getSubject().getCredits();
 				case 3:
-					return item.getTheoryTeacherName();
+					return item.getSemester().getId().getName();
 				case 4:
-					return item.getRoomName();
+					return item.getSemester().getId().getSchoolYear();
 				case 5:
-					return item.getDayInWeek();
-				case 6:
-					return item.getShift();
-				case 7:
-					return item.getMaxAmountStudent();
+					
+					StudentRegisterCourseID registerID = new StudentRegisterCourseID();
+					registerID.setSemesterName(item.getSemester().getId().getName());
+					registerID.setSemesterSchoolYear(item.getSemester().getId().getSchoolYear());
+					registerID.setStudentId(studentId);
+					registerID.setSubjectCredits(item.getSubject().getCredits());
+					registerID.setSubjectId(item.getSubject().getId());
+					registerID.setSubjectName(item.getSubject().getName());
+					
+					StudentRegisterCourse register = StudentRegisterCourseDAO.getRegisterById(registerID);
+					
+					return register.getCreateDate();
 				default:
 					return "";
 				}
@@ -246,21 +261,17 @@ public class CoursesManagement extends JPanel implements ActionListener {
 			public String getColumnName(int column) {
 				switch (column) {
 				case 0:
-					return "Semester";
+					return "Subject id";
 				case 1:
 					return "Subject name";
 				case 2:
 					return "Credits";
 				case 3:
-					return "Theory teacher's name";
+					return "Semester's name";
 				case 4:
-					return "Room name";
+					return "School year";
 				case 5:
-					return "Day in week";
-				case 6:
-					return "Shift";
-				case 7:
-					return "Max amount";
+					return "Create date";
 				default:
 					return "";
 				}
@@ -287,52 +298,40 @@ public class CoursesManagement extends JPanel implements ActionListener {
 		    }
 		    column.setPreferredWidth(width);
 		    
-		    if (i == 9) {
+		    if (i == 7) {
 		    	
-		    	Action actionClass = new AbstractAction()
+		    	Action actionCourseList = new AbstractAction()
 				{
 					private static final long serialVersionUID = 1L;
 
 					public void actionPerformed(ActionEvent e)
 				    {
 				        String[] commandTokens = e.getActionCommand().split("-");
+				        String command = commandTokens[0];
 				        int row = Integer.parseInt(commandTokens[1]);
 				        
 				        System.out.println(e.getActionCommand());
 				        
-				        Course courseToDelete = coursesFilter.get(row);
-						int input = JOptionPane.showConfirmDialog(null, "Are you sure to delete " + courseToDelete.getSubject().getName() +"?");
-						// 0=yes, 1=no, 2=cancel
-						
-						if(input == 0) {
-							int status = CourseDAO.deleteCourse(courseToDelete);
-							if (status == -1) {
-								showMessageDialog(null, "This course is not existed!");
-							}
-							else {
-								
-								courses.remove(row);
-								coursesFilter.removeAll(coursesFilter);
-								
-		
+				        if(command.equals("edit")) {
+				        	
 							
-								coursesFilter.removeAll(coursesFilter);
-								coursesFilter.addAll(courses);
-						        
-								revalidate();
-						        repaint();
-								
-								showMessageDialog(null, "Deleted successfully!");
-							}
-						}
+							
+				        }
+				        else if(command.equals("delete")) {
+				        	
+				        }
+				        else {
+				        	
+				        }
+				        
 				    }
 				};
 		    	
-				tbl_coursesList.getColumnModel().getColumn(i-1).setCellRenderer(new CourseActionCellRenderer(tbl_coursesList, actionClass));
-				tbl_coursesList.getColumnModel().getColumn(i-1).setCellEditor(new CourseActionCellRenderer(tbl_coursesList, actionClass));
+				tbl_coursesList.getColumnModel().getColumn(i-1).setCellRenderer(new CourseListActionCellRenderer(tbl_coursesList, actionCourseList));
+				tbl_coursesList.getColumnModel().getColumn(i-1).setCellEditor(new CourseListActionCellRenderer(tbl_coursesList, actionCourseList));
 		    }
 		    else {
-		    	tbl_coursesList.getColumnModel().getColumn(i-1).setCellRenderer(new RowSessionListRenderer());
+		    	tbl_coursesList.getColumnModel().getColumn(i-1).setCellRenderer(new RowCourseListListRenderer());
 		    }
 		    
 		    
@@ -347,7 +346,7 @@ public class CoursesManagement extends JPanel implements ActionListener {
 		firstRow.add(lbl_title);
 		searchRow.add(lbl_search);
 		searchRow.add(txt_search);
-		secondRow.add(btn_createCourse);
+		secondRow.add(btn_registerCourse);
 		thirdRow.add(scrollView);
 		
 		layoutFirstRow.putConstraint(SpringLayout.NORTH, lbl_title, 10, SpringLayout.NORTH, firstRow);
@@ -364,9 +363,9 @@ public class CoursesManagement extends JPanel implements ActionListener {
         layoutSearchRow.putConstraint(SpringLayout.EAST, txt_search, -15, SpringLayout.EAST, searchRow);
         
 		
-        layoutSecondRow.putConstraint(SpringLayout.NORTH, btn_createCourse, 10, SpringLayout.NORTH, secondRow);
-        layoutSecondRow.putConstraint(SpringLayout.SOUTH, btn_createCourse, -10, SpringLayout.SOUTH, secondRow);
-        layoutSecondRow.putConstraint(SpringLayout.EAST, btn_createCourse, -15, SpringLayout.EAST, secondRow);
+        layoutSecondRow.putConstraint(SpringLayout.NORTH, btn_registerCourse, 10, SpringLayout.NORTH, secondRow);
+        layoutSecondRow.putConstraint(SpringLayout.SOUTH, btn_registerCourse, -10, SpringLayout.SOUTH, secondRow);
+        layoutSecondRow.putConstraint(SpringLayout.EAST, btn_registerCourse, -15, SpringLayout.EAST, secondRow);
         
        
         layoutThirdRow.putConstraint(SpringLayout.NORTH, scrollView, 25, SpringLayout.NORTH, thirdRow);
@@ -405,56 +404,20 @@ public class CoursesManagement extends JPanel implements ActionListener {
 		String strActionCommand = e.getActionCommand();
 		if (strActionCommand.equals("Create"))
 		{
-			try {
-				
-				Action actionRefresh = new AbstractAction()
-				{
-					private static final long serialVersionUID = 1L;
-
-					public void actionPerformed(ActionEvent e)
-				    {
-				        
-						courses.removeAll(courses);
-						coursesFilter.removeAll(coursesFilter);
-						
-						
-						courses = CourseDAO.getCourseList();
-						courses.sort(Course.courseAscendingComparator);
-					
-						coursesFilter.removeAll(coursesFilter);
-						coursesFilter.addAll(courses);
-						
-						tbl_coursesList.revalidate();
-						tbl_coursesList.repaint();
-				        
-						revalidate();
-				        repaint();
-				    }
-				};
-				
-				JComponent createCourseForm;
-				createCourseForm = new CreateCourseForm(actionRefresh);
-				createCourseForm.setOpaque(true);
-				createCourseForm.setVisible(true);
-				
-			} catch (IOException | URISyntaxException e1) {
-				showMessageDialog(null, "Error!");
-			}
+			
 	    }
 
 	}
 
-
-	
 }
 
-class RowSessionListRenderer extends JLabel implements  TableCellRenderer
+class RowCourseListListRenderer extends JLabel implements  TableCellRenderer
 {
 
   
   private static final long serialVersionUID = 1L;
 
-  public RowSessionListRenderer() {
+  public RowCourseListListRenderer() {
    
     setOpaque(true);
   }
@@ -471,7 +434,7 @@ class RowSessionListRenderer extends JLabel implements  TableCellRenderer
 
 }
 
-class CourseActionCellRenderer extends AbstractCellEditor implements  TableCellEditor, TableCellRenderer, ActionListener
+class CourseListActionCellRenderer extends AbstractCellEditor implements  TableCellEditor, TableCellRenderer, ActionListener
 {
 	static final long serialVersionUID = 1L;
 	private JTable table;
@@ -479,7 +442,7 @@ class CourseActionCellRenderer extends AbstractCellEditor implements  TableCellE
 	
 	private Object editorValue;
 	
-	public CourseActionCellRenderer(JTable table, Action action) {
+	public CourseListActionCellRenderer(JTable table, Action action) {
 
 		this.table = table;
 		this.action= action;
@@ -489,7 +452,6 @@ class CourseActionCellRenderer extends AbstractCellEditor implements  TableCellE
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object obj,
 	    boolean selected, boolean focused, int row, int col) {
-		
 	
 		JButton btn_delete = new JButton();
 		Border emptyBorder = BorderFactory.createEmptyBorder();
@@ -503,12 +465,40 @@ class CourseActionCellRenderer extends AbstractCellEditor implements  TableCellE
 		btn_delete.setIcon(new ImageIcon(scaleImage));
 		btn_delete.addActionListener(this);
 		btn_delete.setMnemonic(KeyEvent.VK_D);
+		
+		JButton btn_edit = new JButton();
+		Border emptyBorder2 = BorderFactory.createEmptyBorder();
+		btn_edit.setBorder(emptyBorder2);
+		btn_edit.setPreferredSize(new Dimension(30, 30));
+		btn_edit.setBackground(Color.white);
+		btn_edit.setForeground(Color.white);
+		  
+		ImageIcon icon2 = new ImageIcon("img/edit.png");
+		Image scaleImage2 = icon2.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
+		btn_edit.setIcon(new ImageIcon(scaleImage2));
+		btn_edit.addActionListener(this);
+		btn_edit.setMnemonic(KeyEvent.VK_D);
+		
+		JButton btn_passwordReset = new JButton();
+		Border emptyBorder3 = BorderFactory.createEmptyBorder();
+		btn_passwordReset.setBorder(emptyBorder3);
+		btn_passwordReset.setPreferredSize(new Dimension(30, 30));
+		btn_passwordReset.setBackground(Color.white);
+		btn_passwordReset.setForeground(Color.white);
+		  
+		ImageIcon icon3 = new ImageIcon("img/passwordReset.png");
+		Image scaleImage3 = icon3.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
+		btn_passwordReset.setIcon(new ImageIcon(scaleImage3));
+		btn_passwordReset.addActionListener(this);
+		btn_passwordReset.setMnemonic(KeyEvent.VK_D);
 
 		
 		JPanel view_button = new JPanel();
 		view_button.setLayout(new GridLayout(1,3));
 		view_button.setBackground(Color.white);
 		
+		view_button.add(btn_edit);
+		view_button.add(btn_passwordReset);
 		view_button.add(btn_delete);
 	
 		return view_button;
@@ -517,27 +507,55 @@ class CourseActionCellRenderer extends AbstractCellEditor implements  TableCellE
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 			
-		
-		
 		JButton btn_delete = new JButton();
 		Border emptyBorder = BorderFactory.createEmptyBorder();
 		btn_delete.setBorder(emptyBorder);
 		btn_delete.setPreferredSize(new Dimension(30, 30));
 		btn_delete.setBackground(Color.white);
 		btn_delete.setForeground(Color.white);
+		btn_delete.setActionCommand("delete");
 		  
 		ImageIcon icon = new ImageIcon("img/delete.png");
 		Image scaleImage = icon.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
 		btn_delete.setIcon(new ImageIcon(scaleImage));
 		btn_delete.addActionListener(this);
 		btn_delete.setMnemonic(KeyEvent.VK_D);
-		btn_delete.setActionCommand("delete");
 		
+		JButton btn_edit = new JButton();
+		Border emptyBorder2 = BorderFactory.createEmptyBorder();
+		btn_edit.setBorder(emptyBorder2);
+		btn_edit.setPreferredSize(new Dimension(30, 30));
+		btn_edit.setBackground(Color.white);
+		btn_edit.setForeground(Color.white);
+		btn_edit.setActionCommand("edit");
+		  
+		ImageIcon icon2 = new ImageIcon("img/edit.png");
+		Image scaleImage2 = icon2.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
+		btn_edit.setIcon(new ImageIcon(scaleImage2));
+		btn_edit.addActionListener(this);
+		btn_edit.setMnemonic(KeyEvent.VK_D);
+		
+		JButton btn_passwordReset = new JButton();
+		Border emptyBorder3 = BorderFactory.createEmptyBorder();
+		btn_passwordReset.setBorder(emptyBorder3);
+		btn_passwordReset.setPreferredSize(new Dimension(30, 30));
+		btn_passwordReset.setBackground(Color.white);
+		btn_passwordReset.setForeground(Color.white);
+		btn_passwordReset.setActionCommand("passwordReset");
+		  
+		ImageIcon icon3 = new ImageIcon("img/passwordReset.png");
+		Image scaleImage3 = icon3.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
+		btn_passwordReset.setIcon(new ImageIcon(scaleImage3));
+		btn_passwordReset.addActionListener(this);
+		btn_passwordReset.setMnemonic(KeyEvent.VK_D);
+
 		
 		JPanel view_button = new JPanel();
 		view_button.setLayout(new GridLayout(1,3));
 		view_button.setBackground(Color.white);
 		
+		view_button.add(btn_edit);
+		view_button.add(btn_passwordReset);
 		view_button.add(btn_delete);
 		
 	

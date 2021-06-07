@@ -1,0 +1,44 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
+
+<hibernate-mapping>
+   <class catalog="school_management" name="Models.StudentRegisterCourse" table="student_register_course">
+      
+      <composite-id name = "id" class = "Models.StudentRegisterCourseID">
+	  	<key-property name = "studentId" type = "string">
+      	 <column length="10" name = "student_id" />
+      	</key-property>
+	      
+	    <key-property name = "subjectId" type = "string">
+	      <column length="5" name = "subject_id"/>
+	    </key-property>
+	    
+	    <key-property name = "subjectName" type = "string">
+	      <column length="12" name = "subject_name"/>
+	    </key-property>
+	    
+	    <key-property name = "subjectCredits" type = "short">
+	      <column name = "subject_credits"/>
+	    </key-property>
+	    
+	    <key-property name = "semesterName" type = "string">
+	      <column length="12" name = "semester_name"/>
+	    </key-property>
+	    
+	    <key-property name = "semesterSchoolYear" type = "string">
+	      <column length="12" name = "semester_school_year"/>
+	    </key-property>
+	  </composite-id> 
+      
+      <property name = "createDate" type = "string">
+      	<column length="20" name = "create_date"/>
+      </property>
+      
+      
+	  
+
+      
+   </class>
+</hibernate-mapping>

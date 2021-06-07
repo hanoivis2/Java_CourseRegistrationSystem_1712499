@@ -1,5 +1,9 @@
 package Models;
 
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
+
 public class StudentAccount {
 
 	
@@ -8,21 +12,14 @@ public class StudentAccount {
 	private String fullName;
 	private String birthday;
 	private String birthplace;
-	private Class mainClass = new Class();
+	private String classId;
+	private short gender;
 	private String password;
+	private Class mainClass = new Class();
+	private Set<Course> courses = new HashSet<Course>(0);
 	
 	public StudentAccount() {}
 	
-	public StudentAccount(String id, String fullName, String birthday, String birthplace, Class mainClass,
-			String password) {
-		super();
-		this.id = id;
-		this.fullName = fullName;
-		this.birthday = birthday;
-		this.birthplace = birthplace;
-		this.mainClass = mainClass;
-		this.password = password;
-	}
 
 	public String getId() {
 		return id;
@@ -71,4 +68,46 @@ public class StudentAccount {
 	public void setMainClass(Class mainClass) {
 		this.mainClass = mainClass;
 	}
+
+
+	public String getClassId() {
+		return classId;
+	}
+
+
+	public void setClassId(String classId) {
+		this.classId = classId;
+	}
+	
+	public short getGender() {
+		return gender;
+	}
+
+
+	public void setGender(short gender) {
+		this.gender = gender;
+	}
+	
+	public Set<Course> getCourses() {
+		return courses;
+	}
+
+
+	public void setCourses(Set<Course> courses) {
+		this.courses = courses;
+	}
+	
+	public static Comparator<StudentAccount> studentIdAscendingComparator = new Comparator<StudentAccount>() {
+
+		public int compare(StudentAccount s1, StudentAccount s2) {
+		   String classId1 = s1.getId();
+		   String classId2 = s2.getId();
+	
+		   return classId1.compareTo(classId2);
+		}
+	};
+
+	
+
+	
 }

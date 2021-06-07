@@ -43,10 +43,6 @@ public class ClassesManagement extends JPanel implements ActionListener {
 			}
 		});
 		
-	
-		JComponent mainMenu = new ClassesManagement();
-		mainMenu.setOpaque(true);
-		mainMenu.setVisible(true);
 	}
 	
 	
@@ -66,7 +62,6 @@ public class ClassesManagement extends JPanel implements ActionListener {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		
         frame = new JFrame("Classes Management");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setPreferredSize(new Dimension(dim.width - 100,dim.height - 100));
         frame.setLocation(50, 50);
@@ -102,7 +97,7 @@ public class ClassesManagement extends JPanel implements ActionListener {
 		
 		
 		
-		int[] columnsWidth = { 100, 100, 100, 100, 0, 80 };
+		int[] columnsWidth = { 100, 100, 100, 100, 0, 120 };
 		class CoursesListTableModel extends AbstractTableModel {
 
 			private static final long serialVersionUID = 1L;
@@ -234,7 +229,7 @@ public class ClassesManagement extends JPanel implements ActionListener {
 							}
 							
 				        }
-				        else {
+				        else if(command.equals("delete")) {
 				        	
 				        	Class classToDelete = classesFilter.get(row);
 							int input = JOptionPane.showConfirmDialog(null, "Are you sure to delete " + classToDelete.getId() +"?");
@@ -261,6 +256,43 @@ public class ClassesManagement extends JPanel implements ActionListener {
 									showMessageDialog(null, "Deleted successfully!");
 								}
 							}
+				        }
+				        else {
+				        	
+							try {
+								
+								Action actionRefresh = new AbstractAction()
+								{
+									private static final long serialVersionUID = 1L;
+
+									public void actionPerformed(ActionEvent e)
+								    {
+								        
+										classes.removeAll(classes);
+										
+										
+										classes = ClassDAO.getClassList();
+										classes.sort(Class.classIdAscendingComparator);
+									
+										classesFilter.removeAll(classesFilter);
+										classesFilter.addAll(classes);
+								        
+										revalidate();
+								        repaint();
+								        
+								        
+								    }
+								};
+								
+								JComponent studentsInClassManagement = new StudentsInClassManagement(actionRefresh, classesFilter.get(row).getId());
+								studentsInClassManagement.setOpaque(true);
+								studentsInClassManagement.setVisible(true);
+							} catch (IOException e1) {
+								
+							} catch (URISyntaxException e1) {
+								
+							}
+				    		
 				        }
 				    }
 				};
@@ -441,6 +473,19 @@ class ClassesManagementActionCellRenderer extends AbstractCellEditor implements 
 		btn_delete.setIcon(new ImageIcon(scaleImage));
 		btn_delete.addActionListener(this);
 		btn_delete.setMnemonic(KeyEvent.VK_D);
+		
+		JButton btn_classDetail   = new JButton();
+		Border emptyBorder3 = BorderFactory.createEmptyBorder();
+		btn_classDetail.setBorder(emptyBorder3);
+		btn_classDetail.setPreferredSize(new Dimension(30, 30));
+		btn_classDetail.setBackground(Color.white);
+		btn_classDetail.setForeground(Color.white);
+		  
+		ImageIcon icon3 = new ImageIcon("img/students.png");
+		Image scaleImage3 = icon3.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
+		btn_classDetail.setIcon(new ImageIcon(scaleImage3));
+		btn_classDetail.addActionListener(this);
+		btn_classDetail.setMnemonic(KeyEvent.VK_D);
 
 		
 		JPanel view_button = new JPanel();
@@ -448,6 +493,7 @@ class ClassesManagementActionCellRenderer extends AbstractCellEditor implements 
 		view_button.setBackground(Color.white);
 		
 		view_button.add(btn_edit);
+		view_button.add(btn_classDetail);
 		view_button.add(btn_delete);
 	
 		return view_button;
@@ -485,12 +531,28 @@ class ClassesManagementActionCellRenderer extends AbstractCellEditor implements 
 		btn_delete.setMnemonic(KeyEvent.VK_D);
 		btn_delete.setActionCommand("delete");
 		
+
+		JButton btn_classDetail   = new JButton();
+		Border emptyBorder3 = BorderFactory.createEmptyBorder();
+		btn_classDetail.setBorder(emptyBorder3);
+		btn_classDetail.setPreferredSize(new Dimension(30, 30));
+		btn_classDetail.setBackground(Color.white);
+		btn_classDetail.setForeground(Color.white);
+		  
+		ImageIcon icon3 = new ImageIcon("img/students.png");
+		Image scaleImage3 = icon3.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
+		btn_classDetail.setIcon(new ImageIcon(scaleImage3));
+		btn_classDetail.addActionListener(this);
+		btn_classDetail.setMnemonic(KeyEvent.VK_D);
+		btn_classDetail.setActionCommand("classDetail");
+
 		
 		JPanel view_button = new JPanel();
 		view_button.setLayout(new GridLayout(1,3));
 		view_button.setBackground(Color.white);
 		
 		view_button.add(btn_edit);
+		view_button.add(btn_classDetail);
 		view_button.add(btn_delete);
 		
 	
@@ -512,7 +574,7 @@ class ClassesManagementActionCellRenderer extends AbstractCellEditor implements 
 			table,
 			ActionEvent.ACTION_PERFORMED,
 			e.getActionCommand() + "-" + row);
-		action.actionPerformed(event);
+			action.actionPerformed(event);
 	}
 	
 	

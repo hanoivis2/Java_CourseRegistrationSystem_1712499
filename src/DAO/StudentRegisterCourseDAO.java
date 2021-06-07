@@ -6,44 +6,20 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import Models.Student;
+import Models.StudentRegisterCourseID;
+import Models.StudentRegisterCourse;
 
 @SuppressWarnings("deprecation")
-public class StudentDAO {
+public class StudentRegisterCourseDAO {
 
 	@SuppressWarnings("unchecked")
-	public static List<Student> getStudentList() {
-		List<Student> result = null;
+	public static StudentRegisterCourse getRegisterById(StudentRegisterCourseID registerId) {
+		StudentRegisterCourse result = null;
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		
 		try {
-			String hql = "SELECT stu FROM Student stu"; 
-			@SuppressWarnings("rawtypes")
-			Query query = session.createQuery(hql);
-			result = query.list();
-		} 
-		
-		catch (HibernateException ex) { 
-			
-		} 
-		
-		finally { 
-			session.close();
-		}
-		
-		
-		
-		return result;
-	}
-	
-	public static Student getStudentById(int id) {
-		Student result = null;
-		
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		
-		try {
-			result = (Student) session.get(Student.class, id);
+			result = (StudentRegisterCourse) session.get(StudentRegisterCourse.class, registerId);
 		} 
 		
 		catch (HibernateException ex) { 
@@ -57,11 +33,11 @@ public class StudentDAO {
 		return result;
 	}
 	
-	public static int addStudent(Student student) {
+	public static int addRegister(StudentRegisterCourse newRegister) {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		
-		if (StudentDAO.getStudentById(student.getId())!=null) {
+		if (StudentRegisterCourseDAO.getRegisterById(newRegister.getId())!=null) {
 			return -1; 
 		}
 		
@@ -69,7 +45,7 @@ public class StudentDAO {
 		
 		try {
 			transaction = session.beginTransaction(); 
-			session.save(student);
+			session.save(newRegister);
 			transaction.commit();
 		} 
 		
@@ -84,16 +60,17 @@ public class StudentDAO {
 		return 1;
 	}
 	
-	public static int updateStudent(Student student) {
+	
+	public static int deleteSemester(StudentRegisterCourse registerToDelete) {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		
-		if (StudentDAO.getStudentById(student.getId())!=null) {
+		if (StudentRegisterCourseDAO.getRegisterById(registerToDelete.getId())!=null) {
 			Transaction transaction = null;
 			
 			try {
 				transaction = session.beginTransaction(); 
-				session.update(student);
+				session.delete(registerToDelete);
 				transaction.commit();
 			} 
 			
@@ -105,7 +82,9 @@ public class StudentDAO {
 				session.close();
 			}
 		}
-		
+		else {
+			return -1;
+		}
 		
 		
 		return 1;
