@@ -17,6 +17,7 @@ import java.util.List;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 import Models.Semester;
+import Models.SemesterID;
 
 public class EditSemesterForm extends JPanel implements ActionListener {
 	
@@ -55,7 +56,7 @@ public class EditSemesterForm extends JPanel implements ActionListener {
 		
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		
-		frame = new JFrame("Add semester");
+		frame = new JFrame("Edit semester");
 	    Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 	    frame.setPreferredSize(new Dimension(dim.width - 100,dim.height - 200));
 	    frame.setLocation(50, 100);
@@ -339,8 +340,12 @@ public class EditSemesterForm extends JPanel implements ActionListener {
 				}
 				else {
 					Semester newSemester = new Semester();
-					newSemester.getId().setName(txt_name.getText());
-					newSemester.getId().setSchoolYear(txt_schoolYear.getText());
+					
+					SemesterID id = new SemesterID();
+					id.setName(txt_name.getText());
+					id.setSchoolYear(txt_schoolYear.getText());
+					
+					newSemester.setId(id);
 					newSemester.setStartDate(startDate);
 					newSemester.setEndDate(endDate);
 					newSemester.setDescription(txt_description.getText());
@@ -369,11 +374,12 @@ public class EditSemesterForm extends JPanel implements ActionListener {
 							
 						ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "refresh");
 						action.actionPerformed(event);
-						showMessageDialog(null, "Added successfully!");
+						showMessageDialog(null, "Edited successfully!");
 					}
 				}
 			} catch (Exception e1) {
 				showMessageDialog(null, "Invalid date!");
+				System.out.println(e1.getStackTrace());
 			}
 			
 		}

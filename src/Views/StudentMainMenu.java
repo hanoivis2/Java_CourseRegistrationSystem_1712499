@@ -3,6 +3,8 @@ package Views;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 
 public class StudentMainMenu extends JPanel implements ActionListener {
@@ -12,12 +14,14 @@ public class StudentMainMenu extends JPanel implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	JButton btn_registerCourses;
+	JButton btn_myAccount;
 	JButton btn_reviewCourses;
 	JButton btn_logout;
 	JButton btn_exit;
 	
 	JFrame frame;
+	
+	private String studentId;
 	
 	
 	public final static boolean RIGHT_TO_LEFT = false;
@@ -29,13 +33,12 @@ public class StudentMainMenu extends JPanel implements ActionListener {
 			}
 		});
 
-		JComponent mainMenu = new StudentMainMenu();
-		mainMenu.setOpaque(true);
-		mainMenu.setVisible(true);
 	}
 	
-	public StudentMainMenu() {
+	public StudentMainMenu(String studentId) {
 		 super(new GridLayout(2,2));
+		 
+		 this.studentId = studentId;
 		 
 		 JFrame.setDefaultLookAndFeelDecorated(true);
          frame = new JFrame("Student Main Menu");
@@ -44,9 +47,9 @@ public class StudentMainMenu extends JPanel implements ActionListener {
          Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
          frame.setLocation(dim.width/2 - 450, dim.height/2 - 150);
 	
-         btn_registerCourses = new JButton("Register courses");
-         btn_registerCourses.addActionListener(this);
-         btn_registerCourses.setActionCommand("RegisterCourses");
+         btn_myAccount = new JButton("My account");
+         btn_myAccount.addActionListener(this);
+         btn_myAccount.setActionCommand("MyAccount");
 		 
          btn_reviewCourses = new JButton("Review courses");
          btn_reviewCourses.addActionListener(this);
@@ -60,7 +63,7 @@ public class StudentMainMenu extends JPanel implements ActionListener {
          btn_exit.addActionListener(this);
          btn_exit.setActionCommand("Exit");
 		 
-		 add(btn_registerCourses);
+		 add(btn_myAccount);
 		 add(btn_reviewCourses);
 		 add(btn_logout);
 		 add(btn_exit);
@@ -75,17 +78,42 @@ public class StudentMainMenu extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e)
 	{
 		String strActionCommand = e.getActionCommand();
-		if (strActionCommand.equals("RegisterCourses"))
+		if (strActionCommand.equals("MyAccount"))
 		{
+			
+			
+			try {
+				JComponent myStudentAccount;
+				myStudentAccount = new MyStudentAccount(this.studentId);
+				myStudentAccount.setOpaque(true);
+				myStudentAccount.setVisible(true);
+			} catch (IOException e1) {
+
+			} catch (URISyntaxException e1) {
+
+			}
 			
 	    }
 		else if (strActionCommand.equals("ReviewCourses"))
-		{
-
+		{	
+			try {
+				JComponent courseList;
+				courseList = new CourseList(this.studentId);
+				courseList.setOpaque(true);
+				courseList.setVisible(true);
+			} catch (IOException e1) {
+				
+			} catch (URISyntaxException e1) {
+				
+			}
+			
 		}
 		else if (strActionCommand.equals("Logout"))
 		{
-
+			this.frame.dispose();
+			JComponent loginBox = new LoginBox();
+			loginBox.setOpaque(true);
+			loginBox.setVisible(true);
 		}
 		else if (strActionCommand.equals("Exit"))
 		{

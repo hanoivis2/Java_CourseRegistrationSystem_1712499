@@ -14,10 +14,14 @@ import javax.swing.table.TableColumn;
 import DAO.CourseDAO;
 import DAO.RegistrationSessionDAO;
 import DAO.SemesterDAO;
+import DAO.StudentAccountDAO;
+import DAO.StudentRegisterCourseDAO;
 import Models.Course;
-import Models.MinistryAccount;
 import Models.RegistrationSession;
 import Models.Semester;
+import Models.StudentAccount;
+import Models.StudentRegisterCourse;
+import Models.StudentRegisterCourseID;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -39,12 +43,15 @@ public class RegisterCourseForm extends JPanel implements ActionListener {
 	JLabel lbl_title;
 	JButton btn_register;
 	JScrollPane scrollView;
-	JTable tbl_semesterList;
+	JTable tbl_courseList;
 	JFrame frame;
 	List<Course> courses;
 	List<RegistrationSession> sessions;
 	Semester currentSemester;
+	private boolean[] selectedCourses;
 	
+	private String studentId;
+	private Action action;
 	
 	public static void main(String[] args) throws IOException, URISyntaxException {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -52,16 +59,15 @@ public class RegisterCourseForm extends JPanel implements ActionListener {
 				
 			}
 		});
-		
-		JComponent mainMenu = new RegisterCourseForm();
-		mainMenu.setOpaque(true);
-		mainMenu.setVisible(true);
-		
+
 	}
 	
 	
-	public RegisterCourseForm() throws IOException, URISyntaxException {
+	public RegisterCourseForm(String studentId, Action action) throws IOException, URISyntaxException {
 		super(new BorderLayout());
+		
+		this.studentId = studentId;
+		this.action = action;
 		
 		courses = new ArrayList<Course>();
 		courses = CourseDAO.getCourseList();
@@ -113,11 +119,24 @@ public class RegisterCourseForm extends JPanel implements ActionListener {
         	courses.removeAll(courses);
         }
 		
+        selectedCourses = new boolean[courses.size()];
+        
+        for (int i = 0; i < selectedCourses.length; i++) {
+        	selectedCourses[i] = false;
+        }
 		
+        for (int i = 0; i < courses.size(); i++) {
+			List<Course> registredCourses = new ArrayList<Course>(StudentAccountDAO.getStudentAccountById(studentId).getCourses());
+			for (int j = 0; j < registredCourses.size(); j++) {
+				if (courses.get(i).getId().equals(registredCourses.get(j).getId())) {
+					selectedCourses[i] = true;
+				}
+			}
+		}
 
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		
-        frame = new JFrame("Semesters Management");
+        frame = new JFrame("Course Registration");
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setPreferredSize(new Dimension(dim.width - 100,dim.height - 100));
         frame.setLocation(50, 50);
@@ -153,7 +172,7 @@ public class RegisterCourseForm extends JPanel implements ActionListener {
 		
 		
 		
-		int[] columnsWidth = { 135, 135, 135, 135, 0, 150 };
+		int[] columnsWidth = { 100, 0, 70, 200, 80, 80, 60, 80, 80, 80 };
 		class CoursesListTableModel extends AbstractTableModel {
 
 			private static final long serialVersionUID = 1L;
@@ -170,7 +189,7 @@ public class RegisterCourseForm extends JPanel implements ActionListener {
 
 			@Override
 			public int getColumnCount() {
-				return 6;
+				return 10;
 			}
 
 			@Override
@@ -186,11 +205,20 @@ public class RegisterCourseForm extends JPanel implements ActionListener {
 				case 2:
 					return item.getSubject().getCredits();
 				case 3:
-					return item.getSemester().getId().getName();
+					return item.getTheoryTeacherName();
 				case 4:
-					return item.getSemester().getId().getSchoolYear();
+					return item.getRoomName();
+				case 5:
+					return item.getDayInWeek();
+				case 6:
+					return item.getShift();
+				case 7:
+					return item.getMaxAmountStudent();
+				case 8:
+					List<StudentAccount> students = new ArrayList<StudentAccount>(item.getStudents());
+					return students.size();
 				default:
-					return false;
+					return selectedCourses[rowIndex];
 				}
 			}
 			
@@ -204,9 +232,17 @@ public class RegisterCourseForm extends JPanel implements ActionListener {
 				case 2:
 					return "Credits";
 				case 3:
-					return "Semester's name";
+					return "Theory teacher's name";
 				case 4:
-					return "School year";
+					return "Room name";
+				case 5:
+					return "Day in week";
+				case 6:
+					return "Shift";
+				case 7:
+					return "Max slots";
+				case 8:
+					return "Registered";
 				default:
 					return "Register";
 				}
@@ -215,26 +251,26 @@ public class RegisterCourseForm extends JPanel implements ActionListener {
 		
 
 		
-		tbl_semesterList = new JTable();		
-		tbl_semesterList.setModel(new CoursesListTableModel());
-		tbl_semesterList.setRowSelectionAllowed(true);
-		tbl_semesterList.setRowHeight(30);
-		tbl_semesterList.setBackground(Color.DARK_GRAY);
-		tbl_semesterList.getTableHeader().setPreferredSize(new Dimension(0, 30));
-		((DefaultTableCellRenderer)tbl_semesterList.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
+		tbl_courseList = new JTable();		
+		tbl_courseList.setModel(new CoursesListTableModel());
+		tbl_courseList.setRowSelectionAllowed(true);
+		tbl_courseList.setRowHeight(30);
+		tbl_courseList.setBackground(Color.DARK_GRAY);
+		tbl_courseList.getTableHeader().setPreferredSize(new Dimension(0, 30));
+		((DefaultTableCellRenderer)tbl_courseList.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
 		
 		int i = 0;
 		for (int width : columnsWidth) {
-		    TableColumn column = tbl_semesterList.getColumnModel().getColumn(i++);
+		    TableColumn column = tbl_courseList.getColumnModel().getColumn(i++);
 		    
 		    column.setMinWidth(20);
 		    column.setMaxWidth(width);
-		    if (i == 5) {
+		    if (i == 2) {
 		    	column.setMaxWidth(Integer.MAX_VALUE);
 		    }
 		    column.setPreferredWidth(width);
 		    
-		    if (i == 6) {
+		    if (i == 10) {
 		    	Action actionSetCurrentSemester = new AbstractAction()
 				{
 					private static final long serialVersionUID = 1L;
@@ -242,17 +278,62 @@ public class RegisterCourseForm extends JPanel implements ActionListener {
 					public void actionPerformed(ActionEvent e)
 				    {
 						
+						String[] commandTokens = e.getActionCommand().split("-");
+				        String command = commandTokens[0];
+				        boolean value = Boolean.parseBoolean(commandTokens[1]);
+				        int row = Integer.parseInt(commandTokens[2]);
+				        
+				        System.out.println(command + "- " + value + " - " + row);
+				        
+				        if (value == true) {
+				        	selectedCourses[row] = false;
+				        }
+				        else {
+				        	int selectedCoursesCount = 0;
+				        	for (int i = 0; i < selectedCourses.length; i++) {
+				        		if (selectedCourses[i] == true) {
+				        			selectedCoursesCount++;
+				        			
+				        			if (i != row) {
+				        				Course item = courses.get(i);
+				        				Course selectedItem = courses.get(row);
+				        				
+				        				if (item.getDayInWeek().equals(selectedItem.getDayInWeek())
+				        						&& item.getShift() == selectedItem.getShift()) {
+				        					showMessageDialog(null, "You can not register 2 courses at same time!");
+				        					return;
+				        				}
+				        			}
+				        			
+				        		}
+				        	}
+				        	
+				        	if (selectedCoursesCount >= 8) {
+				        		showMessageDialog(null, "You can only register 8 courses at maximum!");
+				        		return;
+				        	}
+				        	else {
+				        		selectedCourses[row] = true;
+				        	}
+				     
+				        }
+				        
+				        tbl_courseList.revalidate();
+			        	tbl_courseList.repaint();
+			        	
+			        	revalidate();
+			        	repaint();
 				        
 				    }
 				};
 		    	
-				tbl_semesterList.getColumnModel().getColumn(i-1).setCellRenderer(new ActionRegisterCourseCellRenderer(tbl_semesterList, 
+				tbl_courseList.getColumnModel().getColumn(i-1).setCellRenderer(new ActionRegisterCourseCellRenderer(tbl_courseList, 
 						actionSetCurrentSemester));
-				tbl_semesterList.getColumnModel().getColumn(i-1).setCellEditor(new ActionRegisterCourseCellRenderer(tbl_semesterList, 
+				tbl_courseList.getColumnModel().getColumn(i-1).setCellEditor(new ActionRegisterCourseCellRenderer(tbl_courseList, 
 						actionSetCurrentSemester));
 		    }
 		    else {
-		    	tbl_semesterList.getColumnModel().getColumn(i-1).setCellRenderer(new RegisterCourseRenderer());
+		    	tbl_courseList.getColumnModel().getColumn(i-1).setCellRenderer(new RegisterCourseRenderer());
 		    }
 		    
 		    
@@ -260,7 +341,7 @@ public class RegisterCourseForm extends JPanel implements ActionListener {
 		
 		
 		
-		scrollView = new JScrollPane(tbl_semesterList);
+		scrollView = new JScrollPane(tbl_courseList);
 
 		
 		
@@ -313,8 +394,56 @@ public class RegisterCourseForm extends JPanel implements ActionListener {
 		
 		String strActionCommand = e.getActionCommand();
 		if (strActionCommand.equals("Register"))
-		{
+		{				 
+			List< StudentRegisterCourse> allRegisters = StudentRegisterCourseDAO.getAllRegister();
+			for (int i = 0; i < allRegisters.size(); i++) {
+				if (allRegisters.get(i).getId().getStudentId().equals(this.studentId)) {
+					
+					Semester currentSemester = new Semester();
+					
+					for (Semester item:SemesterDAO.getSemesterList()) {
+						if (item.getIsCurrentSemester() == 1) {
+							currentSemester = item;
+							break;
+						}
+					}
+					
+					if (currentSemester.getId().getName().equals(allRegisters.get(i).getId().getSemesterName())
+							&& currentSemester.getId().getSchoolYear().equals(allRegisters.get(i).getId().getSemesterSchoolYear())) {
+						StudentRegisterCourseDAO.deleteRegister(allRegisters.get(i));
+					}
+					
+				}
+			}
 			
+			for (int i = 0; i < this.selectedCourses.length; i++) {
+				if (this.selectedCourses[i] == true) {
+					
+					StudentRegisterCourse registerInfo = new StudentRegisterCourse();
+					
+					StudentRegisterCourseID id = new StudentRegisterCourseID();
+					id.setStudentId(this.studentId);
+					id.setSubjectId(courses.get(i).getSubject().getId());
+					id.setSubjectName(courses.get(i).getSubject().getName());
+					id.setSubjectCredits(courses.get(i).getSubject().getCredits());
+					id.setSemesterName(courses.get(i).getSemester().getId().getName());
+					id.setSemesterSchoolYear(courses.get(i).getSemester().getId().getSchoolYear());
+					
+					SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+					String createDate = dateFormat.format(new Date());
+					
+					registerInfo.setId(id);
+					registerInfo.setCreateDate(createDate);
+					
+					StudentRegisterCourseDAO.addRegister(registerInfo);
+					
+				}
+			}
+			
+			ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "refresh");
+			action.actionPerformed(event);
+			this.frame.dispose();
+			showMessageDialog(null, "Register successfully!");
 	    }
 
 	}

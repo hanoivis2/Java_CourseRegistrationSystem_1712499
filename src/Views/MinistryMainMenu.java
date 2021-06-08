@@ -27,6 +27,8 @@ public class MinistryMainMenu extends JPanel implements ActionListener {
 	
 	JFrame frame;
 	
+	private String ministryId;
+	
 	
 	public final static boolean RIGHT_TO_LEFT = false;
 	
@@ -37,13 +39,12 @@ public class MinistryMainMenu extends JPanel implements ActionListener {
 			}
 		});
 
-		JComponent mainMenu = new MinistryMainMenu();
-		mainMenu.setOpaque(true);
-		mainMenu.setVisible(true);
 	}
 	
-	public MinistryMainMenu() {
+	public MinistryMainMenu(String ministryId) {
 		 super(new GridLayout(3,3));
+		 
+		 this.ministryId = ministryId;
 		 
 		 JFrame.setDefaultLookAndFeelDecorated(true);
          frame = new JFrame("Ministry Main Menu");
@@ -188,10 +189,24 @@ public class MinistryMainMenu extends JPanel implements ActionListener {
 		else if (strActionCommand.equals("MyAccount"))
 		{
 			
+			try {
+				JComponent myMinistryAccount;
+				myMinistryAccount = new MyMinistryAccount(this.ministryId);
+				myMinistryAccount.setOpaque(true);
+				myMinistryAccount.setVisible(true);
+			} catch (IOException e1) {
+				
+			} catch (URISyntaxException e1) {
+				
+			}
+			
 	    }
 		else if (strActionCommand.equals("Logout"))
 		{
-			
+			this.frame.dispose();
+			JComponent loginBox = new LoginBox();
+			loginBox.setOpaque(true);
+			loginBox.setVisible(true);
 	    }
 		else if (strActionCommand.equals("Exit"))
 		{

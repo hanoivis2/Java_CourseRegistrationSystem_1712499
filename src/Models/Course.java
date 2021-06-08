@@ -123,6 +123,21 @@ public class Course implements Serializable {
 		}
 	};
 
+	public static Comparator<Course> courseSemesterAscendingComparator = new Comparator<Course>() {
+
+		public int compare(Course s1, Course s2) {
+		   String semesterSchoolYear1 = s1.getSemester().getId().getSchoolYear();
+		   String semesterSchoolYear2 = s2.getSemester().getId().getSchoolYear();
+		   
+		   if (semesterSchoolYear1.equals(semesterSchoolYear2)) {
+			   return s1.getSemester().getId().getName().compareTo(s2.getSemester().getId().getName());
+		   }
+		   else {
+			   return semesterSchoolYear1.compareTo(semesterSchoolYear2);
+		   }
 	
+		   
+		}
+	};
 
 }

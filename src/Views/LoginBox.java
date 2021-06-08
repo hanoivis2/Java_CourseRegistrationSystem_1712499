@@ -1,5 +1,7 @@
 package Views;
 
+import static javax.swing.JOptionPane.showMessageDialog;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -17,6 +19,11 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
+
+import DAO.MinistryAccountDAO;
+import DAO.StudentAccountDAO;
+import Models.MinistryAccount;
+import Models.StudentAccount;
 
 
 public class LoginBox extends JPanel implements ActionListener {
@@ -114,12 +121,56 @@ public class LoginBox extends JPanel implements ActionListener {
         frame.setVisible(true);
 	}
 	
-	
+	@SuppressWarnings("deprecation")
 	public void actionPerformed(ActionEvent e)
 	{
-//		String strActionCommand = e.getActionCommand();
-//		if (strActionCommand.equals("Login")) {
-//		}
+		String strActionCommand = e.getActionCommand();
+		if (strActionCommand.equals("Login")) {
+			
+			String username = txt_username.getText();
+			String password = txt_password.getText();
+			
+			if (username.length() < 2 || password.isEmpty()) {
+				showMessageDialog(null, "Username or password is not valid!");
+			}
+			else {
+				String firstTwoChars = username.substring(0, 2);
+				
+				if (firstTwoChars.equals("GV")) {
+					if (MinistryAccountDAO.getMinistryAccountById(username) == null) {
+						showMessageDialog(null, "Username or password is incorrect!");
+					}
+					else {
+						MinistryAccount account = MinistryAccountDAO.getMinistryAccountById(username);
+						if (account.getPassword().equals(password)) {
+							JComponent ministryMainMenu = new MinistryMainMenu(username);
+							ministryMainMenu.setOpaque(true);
+							ministryMainMenu.setVisible(true);
+						}
+						else {
+							showMessageDialog(null, "Username or password is incorrect!");
+						}
+					}
+				}
+				else {
+					if (StudentAccountDAO.getStudentAccountById(username) == null) {
+						showMessageDialog(null, "Username or password is incorrect!");
+					}
+					else {
+						StudentAccount account = StudentAccountDAO.getStudentAccountById(username);
+						if (account.getPassword().equals(password)) {
+							JComponent studentMainMenu = new StudentMainMenu(username);
+							studentMainMenu.setOpaque(true);
+							studentMainMenu.setVisible(true);
+						}
+						else {
+							showMessageDialog(null, "Username or password is incorrect!");
+						}
+					}
+				}
+			}
+			
+		}
 
 	}
 }

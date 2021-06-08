@@ -1,6 +1,7 @@
 package DAO;
 
 import java.util.List;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -12,7 +13,6 @@ import Models.StudentRegisterCourse;
 @SuppressWarnings("deprecation")
 public class StudentRegisterCourseDAO {
 
-	@SuppressWarnings("unchecked")
 	public static StudentRegisterCourse getRegisterById(StudentRegisterCourseID registerId) {
 		StudentRegisterCourse result = null;
 		
@@ -29,6 +29,32 @@ public class StudentRegisterCourseDAO {
 		finally { 
 			session.close();
 		}
+		
+		return result;
+	}
+	
+	@SuppressWarnings({ "unchecked" })
+	public static List<StudentRegisterCourse> getAllRegister() {
+		List<StudentRegisterCourse> result = null;
+		
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		
+		try {
+			String hql = "SELECT s FROM StudentRegisterCourse s"; 
+			@SuppressWarnings("rawtypes")
+			Query query = session.createQuery(hql);
+			result = query.list();
+		} 
+		
+		catch (HibernateException ex) { 
+			
+		} 
+		
+		finally { 
+			session.close();
+		}
+		
+		
 		
 		return result;
 	}
@@ -61,7 +87,7 @@ public class StudentRegisterCourseDAO {
 	}
 	
 	
-	public static int deleteSemester(StudentRegisterCourse registerToDelete) {
+	public static int deleteRegister(StudentRegisterCourse registerToDelete) {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		

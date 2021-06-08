@@ -11,10 +11,13 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import DAO.RegistrationSessionDAO;
+import DAO.SemesterDAO;
 import DAO.StudentAccountDAO;
 import DAO.StudentRegisterCourseDAO;
 import Models.Course;
-import Models.StudentAccount;
+import Models.RegistrationSession;
+import Models.Semester;
 import Models.StudentRegisterCourse;
 import Models.StudentRegisterCourseID;
 
@@ -24,7 +27,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -42,6 +48,9 @@ public class CourseList extends JPanel implements ActionListener {
 	List<Course> courses;
 	List<Course> coursesFilter;
 	
+	List<RegistrationSession> sessions = new ArrayList<RegistrationSession>();
+    Semester currentSemester = new Semester();
+	
 	private String studentId;
 	
 	
@@ -51,19 +60,17 @@ public class CourseList extends JPanel implements ActionListener {
 				
 			}
 		});
-		
-		JComponent mainMenu = new CourseList();
-		mainMenu.setOpaque(true);
-		mainMenu.setVisible(true);
+	
 	}
 	
 	
-	public CourseList() throws IOException, URISyntaxException {
+	public CourseList(String studentId) throws IOException, URISyntaxException {
 		super(new BorderLayout());
 		
-		studentId = "1712499";
+		this.studentId = studentId;
 		
 		courses = new ArrayList<Course>(StudentAccountDAO.getStudentAccountById(studentId).getCourses());
+		courses.sort(Course.courseSemesterAscendingComparator);
 		coursesFilter = new ArrayList<Course>();
 	
 		coursesFilter.removeAll(coursesFilter);
@@ -104,10 +111,10 @@ public class CourseList extends JPanel implements ActionListener {
 		lbl_title.setHorizontalAlignment(JLabel.CENTER);
 		lbl_title.setFont(new Font("Helvetica", Font.BOLD, 16));
 		
-		btn_registerCourse = new JButton("Create new ministry account");
+		btn_registerCourse = new JButton("Register course");
 		btn_registerCourse.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btn_registerCourse.addActionListener(this);
-		btn_registerCourse.setActionCommand("Register Course");
+		btn_registerCourse.setActionCommand("RegisterCourse");
 		
 		
 		lbl_search = new JLabel("Enter ministry's name to search: ");       
@@ -203,7 +210,7 @@ public class CourseList extends JPanel implements ActionListener {
 			}
 		});
 		
-		int[] columnsWidth = { 100, 300, 100, 100, 100, 100, 50 };
+		int[] columnsWidth = {  100, 0, 70, 200, 80, 80, 60, 100, 50 };
 		class CoursesListTableModel extends AbstractTableModel {
 
 			private static final long serialVersionUID = 1L;
@@ -220,7 +227,7 @@ public class CourseList extends JPanel implements ActionListener {
 
 			@Override
 			public int getColumnCount() {
-				return 7;
+				return 9;
 			}
 
 			@Override
@@ -236,10 +243,14 @@ public class CourseList extends JPanel implements ActionListener {
 				case 2:
 					return item.getSubject().getCredits();
 				case 3:
-					return item.getSemester().getId().getName();
+					return item.getTheoryTeacherName();
 				case 4:
-					return item.getSemester().getId().getSchoolYear();
+					return item.getRoomName();
 				case 5:
+					return item.getDayInWeek();
+				case 6:
+					return item.getShift();
+				case 7:
 					
 					StudentRegisterCourseID registerID = new StudentRegisterCourseID();
 					registerID.setSemesterName(item.getSemester().getId().getName());
@@ -267,10 +278,14 @@ public class CourseList extends JPanel implements ActionListener {
 				case 2:
 					return "Credits";
 				case 3:
-					return "Semester's name";
+					return "Theory teacher's name";
 				case 4:
-					return "School year";
+					return "Room name";
 				case 5:
+					return "Day in week";
+				case 6:
+					return "Shift";
+				case 7:
 					return "Create date";
 				default:
 					return "";
@@ -298,7 +313,7 @@ public class CourseList extends JPanel implements ActionListener {
 		    }
 		    column.setPreferredWidth(width);
 		    
-		    if (i == 7) {
+		    if (i == 9) {
 		    	
 		    	Action actionCourseList = new AbstractAction()
 				{
@@ -307,22 +322,84 @@ public class CourseList extends JPanel implements ActionListener {
 					public void actionPerformed(ActionEvent e)
 				    {
 				        String[] commandTokens = e.getActionCommand().split("-");
-				        String command = commandTokens[0];
 				        int row = Integer.parseInt(commandTokens[1]);
 				        
-				        System.out.println(e.getActionCommand());
+						int input = JOptionPane.showConfirmDialog(null, "Are you sure to delete this course?");
+						// 0=yes, 1=no, 2=cancel
+						
+						if(input == 0) {
+							for (Semester item:SemesterDAO.getSemesterList()) {
+								if (item.getIsCurrentSemester() == 1) {
+									currentSemester = item;
+									break;
+								}
+							}
+					        
+					        
+							sessions = RegistrationSessionDAO.getRegistrationSessionList();
+						
+							Predicate<RegistrationSession> predicateString2 = s -> {
+								return !(s.getSemester().getId().equals(currentSemester.getId()));
+					        };
+					        sessions.removeIf(predicateString2);
+							
+					        int flag = 0;
+					        for (RegistrationSession item:sessions)
+					        {
+					        	
+					        	Date sessionStartDate;
+					    		Date sessionEndDate;
+					    		Date today = new Date();
+					    		
+					    		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+					    		try {
+					    			sessionStartDate = dateFormat.parse(item.getId().getStartDate());
+					    			sessionEndDate = dateFormat.parse(item.getId().getEndDate());
+					    			
+					    			if (today.after(sessionStartDate) && today.before(sessionEndDate)
+					    				&& courses.get(row).getSemester().getId().equals(currentSemester.getId())) {
+					    				flag = 1;
+					    				break;
+					    			}
+					    			
+					    		} catch (ParseException e1) {
+					    			
+					    			e1.printStackTrace();
+					    		}
+					    		
+					        }
+					        
+					        
+					        
+					        if (flag == 0) {
+					        	showMessageDialog(null, "This registration session has ended!");
+					        }
+					        else {
+					        	StudentRegisterCourseID id = new StudentRegisterCourseID();
+					        	id.setSemesterName(courses.get(row).getSemester().getId().getName());
+					        	id.setSemesterSchoolYear(courses.get(row).getSemester().getId().getSchoolYear());
+					        	id.setStudentId(studentId);
+					        	id.setSubjectCredits(courses.get(row).getSubject().getCredits());
+					        	id.setSubjectId(courses.get(row).getSubject().getId());
+					        	id.setSubjectName(courses.get(row).getSubject().getName());
+					        	
+					        	StudentRegisterCourseDAO.deleteRegister(StudentRegisterCourseDAO.getRegisterById(id));
+					        	
+					        	courses = new ArrayList<Course>(StudentAccountDAO.getStudentAccountById(studentId).getCourses());
+								courses.sort(Course.courseSemesterAscendingComparator);
+								coursesFilter.removeAll(coursesFilter);
+								coursesFilter.addAll(courses);
+								
+								tbl_coursesList.revalidate();
+								tbl_coursesList.repaint();
+						        
+								revalidate();
+						        repaint();
+					        	
+					        	showMessageDialog(null, "Delete register successfully!");
+					        }
+						}
 				        
-				        if(command.equals("edit")) {
-				        	
-							
-							
-				        }
-				        else if(command.equals("delete")) {
-				        	
-				        }
-				        else {
-				        	
-				        }
 				        
 				    }
 				};
@@ -402,9 +479,38 @@ public class CourseList extends JPanel implements ActionListener {
 	{
 		
 		String strActionCommand = e.getActionCommand();
-		if (strActionCommand.equals("Create"))
+		if (strActionCommand.equals("RegisterCourse"))
 		{
-			
+			try {
+				
+				Action actionRefresh = new AbstractAction()
+				{
+					private static final long serialVersionUID = 1L;
+
+					public void actionPerformed(ActionEvent e)
+				    {
+				        
+						courses = new ArrayList<Course>(StudentAccountDAO.getStudentAccountById(studentId).getCourses());
+						courses.sort(Course.courseSemesterAscendingComparator);
+						coursesFilter.removeAll(coursesFilter);
+						coursesFilter.addAll(courses);
+						
+						tbl_coursesList.revalidate();
+						tbl_coursesList.repaint();
+				        
+						revalidate();
+				        repaint();
+				    }
+				};
+				
+				JComponent registerCourseForm;
+				registerCourseForm = new RegisterCourseForm(this.studentId, actionRefresh);
+				registerCourseForm.setOpaque(true);
+				registerCourseForm.setVisible(true);
+				
+			} catch (IOException | URISyntaxException e1) {
+				showMessageDialog(null, "Error!");
+			}
 	    }
 
 	}
@@ -465,40 +571,12 @@ class CourseListActionCellRenderer extends AbstractCellEditor implements  TableC
 		btn_delete.setIcon(new ImageIcon(scaleImage));
 		btn_delete.addActionListener(this);
 		btn_delete.setMnemonic(KeyEvent.VK_D);
-		
-		JButton btn_edit = new JButton();
-		Border emptyBorder2 = BorderFactory.createEmptyBorder();
-		btn_edit.setBorder(emptyBorder2);
-		btn_edit.setPreferredSize(new Dimension(30, 30));
-		btn_edit.setBackground(Color.white);
-		btn_edit.setForeground(Color.white);
-		  
-		ImageIcon icon2 = new ImageIcon("img/edit.png");
-		Image scaleImage2 = icon2.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
-		btn_edit.setIcon(new ImageIcon(scaleImage2));
-		btn_edit.addActionListener(this);
-		btn_edit.setMnemonic(KeyEvent.VK_D);
-		
-		JButton btn_passwordReset = new JButton();
-		Border emptyBorder3 = BorderFactory.createEmptyBorder();
-		btn_passwordReset.setBorder(emptyBorder3);
-		btn_passwordReset.setPreferredSize(new Dimension(30, 30));
-		btn_passwordReset.setBackground(Color.white);
-		btn_passwordReset.setForeground(Color.white);
-		  
-		ImageIcon icon3 = new ImageIcon("img/passwordReset.png");
-		Image scaleImage3 = icon3.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
-		btn_passwordReset.setIcon(new ImageIcon(scaleImage3));
-		btn_passwordReset.addActionListener(this);
-		btn_passwordReset.setMnemonic(KeyEvent.VK_D);
 
 		
 		JPanel view_button = new JPanel();
 		view_button.setLayout(new GridLayout(1,3));
 		view_button.setBackground(Color.white);
-		
-		view_button.add(btn_edit);
-		view_button.add(btn_passwordReset);
+
 		view_button.add(btn_delete);
 	
 		return view_button;
@@ -520,42 +598,12 @@ class CourseListActionCellRenderer extends AbstractCellEditor implements  TableC
 		btn_delete.setIcon(new ImageIcon(scaleImage));
 		btn_delete.addActionListener(this);
 		btn_delete.setMnemonic(KeyEvent.VK_D);
-		
-		JButton btn_edit = new JButton();
-		Border emptyBorder2 = BorderFactory.createEmptyBorder();
-		btn_edit.setBorder(emptyBorder2);
-		btn_edit.setPreferredSize(new Dimension(30, 30));
-		btn_edit.setBackground(Color.white);
-		btn_edit.setForeground(Color.white);
-		btn_edit.setActionCommand("edit");
-		  
-		ImageIcon icon2 = new ImageIcon("img/edit.png");
-		Image scaleImage2 = icon2.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
-		btn_edit.setIcon(new ImageIcon(scaleImage2));
-		btn_edit.addActionListener(this);
-		btn_edit.setMnemonic(KeyEvent.VK_D);
-		
-		JButton btn_passwordReset = new JButton();
-		Border emptyBorder3 = BorderFactory.createEmptyBorder();
-		btn_passwordReset.setBorder(emptyBorder3);
-		btn_passwordReset.setPreferredSize(new Dimension(30, 30));
-		btn_passwordReset.setBackground(Color.white);
-		btn_passwordReset.setForeground(Color.white);
-		btn_passwordReset.setActionCommand("passwordReset");
-		  
-		ImageIcon icon3 = new ImageIcon("img/passwordReset.png");
-		Image scaleImage3 = icon3.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
-		btn_passwordReset.setIcon(new ImageIcon(scaleImage3));
-		btn_passwordReset.addActionListener(this);
-		btn_passwordReset.setMnemonic(KeyEvent.VK_D);
 
 		
 		JPanel view_button = new JPanel();
 		view_button.setLayout(new GridLayout(1,3));
 		view_button.setBackground(Color.white);
 		
-		view_button.add(btn_edit);
-		view_button.add(btn_passwordReset);
 		view_button.add(btn_delete);
 		
 	

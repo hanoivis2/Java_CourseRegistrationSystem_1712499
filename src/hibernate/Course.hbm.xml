@@ -49,7 +49,7 @@
 		<column length="5" name="semester_school_year" not-null="true"/> 
 	  </many-to-one>
 	  
-	  <set inverse="true" name="students" table="student_register_course"> 
+	  <set inverse="true" name="students" table="student_register_course" fetch="join" lazy="false"> 
       	<key>
 			<column length="10" name="subject_id" not-null="true"/> 
 			<column length="5" name="semester_name" not-null="true"/> 
