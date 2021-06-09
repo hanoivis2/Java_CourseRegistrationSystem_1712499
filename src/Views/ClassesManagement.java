@@ -12,7 +12,11 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import Models.Class;
+import Models.StudentAccount;
+import Models.StudentRegisterCourse;
 import DAO.ClassDAO;
+import DAO.StudentAccountDAO;
+import DAO.StudentRegisterCourseDAO;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -232,10 +236,25 @@ public class ClassesManagement extends JPanel implements ActionListener {
 				        else if(command.equals("delete")) {
 				        	
 				        	Class classToDelete = classesFilter.get(row);
-							int input = JOptionPane.showConfirmDialog(null, "Are you sure to delete " + classToDelete.getId() +"?");
+							int input = JOptionPane.showConfirmDialog(null, "Are you sure to delete " + classToDelete.getId() +"? ("
+									+ "also delete its students and their reigster course information)");
 							// 0=yes, 1=no, 2=cancel
 							
 							if(input == 0) {
+								
+								List<StudentAccount> studentsInClass = StudentAccountDAO.getStudentAccountByClassIdList(classToDelete.getId());
+								
+								for(StudentAccount student:studentsInClass) {
+									List<StudentRegisterCourse> registerInfos = StudentRegisterCourseDAO.getAllRegister();
+									for(StudentRegisterCourse info:registerInfos) {
+										if(info.getId().getStudentId().equals(student.getId())) {
+											StudentRegisterCourseDAO.deleteRegister(info);
+										}
+									}
+									StudentAccountDAO.deleteStudentAccount(student);
+								}
+								
+								
 								int status = ClassDAO.deleteClass(classToDelete);
 								if (status == -1) {
 									showMessageDialog(null, "This class is not existed!");

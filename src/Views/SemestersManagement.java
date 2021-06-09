@@ -11,8 +11,14 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import DAO.CourseDAO;
+import DAO.RegistrationSessionDAO;
 import DAO.SemesterDAO;
+import DAO.StudentRegisterCourseDAO;
+import Models.Course;
+import Models.RegistrationSession;
 import Models.Semester;
+import Models.StudentRegisterCourse;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -22,6 +28,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class SemestersManagement extends JPanel implements ActionListener {
 	
@@ -239,10 +246,47 @@ public class SemestersManagement extends JPanel implements ActionListener {
 								showMessageDialog(null, "Please set another semester as current semester before deleting!");
 							}
 				        	else {
-				        		int input = JOptionPane.showConfirmDialog(null, "Are you sure to delete " + semesterToDelete.getId() +"?");
+				        		int input = JOptionPane.showConfirmDialog(null, "Are you sure to delete " + semesterToDelete.getId() +"? ("
+				        				+ "also delete its register course information, courses and registration sessions)");
 								// 0=yes, 1=no, 2=cancel
 								
 								if(input == 0) {
+									
+									List<StudentRegisterCourse> registerInfos = StudentRegisterCourseDAO.getAllRegister();
+									Predicate<StudentRegisterCourse> predicateString = s -> {
+										boolean firstCon = !s.getId().getSemesterName().equals(semesterToDelete.getId().getName());
+										boolean secondCon = !s.getId().getSemesterSchoolYear().equals(semesterToDelete.getId().getSchoolYear());
+										return firstCon&&secondCon;
+							        };
+							        registerInfos.removeIf(predicateString);
+							        for (StudentRegisterCourse info:registerInfos) {
+							        	StudentRegisterCourseDAO.deleteRegister(info);
+							        }
+							        
+							        List<Course> coursesInSemester = CourseDAO.getCourseList();
+							        Predicate<Course> predicateString2 = s -> {
+										boolean firstCon = !s.getId().getSemesterName().equals(semesterToDelete.getId().getName());
+										boolean secondCon = !s.getId().getSemesterSchoolYear().equals(semesterToDelete.getId().getSchoolYear());
+										return firstCon&&secondCon;
+							        };
+							        coursesInSemester.removeIf(predicateString2);
+							        for (Course course:coursesInSemester) {
+							        	CourseDAO.deleteCourse(course);
+							        }
+							        
+							     
+							        List<RegistrationSession> sessions = RegistrationSessionDAO.getRegistrationSessionList();
+							        Predicate<RegistrationSession> predicateString3 = s -> {
+										boolean firstCon = !s.getSemesterName().equals(semesterToDelete.getId().getName());
+										boolean secondCon = !s.getSemesterSchoolYear().equals(semesterToDelete.getId().getSchoolYear());
+										return firstCon&&secondCon;
+							        };
+							        sessions.removeIf(predicateString3);
+							        for (RegistrationSession session:sessions) {
+							        	RegistrationSessionDAO.deleteRegistrationSession(session);
+							        }
+									
+									
 									int status = SemesterDAO.deleteSemester(semesterToDelete);
 									if (status == -1) {
 										showMessageDialog(null, "This class is not existed!");

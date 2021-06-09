@@ -12,7 +12,11 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import DAO.CourseDAO;
+import DAO.StudentRegisterCourseDAO;
 import DAO.SubjectDAO;
+import Models.Course;
+import Models.StudentRegisterCourse;
 import Models.Subject;
 
 import static javax.swing.JOptionPane.showMessageDialog;
@@ -329,10 +333,30 @@ public class SubjectsManagement extends JPanel implements ActionListener {
 				        else if(command.equals("delete")) {
 				        	
 				        	Subject subjectToDelete = subjectsFilter.get(row);
-							int input = JOptionPane.showConfirmDialog(null, "Are you sure to delete " + subjectToDelete.getName() +"?");
+							int input = JOptionPane.showConfirmDialog(null, "Are you sure to delete " + subjectToDelete.getName() +"? ("
+									+ "also delete its register course information and courses)");
 							// 0=yes, 1=no, 2=cancel
 							
 							if(input == 0) {
+								
+								List<StudentRegisterCourse> registerInfos = StudentRegisterCourseDAO.getAllRegister();
+								Predicate<StudentRegisterCourse> predicateString = s -> {
+									return !s.getId().getSubjectId().equals(subjectToDelete.getId());
+						        };
+						        registerInfos.removeIf(predicateString);
+						        for (StudentRegisterCourse info:registerInfos) {
+						        	StudentRegisterCourseDAO.deleteRegister(info);
+						        }
+						        
+						        List<Course> coursesInSemester = CourseDAO.getCourseList();
+						        Predicate<Course> predicateString2 = s -> {
+						        	return !s.getId().getSubjectId().equals(subjectToDelete.getId());
+						        };
+						        coursesInSemester.removeIf(predicateString2);
+						        for (Course course:coursesInSemester) {
+						        	CourseDAO.deleteCourse(course);
+						        }
+								
 								int status = SubjectDAO.deleteSubject(subjectToDelete);
 								if (status == -1) {
 									showMessageDialog(null, "This subject is not existed!");

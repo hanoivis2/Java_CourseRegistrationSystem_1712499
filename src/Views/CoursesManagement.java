@@ -12,7 +12,9 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import DAO.CourseDAO;
+import DAO.StudentRegisterCourseDAO;
 import Models.Course;
+import Models.StudentRegisterCourse;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -301,10 +303,23 @@ public class CoursesManagement extends JPanel implements ActionListener {
 				        System.out.println(e.getActionCommand());
 				        
 				        Course courseToDelete = coursesFilter.get(row);
-						int input = JOptionPane.showConfirmDialog(null, "Are you sure to delete " + courseToDelete.getSubject().getName() +"?");
+						int input = JOptionPane.showConfirmDialog(null, "Are you sure to delete " + courseToDelete.getSubject().getName() +"?("
+								+ "also delete its register course information)");
 						// 0=yes, 1=no, 2=cancel
 						
 						if(input == 0) {
+							
+							List<StudentRegisterCourse> registerInfos = StudentRegisterCourseDAO.getAllRegister();
+							Predicate<StudentRegisterCourse> predicateString = s -> {
+								boolean firstCon = !s.getId().getSemesterName().equals(courseToDelete.getSemester().getId().getName());
+								boolean secondCon = !s.getId().getSemesterSchoolYear().equals(courseToDelete.getSemester().getId().getSchoolYear());
+								return firstCon&&secondCon;
+					        };
+					        registerInfos.removeIf(predicateString);
+					        for (StudentRegisterCourse info:registerInfos) {
+					        	StudentRegisterCourseDAO.deleteRegister(info);
+					        }
+							
 							int status = CourseDAO.deleteCourse(courseToDelete);
 							if (status == -1) {
 								showMessageDialog(null, "This course is not existed!");
