@@ -30,6 +30,22 @@
 	    <key-property name = "semesterSchoolYear" type = "string">
 	      <column length="12" name = "semester_school_year"/>
 	    </key-property>
+	    
+	    <key-property name = "theoryTeacherName" type = "string">
+	      <column length="70" name = "theory_teacher_name"/>
+	    </key-property>
+	    
+	    <key-property name = "roomName" type = "string">
+	      <column length="10" name = "room_name"/>
+	    </key-property>
+	    
+	    <key-property name = "dayInWeek" type = "string">
+	      <column length="15" name = "day_in_week"/>
+	    </key-property>
+	    
+	    <key-property name = "shift" type = "short">
+	      <column name = "shift"/>
+	    </key-property>
 	  </composite-id> 
       
       <property name = "createDate" type = "string">
@@ -38,7 +54,5 @@
       
       
 	  
-
-      
    </class>
 </hibernate-mapping>

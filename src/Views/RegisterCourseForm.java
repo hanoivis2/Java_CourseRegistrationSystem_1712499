@@ -205,13 +205,13 @@ public class RegisterCourseForm extends JPanel implements ActionListener {
 				case 2:
 					return item.getSubject().getCredits();
 				case 3:
-					return item.getTheoryTeacherName();
+					return item.getId().getTheoryTeacherName();
 				case 4:
-					return item.getRoomName();
+					return item.getId().getRoomName();
 				case 5:
-					return item.getDayInWeek();
+					return item.getId().getDayInWeek();
 				case 6:
-					return item.getShift();
+					return item.getId().getShift();
 				case 7:
 					return item.getMaxAmountStudent();
 				case 8:
@@ -298,8 +298,8 @@ public class RegisterCourseForm extends JPanel implements ActionListener {
 				        				Course item = courses.get(i);
 				        				Course selectedItem = courses.get(row);
 				        				
-				        				if (item.getDayInWeek().equals(selectedItem.getDayInWeek())
-				        						&& item.getShift() == selectedItem.getShift()) {
+				        				if (item.getId().getDayInWeek().equals(selectedItem.getId().getDayInWeek())
+				        						&& item.getId().getShift() == selectedItem.getId().getShift()) {
 				        					showMessageDialog(null, "You can not register 2 courses at same time!");
 				        					return;
 				        				}
@@ -428,6 +428,10 @@ public class RegisterCourseForm extends JPanel implements ActionListener {
 					id.setSubjectCredits(courses.get(i).getSubject().getCredits());
 					id.setSemesterName(courses.get(i).getSemester().getId().getName());
 					id.setSemesterSchoolYear(courses.get(i).getSemester().getId().getSchoolYear());
+					id.setRoomName(courses.get(i).getId().getRoomName());
+					id.setShift(courses.get(i).getId().getShift());
+					id.setTheoryTeacherName(courses.get(i).getId().getTheoryTeacherName());
+					id.setDayInWeek(courses.get(i).getId().getDayInWeek());
 					
 					SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 					String createDate = dateFormat.format(new Date());

@@ -420,12 +420,12 @@ public class CreateCourseForm extends JPanel implements ActionListener {
 					courseId.setSubjectId(allSubjects.get(subjects.getSelectedIndex()).getId());
 					courseId.setSemesterName(allSemesters.get(this.semester.getSelectedIndex()).getId().getName());
 					courseId.setSemesterSchoolYear(allSemesters.get(this.semester.getSelectedIndex()).getId().getSchoolYear());
+					courseId.setRoomName(txt_roomName.getText());
+					courseId.setDayInWeek(String.valueOf(daysInWeekList.getSelectedItem()));
+					courseId.setShift(shift);
+					courseId.setTheoryTeacherName(txt_theoryTeacherName.getText());
 					
 					newCourse.setId(courseId);
-					newCourse.setTheoryTeacherName(txt_theoryTeacherName.getText());
-					newCourse.setRoomName(txt_roomName.getText());
-					newCourse.setDayInWeek(String.valueOf(daysInWeekList.getSelectedItem()));
-					newCourse.setShift(shift);
 					newCourse.setMaxAmountStudent(maxAmountStudents);
 					newCourse.setSubject(SubjectDAO.getSubjectById(courseId.getSubjectId()));
 					

@@ -243,13 +243,13 @@ public class CourseList extends JPanel implements ActionListener {
 				case 2:
 					return item.getSubject().getCredits();
 				case 3:
-					return item.getTheoryTeacherName();
+					return item.getId().getTheoryTeacherName();
 				case 4:
-					return item.getRoomName();
+					return item.getId().getRoomName();
 				case 5:
-					return item.getDayInWeek();
+					return item.getId().getDayInWeek();
 				case 6:
-					return item.getShift();
+					return item.getId().getShift();
 				case 7:
 					
 					StudentRegisterCourseID registerID = new StudentRegisterCourseID();
@@ -259,6 +259,10 @@ public class CourseList extends JPanel implements ActionListener {
 					registerID.setSubjectCredits(item.getSubject().getCredits());
 					registerID.setSubjectId(item.getSubject().getId());
 					registerID.setSubjectName(item.getSubject().getName());
+					registerID.setDayInWeek(item.getId().getDayInWeek());
+					registerID.setTheoryTeacherName(item.getId().getTheoryTeacherName());
+					registerID.setRoomName(item.getId().getRoomName());
+					registerID.setShift(item.getId().getShift());
 					
 					StudentRegisterCourse register = StudentRegisterCourseDAO.getRegisterById(registerID);
 					
@@ -382,6 +386,10 @@ public class CourseList extends JPanel implements ActionListener {
 					        	id.setSubjectCredits(courses.get(row).getSubject().getCredits());
 					        	id.setSubjectId(courses.get(row).getSubject().getId());
 					        	id.setSubjectName(courses.get(row).getSubject().getName());
+					        	id.setRoomName(courses.get(row).getId().getRoomName());
+					        	id.setTheoryTeacherName(courses.get(row).getId().getTheoryTeacherName());
+					        	id.setShift(courses.get(row).getId().getShift());
+					        	id.setDayInWeek(courses.get(row).getId().getDayInWeek());
 					        	
 					        	StudentRegisterCourseDAO.deleteRegister(StudentRegisterCourseDAO.getRegisterById(id));
 					        	

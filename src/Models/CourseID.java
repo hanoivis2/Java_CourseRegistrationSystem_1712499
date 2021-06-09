@@ -8,6 +8,10 @@ public class CourseID implements Serializable {
 	private String subjectId;
 	private String semesterName;
 	private String semesterSchoolYear;
+	private String theoryTeacherName;
+	private String roomName;
+	private String dayInWeek;
+	private short shift;
 	
 	public CourseID() {}
 
@@ -61,6 +65,38 @@ public class CourseID implements Serializable {
 		} else if (!subjectId.equals(other.subjectId))
 			return false;
 		return true;
+	}
+
+	public String getTheoryTeacherName() {
+		return theoryTeacherName;
+	}
+
+	public void setTheoryTeacherName(String theoryTeacherName) {
+		this.theoryTeacherName = theoryTeacherName;
+	}
+
+	public String getRoomName() {
+		return roomName;
+	}
+
+	public void setRoomName(String roomName) {
+		this.roomName = roomName;
+	}
+
+	public String getDayInWeek() {
+		return dayInWeek;
+	}
+
+	public void setDayInWeek(String dayInWeek) {
+		this.dayInWeek = dayInWeek;
+	}
+
+	public short getShift() {
+		return shift;
+	}
+
+	public void setShift(short shift) {
+		this.shift = shift;
 	}
 
 }

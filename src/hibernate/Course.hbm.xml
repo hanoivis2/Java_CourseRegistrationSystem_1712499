@@ -18,23 +18,25 @@
 	    <key-property name = "semesterSchoolYear" type = "string">
 	      <column length="12" name = "semester_school_year"/>
 	    </key-property>
+	    
+	    <key-property name = "theoryTeacherName" type = "string">
+      	  <column length="70" name = "theory_teacher_name"/>
+      	</key-property>
+      
+      	<key-property name = "roomName" type = "string">
+      	  <column length="10" name = "room_name"/>
+      	</key-property>
+      
+      	<key-property name = "dayInWeek" type = "string">
+      	  <column length="15" name = "day_in_week"/>
+      	</key-property>
+      
+      	<key-property name = "shift" type = "short">
+      	  <column name = "shift"/>
+      	</key-property>
 	  </composite-id> 
       
-      <property name = "theoryTeacherName" type = "string">
-      	<column length="70" name = "theory_teacher_name"/>
-      </property>
-      
-      <property name = "roomName" type = "string">
-      	<column length="10" name = "room_name"/>
-      </property>
-      
-      <property name = "dayInWeek" type = "string">
-      	<column length="15" name = "day_in_week"/>
-      </property>
-      
-      <property name = "shift" type = "short">
-      	<column name = "shift"/>
-      </property>
+   
       
       <property name = "maxAmountStudent" type = "short">
       	<column name = "maximum_amount"/>
@@ -54,6 +56,10 @@
 			<column length="10" name="subject_id" not-null="true"/> 
 			<column length="5" name="semester_name" not-null="true"/> 
 			<column length="12" name="semester_school_year" not-null="true"/> 
+			<column length="70" name="theory_teacher_name" not-null="true"/> 
+			<column length="10" name="room_name" not-null="true"/> 
+			<column length="15" name="day_in_week" not-null="true"/> 
+			<column name="shift" not-null="true"/> 
 		</key>
 		<many-to-many entity-name="Models.StudentAccount">
 			<column length="10" name="student_id" not-null="true"/>

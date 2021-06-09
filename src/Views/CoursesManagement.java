@@ -197,7 +197,7 @@ public class CoursesManagement extends JPanel implements ActionListener {
 			}
 		});
 		
-		int[] columnsWidth = { 150, 30, 70, 250, 90, 90, 50, 80, 50 };
+		int[] columnsWidth = { 150, 30, 70, 250, 90, 90, 50, 80, 80 };
 		class CoursesListTableModel extends AbstractTableModel {
 
 			private static final long serialVersionUID = 1L;
@@ -230,13 +230,13 @@ public class CoursesManagement extends JPanel implements ActionListener {
 				case 2:
 					return item.getSubject().getCredits();
 				case 3:
-					return item.getTheoryTeacherName();
+					return item.getId().getTheoryTeacherName();
 				case 4:
-					return item.getRoomName();
+					return item.getId().getRoomName();
 				case 5:
-					return item.getDayInWeek();
+					return item.getId().getDayInWeek();
 				case 6:
-					return item.getShift();
+					return item.getId().getShift();
 				case 7:
 					return item.getMaxAmountStudent();
 				default:
@@ -298,48 +298,65 @@ public class CoursesManagement extends JPanel implements ActionListener {
 					public void actionPerformed(ActionEvent e)
 				    {
 				        String[] commandTokens = e.getActionCommand().split("-");
+				        String command = commandTokens[0];
 				        int row = Integer.parseInt(commandTokens[1]);
 				        
 				        System.out.println(e.getActionCommand());
 				        
-				        Course courseToDelete = coursesFilter.get(row);
-						int input = JOptionPane.showConfirmDialog(null, "Are you sure to delete " + courseToDelete.getSubject().getName() +"?("
-								+ "also delete its register course information)");
-						// 0=yes, 1=no, 2=cancel
-						
-						if(input == 0) {
+				       if (command.equals("delete")) {
+				    	   Course courseToDelete = coursesFilter.get(row);
+							int input = JOptionPane.showConfirmDialog(null, "Are you sure to delete " + courseToDelete.getSubject().getName() +"?("
+									+ "also delete its register course information)");
+							// 0=yes, 1=no, 2=cancel
 							
-							List<StudentRegisterCourse> registerInfos = StudentRegisterCourseDAO.getAllRegister();
-							Predicate<StudentRegisterCourse> predicateString = s -> {
-								boolean firstCon = !s.getId().getSemesterName().equals(courseToDelete.getSemester().getId().getName());
-								boolean secondCon = !s.getId().getSemesterSchoolYear().equals(courseToDelete.getSemester().getId().getSchoolYear());
-								return firstCon&&secondCon;
-					        };
-					        registerInfos.removeIf(predicateString);
-					        for (StudentRegisterCourse info:registerInfos) {
-					        	StudentRegisterCourseDAO.deleteRegister(info);
-					        }
-							
-							int status = CourseDAO.deleteCourse(courseToDelete);
-							if (status == -1) {
-								showMessageDialog(null, "This course is not existed!");
+							if(input == 0) {
+								
+								List<StudentRegisterCourse> registerInfos = StudentRegisterCourseDAO.getAllRegister();
+								Predicate<StudentRegisterCourse> predicateString = s -> {
+									boolean firstCon = !s.getId().getSemesterName().equals(courseToDelete.getSemester().getId().getName());
+									boolean secondCon = !s.getId().getSemesterSchoolYear().equals(courseToDelete.getSemester().getId().getSchoolYear());
+									return firstCon&&secondCon;
+						        };
+						        registerInfos.removeIf(predicateString);
+						        for (StudentRegisterCourse info:registerInfos) {
+						        	StudentRegisterCourseDAO.deleteRegister(info);
+						        }
+								
+								int status = CourseDAO.deleteCourse(courseToDelete);
+								if (status == -1) {
+									showMessageDialog(null, "This course is not existed!");
+								}
+								else {
+									
+									courses.remove(row);
+									coursesFilter.removeAll(coursesFilter);
+									
+			
+								
+									coursesFilter.removeAll(coursesFilter);
+									coursesFilter.addAll(courses);
+							        
+									revalidate();
+							        repaint();
+									
+									showMessageDialog(null, "Deleted successfully!");
+								}
 							}
-							else {
+				       }
+				       else {
+				    	   
+							try {
+								JComponent studentsInCourseManagement;
+								studentsInCourseManagement = new StudentsInCourseManagement(coursesFilter.get(row).getId());
+								studentsInCourseManagement.setOpaque(true);
+						    	   studentsInCourseManagement.setVisible(true);
+							} catch (IOException e1) {
 								
-								courses.remove(row);
-								coursesFilter.removeAll(coursesFilter);
+							} catch (URISyntaxException e1) {
 								
-		
-							
-								coursesFilter.removeAll(coursesFilter);
-								coursesFilter.addAll(courses);
-						        
-								revalidate();
-						        repaint();
-								
-								showMessageDialog(null, "Deleted successfully!");
 							}
-						}
+				    	   
+				       }
 				    }
 				};
 		    	
@@ -518,12 +535,27 @@ class CourseActionCellRenderer extends AbstractCellEditor implements  TableCellE
 		btn_delete.setIcon(new ImageIcon(scaleImage));
 		btn_delete.addActionListener(this);
 		btn_delete.setMnemonic(KeyEvent.VK_D);
+		
+		JButton btn_classDetail   = new JButton();
+		Border emptyBorder3 = BorderFactory.createEmptyBorder();
+		btn_classDetail.setBorder(emptyBorder3);
+		btn_classDetail.setPreferredSize(new Dimension(30, 30));
+		btn_classDetail.setBackground(Color.white);
+		btn_classDetail.setForeground(Color.white);
+		  
+		ImageIcon icon3 = new ImageIcon("img/students.png");
+		Image scaleImage3 = icon3.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
+		btn_classDetail.setIcon(new ImageIcon(scaleImage3));
+		btn_classDetail.addActionListener(this);
+		btn_classDetail.setMnemonic(KeyEvent.VK_D);
 
 		
 		JPanel view_button = new JPanel();
 		view_button.setLayout(new GridLayout(1,3));
 		view_button.setBackground(Color.white);
 		
+		
+		view_button.add(btn_classDetail);
 		view_button.add(btn_delete);
 	
 		return view_button;
@@ -548,11 +580,27 @@ class CourseActionCellRenderer extends AbstractCellEditor implements  TableCellE
 		btn_delete.setMnemonic(KeyEvent.VK_D);
 		btn_delete.setActionCommand("delete");
 		
+		JButton btn_classDetail   = new JButton();
+		Border emptyBorder3 = BorderFactory.createEmptyBorder();
+		btn_classDetail.setBorder(emptyBorder3);
+		btn_classDetail.setPreferredSize(new Dimension(30, 30));
+		btn_classDetail.setBackground(Color.white);
+		btn_classDetail.setForeground(Color.white);
+		  
+		ImageIcon icon3 = new ImageIcon("img/students.png");
+		Image scaleImage3 = icon3.getImage().getScaledInstance(25, 25,Image.SCALE_SMOOTH);
+		btn_classDetail.setIcon(new ImageIcon(scaleImage3));
+		btn_classDetail.addActionListener(this);
+		btn_classDetail.setMnemonic(KeyEvent.VK_D);
+		btn_classDetail.setActionCommand("classDetail");
+
 		
 		JPanel view_button = new JPanel();
 		view_button.setLayout(new GridLayout(1,3));
 		view_button.setBackground(Color.white);
 		
+		
+		view_button.add(btn_classDetail);
 		view_button.add(btn_delete);
 		
 	

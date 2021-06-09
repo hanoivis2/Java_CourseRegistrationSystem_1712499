@@ -12,41 +12,12 @@ public class Course implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private CourseID id;
-	private String theoryTeacherName;
-	private String roomName;
-	private String dayInWeek;
-	private short shift;
 	private short maxAmountStudent;
 	private Subject subject = new Subject();
 	private Semester semester = new Semester();
 	private Set<StudentAccount> students = new HashSet<StudentAccount>(0);
 	
 	public Course() {}
-	
-
-	public String getTheoryTeacherName() {
-		return theoryTeacherName;
-	}
-
-	public void setTheoryTeacherName(String theoryTeacherName) {
-		this.theoryTeacherName = theoryTeacherName;
-	}
-
-	public String getRoomName() {
-		return roomName;
-	}
-
-	public void setRoomName(String roomName) {
-		this.roomName = roomName;
-	}
-
-	public String getDayInWeek() {
-		return dayInWeek;
-	}
-
-	public void setDayInWeek(String dayInWeek) {
-		this.dayInWeek = dayInWeek;
-	}
 
 
 	public Subject getSubject() {
@@ -76,15 +47,6 @@ public class Course implements Serializable {
 
 	public void setId(CourseID id) {
 		this.id = id;
-	}
-	
-	public short getShift() {
-		return shift;
-	}
-
-
-	public void setShift(short shift) {
-		this.shift = shift;
 	}
 
 
